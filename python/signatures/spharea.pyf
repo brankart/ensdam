@@ -1,0 +1,19 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module spharea ! in 
+    interface  ! in :spharea
+        module ensdam_spharea ! in :spharea:/linkhome/rech/egi/regi700/src/EnsDAM/src/TranSpHO/spharea.f90
+            real(kind=8), private,parameter,optional :: twopi=6.28318530718
+            real(kind=8), private,parameter,optional,depend(twopi) :: deg2rad=0.0174532925199
+            subroutine mesh_area(lon,lat,area) ! in :spharea:/linkhome/rech/egi/regi700/src/EnsDAM/src/TranSpHO/spharea.f90:ensdam_spharea
+                real(kind=8) dimension(:,:),intent(in) :: lon
+                real(kind=8) dimension(size(lon,1),size(lon,2)),intent(in) :: lat
+                real(kind=8) dimension(size(lon,1)-1,size(lon,2)-2),intent(out) :: area
+            end subroutine mesh_area
+        end module ensdam_spharea
+    end interface 
+end python module spharea
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

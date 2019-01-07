@@ -1,0 +1,46 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module anatra ! in 
+    interface  ! in :anatra
+        module ensdam_anatra ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90
+            use ensdam_storng
+            subroutine ana_forward_ensemble(ens,qua,quaref,rank_bn) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) dimension(:,:),intent(inout) :: ens
+                real(kind=8) dimension(size(ens,1),:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,2)),intent(in) :: quaref
+                real(kind=8), optional,dimension(:),intent(in) :: rank_bn
+            end subroutine ana_forward_ensemble
+            subroutine ana_forward_vector(vct,qua,quaref,rank_bn) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) dimension(:),intent(inout) :: vct
+                real(kind=8) dimension(size(vct,1),:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,2)),intent(in) :: quaref
+                real(kind=8), optional,intent(in) :: rank_bn
+            end subroutine ana_forward_vector
+            subroutine ana_forward_variable(var,qua,quaref,rank_bn) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) intent(inout) :: var
+                real(kind=8) dimension(:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,1)),intent(in) :: quaref
+                real(kind=8), optional,intent(in) :: rank_bn
+            end subroutine ana_forward_variable
+            subroutine ana_backward_ensemble(ens,qua,quaref) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) dimension(:,:),intent(inout) :: ens
+                real(kind=8) dimension(size(ens,1),:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,2)),intent(in) :: quaref
+            end subroutine ana_backward_ensemble
+            subroutine ana_backward_vector(vct,qua,quaref) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) dimension(:),intent(inout) :: vct
+                real(kind=8) dimension(size(vct,1),:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,2)),intent(in) :: quaref
+            end subroutine ana_backward_vector
+            subroutine ana_backward_variable(var,qua,quaref) ! in :anatra:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anatra.f90:ensdam_anatra
+                real(kind=8) intent(inout) :: var
+                real(kind=8) dimension(:),intent(in) :: qua
+                real(kind=8) dimension(size(qua,1)),intent(in) :: quaref
+            end subroutine ana_backward_variable
+        end module ensdam_anatra
+    end interface 
+end python module anatra
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

@@ -1,0 +1,53 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module meanstd ! in 
+    interface  ! in :meanstd
+        module ensdam_meanstd ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90
+            use mpi
+            integer, save,private :: mpi_code
+            integer, save,public,optional :: mpi_comm_meanstd=mpi_comm_world
+            subroutine ensemble_meanstd_vector(ens,mean,std,weight) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(size(ens,1)),intent(out) :: mean
+                real(kind=8) dimension(size(ens,1)),intent(out) :: std
+                real(kind=8) dimension(size(ens,1),size(ens,2)),intent(in) :: weight
+            end subroutine ensemble_meanstd_vector
+            subroutine ensemble_meanstd_variable(ens,mean,std,weight) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) dimension(:),intent(in) :: ens
+                real(kind=8) intent(out) :: mean
+                real(kind=8), optional,intent(out) :: std
+                real(kind=8), optional,dimension(:),intent(in) :: weight
+            end subroutine ensemble_meanstd_variable
+            subroutine update_meanstd_vector(vct,idx,mean,msqra) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) dimension(:),intent(in) :: vct
+                integer intent(in) :: idx
+                real(kind=8) dimension(:),intent(inout) :: mean
+                real(kind=8), optional,dimension(:),intent(inout) :: msqra
+            end subroutine update_meanstd_vector
+            subroutine update_meanstd_vector_weight(vct,weight,weightsum,mean,msqra) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) dimension(:),intent(in) :: vct
+                real(kind=8) dimension(:),intent(in) :: weight
+                real(kind=8) dimension(:),intent(inout) :: weightsum
+                real(kind=8) dimension(:),intent(inout) :: mean
+                real(kind=8), optional,dimension(:),intent(inout) :: msqra
+            end subroutine update_meanstd_vector_weight
+            subroutine update_meanstd_variable(var,idx,mean,msqra) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) intent(in) :: var
+                integer intent(in) :: idx
+                real(kind=8) intent(inout) :: mean
+                real(kind=8), optional,intent(inout) :: msqra
+            end subroutine update_meanstd_variable
+            subroutine update_meanstd_variable_weight(var,weight,weightsum,mean,msqra) ! in :meanstd:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsStat/meanstd.F90:ensdam_meanstd
+                real(kind=8) intent(in) :: var
+                real(kind=8) intent(in) :: weight
+                real(kind=8) intent(inout) :: weightsum
+                real(kind=8) intent(inout) :: mean
+                real(kind=8), optional,intent(inout) :: msqra
+            end subroutine update_meanstd_variable_weight
+        end module ensdam_meanstd
+    end interface 
+end python module meanstd
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
