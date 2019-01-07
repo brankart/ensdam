@@ -1,0 +1,481 @@
+\documentclass[11pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[a4paper,top=1in,left=1in,right=1in,bottom=1in]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{natbib}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\centerline{
+\includegraphics[height=22mm]{Logos/logo_uga.png}
+\hspace{5mm}
+\includegraphics[height=22mm]{Logos/logo_cnrs.png}
+\hfill
+\includegraphics[height=22mm]{Logos/logo_ige.png}
+}
+
+\vspace{20mm}
+
+\begin{center}
+
+{\Huge\bf EnsAugm}
+
+\vspace{10mm}
+
+\centerline{\Large\bf Ensemble Augmentation}
+\centerline{\Large\bf by Schur products}
+\centerline{\Large\bf with large-scale patterns}
+
+\vspace{10mm}
+
+{\Large\bf User's guide}
+
+\vspace{10mm}
+
+{\large\bf Jean-Michel Brankart}
+
+\vspace{5mm}
+{\tt http://pp.ige-grenoble.fr/pageperso/brankarj/}
+
+\vspace{5mm}
+{\large Institut des G\'eosciences de l'Environnement}
+
+\vspace{1mm}
+{\large Universit\'e Grenoble Alpes, CNRS, France}
+
+\end{center}
+
+\vspace{20mm}
+The purpose of EnsAugm is to provide tools
+to augment an ensemble simulation with new members.
+The objective is to mitigate the effects of undersampling
+by an artifical increase of the ensemble size.
+
+All variables from the input ensemble are assumed to be normally
+distributed with zero mean and unit standard deviation [N(0,1)],
+which can be obtained by anamorphosis transformation (see EnsAnam modules).
+The new members can then be obtained by combining Schur products
+of one of the ensemble member by the large-scale pattern of other members.
+This operation preserves the local correlation structure of the original ensemble
+and reduce to zero the long-range correlations.
+
+The tools are provided as a library of modules,
+which can be easily plugged in any existing software.
+This library includes:
+
+\begin{itemize}
+\item the computation of the Schur product of two vectors with N(0,1) marginal distribution;
+\item the computation of a multiple Schur product by random combination of ensemble members at different scales;
+\item the sampling of the augmented ensemble.
+\end{itemize}
+
+\clearpage
+
+\pagestyle{plain}
+
+\section{Description of the method}
+
+A major difficulty with ensemble methods is that large ensembles are expensive to produce,
+while the accuracy of the statistics improves quite slowly with the ensemble size.
+Methods to artificially increase the ensemble size at low numerical cost
+can thus be very helpful, providing that the statistics can be improved.
+The approach that is used here to generate an augmented ensemble with imrpoved statistics
+is to localize the correlation structure of the original ensemble.
+The localization of correlations is done implicitly
+(in the sense that correlations are never computed explicitly in the algorithm)
+by computing Schur products of ensemble members with large-scale patterns of other members.
+
+Our basic assumptions about the original ensemble are that:
+
+\begin{itemize}
+\item the marginal probability distribution of all variables is a normal distribution
+with zero mean and unit standard deviation (which can be obtained
+by anamorphosis transformation, see EnsAnam modules);
+\item the large-scale component of every member of the ensemble can be computed
+by separating scales (using for instance the TranSpHO modules,
+in the case of spherical coordinates);
+each of them is also renormalized to have a zero mean and a unit standard deviation.
+\end{itemize}
+
+\noindent
+The characteristics of the localizing correlation matrix
+depend on the scales that are kept in the large-scale components
+provided to the algorithm.
+
+\subsection{Computation of Schur products}
+
+Let ${\bf x_1}$ and~${\bf x_2}$ be two independent random vectors, with:
+
+\begin{eqnarray}
+\label{eq:defx1}
+<{\bf x_1}> = 0 \quad&\mbox{and}&\quad <{\bf x_1}{\bf x_1}^T> = {\bf C}_1 \\
+\label{eq:defx2}
+<{\bf x_2}> = 0 \quad&\mbox{and}&\quad <{\bf x_2}{\bf x_2}^T> = {\bf C}_2
+\end{eqnarray}
+
+\noindent
+and let ${\bf x}$ be the Schur product of ${\bf x_1}$ and~${\bf x_2}$:
+
+\begin{equation}
+\label{eq:product}
+{\bf x} = {\bf x_1} \circ {\bf x_2}
+\end{equation}
+
+\noindent
+Then, it can be shown that:
+
+\begin{equation}
+\label{eq:x-cov}
+<{\bf x}> = 0 \quad\mbox{and}\quad <{\bf x}{\bf x}^T> = {\bf C}_1 \circ {\bf C}_2 \\
+\end{equation}
+
+\noindent
+This is the basic property used in the augmentation algorithm
+to localize correlation using Schur products.
+
+One possible difficulty with this method is that the product
+of two independent Gaussian variable is not a Gaussian variable.
+If necessary, this problem can be solved since all components
+of ${\bf x_1}$ and~${\bf x_2}$ have been assumed to have the same marginal distribution:
+
+\begin{equation}
+x_1^{(k)},\, x_2^{(k)} \; \sim \; {\cal N} (0,1) \quad \forall k
+\end{equation}
+
+\noindent
+so that all components of~${\bf x}$ have also the same marginal distribution:
+
+\begin{equation}
+x^{(k)} = x_1^{(k)} \; x_2^{(k)} \; \sim \; {\cal P} (0,1) \quad \forall k
+\end{equation}
+
+\noindent
+where ${\cal P}(0,1)$ is the distribution of the product of two independent
+Gaussian variables with zero mean and unit variance.
+The pdf of this distribution can be computed explicitly \citep{NADA15}:
+
+\begin{equation}
+p(x) = \frac{1}{\pi} \, K_0 (|x|)
+\end{equation}
+
+\noindent
+where $K_0$ is the order~0 modified Bessel function of the second kind.
+The $x$ variable can then be easily transformed back to Gaussian by the function:
+
+\begin{equation}
+\label{eq:ana-gp}
+\tilde{x} = G^{-1} \left[ P(x) \right]
+\end{equation}
+
+\noindent
+where $P(x)$ is the cdf corresponding to~${\cal P}(0,1)$ and
+$G(\tilde{x})$ is the cdf corresponding to~${\cal N}(0,1)$.
+
+The computation of the Schur product with Eq.~(\ref{eq:product})
+and the renormalization with Eq.~(\ref{eq:ana-gp})
+can be peerformed with the module {\bf\tt schurprod} of the library.
+The renormalization is performed in the module
+using an existing implementation of~$P$, which is available online%
+\footnote{https://jblevins.org/mirror/amiller/},
+following the algorithm proposed by \citet{MEEK94}.
+
+\subsection{Localizing correlations by Schur products with large-scale patterns}
+
+Let us suppose that every ensemble member ${\bf x}_i,\,i=1,\ldots,m$
+(where $m$ is the size of the original ensemble) is associated
+to its corresponding large-scale component ${\bf x}_i^{(j)}$,
+for several cutting wave lengths $j=2,\ldots,s$
+(where $s$ is the number of available scales for each ensemble member,
+including the full-scale member itself for $s=1$).
+Then, we can construct multiple Schur products like:
+
+\begin{equation}
+\label{eq:multiple_product}
+{\bf x} = {\bf x_\alpha} \circ \left( {\bf x}_\beta^{(2)} \circ \ldots \circ {\bf x}_\gamma^{(2)} \right)
+            \circ \ldots \circ \left( {\bf x}_\psi^{(s)} \circ \ldots \circ {\bf x}_\omega^{(s)} \right)
+\end{equation}
+
+\noindent
+combining one member of the original ensemble
+with several members at each available scale.
+In computing this product, it is assumed that
+the member indices $\alpha, \beta, \ldots \gamma \ldots \psi \ldots\omega$
+are all different so that the same member
+is never used twice in the same product.
+
+The covariance of~${\bf x}$ is then:
+
+\begin{equation}
+\label{eq:multiple_product_cov}
+<{\bf x} {\bf x}^T > = {\bf C} \circ \left( {\bf C}^{(2)} \circ \ldots \circ {\bf C}^{(2)} \right)
+                  \circ \ldots \circ \left( {\bf C}^{(s)} \circ \ldots \circ {\bf C}^{(s)} \right)
+\end{equation}
+
+\noindent
+where ${\bf C}$ is the correlation matrix of the original ensemble,
+and the rest of the product is the localizing correlation.
+One important condition on the localizing correlation matrix
+is that all elements must be positive
+(to avoid changing the sign of correlation coefficients in~${\bf C}$).
+In Eq.~(\ref{eq:multiple_product_cov}), this condition is easily verified
+by using an even Schur-power for each of the~${\bf C}^{(j)}$, $j=2,\ldots,s$.
+In this way, by using an even number of vector in each parenthesis
+of the product in Eq.~(\ref{eq:multiple_product}),
+we can be sure that we (implicitly) localize the ensemble covariance
+with a positive correlation matrix.
+In addition to this, as in the previous section, it is also possible
+to take care of renormalizing the product so that all variables in~${\bf x}$
+are still marginally distributed as~${\cal N}(0,1)$.
+However, it must be noted that this operation can modify
+the linear correlation structure, even if it preserves rank correlations.
+
+The key property of Eq.~(\ref{eq:multiple_product}) for augmenting the original ensemble
+is the very large number of linearly independent ${\bf x}$-vector that can be generated
+by different combinations of the original members.
+With $p$ Schur products (i.e.\ by combining $p$ large-scale patterns to one original member),
+the number of possible combinations is:
+
+\begin{equation}
+N = \frac{m!}{(m-p-1)! \prod_i q_i !}
+\qquad\mbox{with}\qquad
+p \le m-1
+\qquad\mbox{and}\qquad
+\sum_i q_i = p
+\end{equation}
+
+\noindent
+where $m$ is the size of the original ensemble,
+$q_i$ is the multiplicity of every scale in the product, and
+$N$ is the number of products that can be generated.
+For instance, for $m=20$, if the positive condition must be verified,
+the maximum number of ${\bf x}$-vectors that can be generated is
+by setting $p=18$ and all $q_i$ ($i=1,\ldots,9$) equal to~2,
+so that the maximum size of the augmented ensemble is
+as large as $20!/2^9 \simeq 5 \times 10^{15}$.
+More reasonably, if the size of the state vector is about $n\sim 10^7 - 10^8$,
+a full rank ensemble could already be obtained with $p=6$ Schur products,
+which leads to a possible ensemble size
+as large as $20!/(13!\times 2^3) \simeq 5 \times 10^{7}$.
+Could we explore the state space by linear combination of these vectors,
+we would be able to solve inverse problems globally without rank approximation.
+
+\subsection{Sampling of the augmented ensemble}
+
+From the Schur products in Eq.~(\ref{eq:multiple_product}), members of the augmented ensemble
+can then be obtained by random linear combinations:
+
+\begin{equation}
+\label{eq:augm_linear_combination}
+\hat{\bf x}_i = \sum_{k=1}^{N} w_{ik} \, {\bf x}_{\alpha(k)}
+\end{equation}
+
+\noindent
+where ${\bf x}_{\alpha(k)}$ is the Schur product obtained with combination~$\alpha(k)$
+of one original member and several large-scale patterns,
+$w_{ik}$ are independent random coefficients with ${\cal N}(0,1)$ distribution,
+and $\hat{\bf x}_i$ is one member of the augmented ensemble.
+By construction, the marginal distribution of the~$\hat{\bf x}_i$ is~${\cal N}(0,1)$,
+at the only condition that the variance of the~${\bf x}_{\alpha(k)}$ is equal to~1,
+which follows directly from Eq.~(\ref{eq:multiple_product}).
+In this case, the renormalization of the~${\bf x}_{\alpha(k)}$
+using Eq.~(\ref{eq:ana-gp}) is thus unnecessary.
+
+In practice, the sum in Eq.~(\ref{eq:augm_linear_combination}) is computed iteratively,
+as the result of the sequence:
+
+\begin{equation}
+\label{eq:augm_chain}
+\hat{\bf x}_i^{(0)} = 0 \, ; \quad
+\hat{\bf x}_i^{(k+1)} = \frac{\sqrt{k-1}}{\sqrt{k}} \; \hat{\bf x}_i^{(k)}
+                      + \frac{1}{\sqrt{k}} \; w_{ik} \, {\bf x}_{\alpha(k)}
+\end{equation}
+
+\noindent
+In this way, the augmented members are constructed progressively with more and more Schur products,
+and can be viewed as an ensemble of MCMC chains converging towards the requested sample.
+Everything is thus ready to condition the localized augmented ensemble to observations
+using a Metropolis/Hasting algorithm
+(by accepting or rejecting new draws in the above chain
+according to observation likelihood),
+as implemented in the {\bf\tt EnsUpdate} modules.
+
+\section{Description of the modules}
+
+In this section,
+the modules are described one by one,
+giving for each of them:
+the method that has been implemented,
+the list of public variables and public routines
+(with a description of input and output data),
+the MPI parallelization, and
+an estimation of the computational cost
+as a function of the size of the problem.
+
+\subsection{Module: {\tt\bf schurprod}}
+
+The purpose of this module is to perform
+the Schur product of two vectors/variables with N(0,1) marginal distribution
+and restore a marginal N(0,1) distribution.
+
+\subsubsection*{Method}
+
+The method is to loop on the vector variables, compute the product,
+and renormalize the result using the transformation in Eq.~\ref{eq:ana-gp}.
+The transformation is either computed explicitly,
+or interpolated from a precomputed table.
+Interpolation is less expensive if the size of the vector
+is larger than the size of the precomputed table.
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[schurprod\_precompute:] precompute the renormalization function (default=.TRUE.);
+\item[schurprod\_gpmin:] min Gaussian product in precomputed table (default=-12.);
+\item[schurprod\_gpmax:] max Gaussian product in precomputed table (default=12.);
+\item[schurprod\_tablesize:] size of precomputed table (default=10000).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[schurprod:] perform Schur product:
+  \begin{description}
+  \item[{\tt prod} (input/output)]: Schur product (overwritten on 1st input vector/variable);
+  \item[{\tt vct} (input)]: second input vector/variable with which performing the Schur product.
+  \end{description}
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+For Schur product of large-size vectors,
+MPI parallelization is easily obtained by making each processor
+work on a different part of the vectors.
+Since the operations performed on different variables are independent,
+no MPI operations needed to be implemented inside the modules.
+
+\subsubsection*{Computational cost}
+
+The computational complexity of the algorithm can be written:
+
+\begin{equation}
+C_p \sim k_1 n
+\end{equation}
+
+\noindent
+where $n$ is the size of the input vectors, and $k_1$ is an order~1 constant.
+The Schur product itself is just one mutliplication for each component of the input vector,
+while renormalization is reduced to a few operations by interpolating in a precomputed table
+(4 additions, 2 multiplications, and 1 division).
+In total, this means that $k_1 \sim 4$.
+
+\subsection{Module: {\tt\bf ensaugm}}
+
+The purpose of this module is to generate new ensemble members
+by Schur product with large scale patterns.
+
+\subsubsection*{Method}
+
+The method is to sample random combinations of members
+to compute the multiple Schur product
+and then to perform random linear combination
+of these multiple Schur products to build augmented members.
+This random linear combination is performed iteratively,
+by generating the multiple Schur products one by one,
+and add progressively their contribution to the random linear combination.
+The Schur product can optionally be renormalized using the {\bf\tt schurprod} module.
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[ensaugm\_with\_renormalization:] Renormalize the Schur product
+               with the {\bf\tt schurprod} module (default=.FALSE.);
+\item[ensaugm\_chain\_index:] Current iteration index in MCMC chain (intialized to 1);
+\item[mpi\_comm\_ensaugm:] MPI communicator to use (default=mpi\_comm\_world).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[sample\_augmented\_ensemble:] iterate the Markov chains to sample the augmented ensemble:
+  \begin{description}
+  \item[{\tt maxchain} (input)]: number of additional iterations to perform;
+  \item[{\tt augens} (input/output)]: current version of augmented ensemble;
+  \item[{\tt ens} (input)]: input ensemble to be augmented,
+                            assumed available at several resolutions
+                            (the first one at full resolution, and the next ones at lower resolution),
+                            all marginal distributions must be N(0,1);
+  \item[{\tt multiplicity} (input)]:  multiplicity of each resolution
+                            in the construction of the new member;
+  \end{description}
+\item[newproduct:] compute new multiple Schur product (with random combination of input members):
+  \begin{description}
+  \item[{\tt new} (output)]: new multiple Schur product;
+  \item[{\tt ens} (input)]: ensemble to be augmented, at full resolution
+                            and at several lower resolutions;
+  \item[{\tt multiplicity} (input)]: multiplicity of each resolution
+                            in the construction of the new member;
+                            and at several lower resolutions;
+  \item[{\tt sample} (output)]: member indices that have been used to build the new multiple Schur product.
+  \end{description}
+\item[getproduct:] compute new multiple Schur product (with specified combination of input members):
+  \begin{description}
+  \item[{\tt new} (output)]: new multiple Schur product;
+  \item[{\tt ens} (input)]: ensemble to be augmented, at full resolution
+                            and at several lower resolutions;
+  \item[{\tt multiplicity} (input)]: multiplicity of each resolution
+                            in the construction of the new member;
+  \item[{\tt sample} (input)]: member indices that must be used to build the new multiple Schur product.
+  \end{description}
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+For large-size vectors,
+MPI parallelization is easily obtained by making each processor
+work on a different part of the vectors.
+MPI communications are only needed to share
+the random member indices that are used to compute the multiple Schur products,
+and the random coefficients that are used to linearly combine these multiple Schur products.
+
+\subsubsection*{Computational cost}
+
+The computational complexity of the computation of one multiple product is:
+
+\begin{equation}
+C_{mp} = p \times C_p \sim k_1 p n
+\end{equation}
+
+\noindent
+where $n$ is the size of the input vectors,
+$p$, the number of vectors used in each multiple product
+(this is the sum of the multiplicities used for each resolution),
+and $k_1=1$ (without renormalization) or $k_1\sim 4$ (with renormalization).
+
+The computational complexity of the sampling of the augmented ensemble can be written:
+
+\begin{equation}
+C_{\mbox{aug}} = N m \times C_{mp} \sim k_1 p n m N
+\end{equation}
+
+\noindent
+where $m$ is the size of the augmented ensemble (the number of required Markov chains), and
+$N$, the number of iteration in the chains (i.e.\ the number of multiple products
+that are combined to build a new member).
+
+\begin{thebibliography}{}
+\bibitem[Meeker and Escobar(1994)]{MEEK94}
+Meeker, W.Q. and Escobar, L.A., 1994:
+An algorithm to compute the CDF of the product of two normal random variables.
+\textit{Commun. in Statist.-Simula.}, \textbf{23(1)}, 271-280.
+\bibitem[Nadarajah and Pog\'any(2015)]{NADA15}
+Nadarajah, S. and Pog\'any, T., 2015:
+On the distribution of the product of correlated normal random variables.
+\textit{Comptes Rendus Mathematique}, \textbf{354}, 10.1016/j.crma.2015.10.019.
+\end{thebibliography}
+
+
+\end{document}
+

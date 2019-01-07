@@ -1,0 +1,294 @@
+\documentclass[11pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[a4paper,top=1in,left=1in,right=1in,bottom=1in]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{natbib}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\centerline{
+\includegraphics[height=22mm]{Logos/logo_uga.png}
+\hspace{5mm}
+\includegraphics[height=22mm]{Logos/logo_cnrs.png}
+\hfill
+\includegraphics[height=22mm]{Logos/logo_ige.png}
+}
+
+\vspace{20mm}
+
+\begin{center}
+
+{\Huge\bf StochTools}
+
+\vspace{10mm}
+
+{\Large\bf Stochastic Modelling Tools}
+
+\vspace{10mm}
+
+{\Large\bf User's guide}
+
+\vspace{10mm}
+
+{\large\bf Jean-Michel Brankart}
+
+\vspace{5mm}
+{\tt http://pp.ige-grenoble.fr/pageperso/brankarj/}
+
+\vspace{5mm}
+{\large Institut des G\'eosciences de l'Environnement}
+
+\vspace{1mm}
+{\large Universit\'e Grenoble Alpes, CNRS, France}
+
+\end{center}
+
+\vspace{20mm}
+The main purpose of StochTools is to provide tools
+to generate random numbers, random fields,
+or stochastic processes of various types,
+to be used in stochastic modelling or data assimilation systems.
+
+The tools are provided as a library of modules,
+which can be easily plugged in any existing software.
+This library includes:
+
+\begin{itemize}
+\item the generation of random numbers with various probability distribution
+      (uniform, normal, gamma, beta, exponential, truncated exponential, truncated normal);
+\item the computation of the probabilty density function (pdf), the cumulative distribution function (cdf)
+      or the inverse cdf of several probability distributions (normal, gamma, beta);
+\item the computation of the cdf of the product of two normal random numbers;
+\item the transformation of a normal random variable into a gamma or a beta random variable,
+      and the transformation of the product of two normal random variables into a normal variable;
+\item the generation of random fields with specified spectrum (in 1D, in 2D or
+      in the basis of the spherical harmonics).
+\end{itemize}
+
+\clearpage
+
+\pagestyle{plain}
+
+\section{Description of the modules}
+
+In this section,
+the modules are described one by one,
+giving for each of them:
+the method that has been implemented,
+the list of public variables and public routines
+(with a description of input and output data),
+the MPI parallelization, and
+an estimation of the computational cost
+as a function of the size of the problem.
+
+\subsection{Module: {\tt\bf storng}}
+
+The purpose of this module is to generate random numbers,
+according to a few specific distribution:
+uniform, Gaussian, gamma, and beta.
+
+\subsubsection*{Method}
+
+The module is based on (and includes) the
+64-bit KISS (Keep It Simple Stupid) random number generator
+distributed by George Marsaglia.
+KISS is based on 3 components:
+(1) Xorshift (XSH), period $2^{64}-1$,
+(2) Multiply-with-carry (MWC), period ($2^{121}+2^{63}-1$)
+(3) Congruential generator (CNG), period $2^{64}$.
+The overall period of the sequence of radom numbers is:
+$(2^{250}+2^{192}+2^{64}-2^{186}-2^{129})/6 \simeq 2^{247.42} \,\mbox{or}\, 10^{74.48}$.
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[kiss:] KISS random number generator (64-byte integers);
+\item[kiss\_seed:] define seeds for KISS random number generator;
+\item[kiss\_save:] save current state of KISS (for future restart);
+\item[kiss\_load:] load the saved state of KISS;
+\item[kiss\_reset:] reset to the default seeds;
+\item[kiss\_check:] check the KISS pseudo-random sequence;
+\item[kiss\_uniform:] real random numbers with uniform distribution in [0,1];
+\item[kiss\_gaussian:] real random numbers with Gaussian distribution N(0,1);
+\item[kiss\_gamma:] real random numbers with Gamma distribution Gamma(k,1);
+\item[kiss\_beta:] real random numbers with Beta distribution Beta(a,b).
+\end{description}
+
+\subsubsection*{Computational cost}
+
+This is a very cheap random number generator.
+Each call to the {\tt kiss} function requires
+the following list of operations
+applied to 64-byte integers:
+
+\centerline{* (1), + (6), ISHFT (4), IEOR (3), .EQ. (1)}
+
+\subsection{Module: {\tt\bf stotge}}
+
+The purpose of this module is to generate random numbers
+with truncated normal or truncated exponential distribution.
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[ran\_te:] sample random number with truncated exponential distribution;
+\item[ran\_tg:] sample random number with truncated Gaussian distribution;
+\item[ranv\_tg:] sample random vector with truncated Gaussian distribution.
+\end{description}
+
+\subsection{Module: {\tt\bf stoutil}}
+
+The purpose of this module is to compute the probabilty density function (pdf),
+the cumulative distribution function (cdf) or the inverse cdf
+of several probability distributions (normal, gamma, beta).
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[pdf\_gaussian:] compute Gaussian pdf;
+\item[logpdf\_gaussian:] compute the logarithm of a Gaussian pdf (minus a constant);
+\item[cdf\_gaussian:] compute Gaussian cdf;
+\item[invcdf\_gaussian:] compute Gaussian inverse cdf;
+\item[pdf\_gamma:] compute gamma pdf;
+\item[logpdf\_gamma:] compute the logarithm of a gamma pdf (minus a constant);
+\item[cdf\_gamma:] compute gamma cdf;
+\item[invcdf\_gamma:] compute gamma inverse cdf;
+\item[pdf\_beta:] compute beta pdf;
+\item[logpdf\_beta:] compute the logarithm of a beta pdf (minus a constant);
+\item[cdf\_beta:] compute beta cdf;
+\item[invcdf\_beta:] compute beta inverse cdf.
+\end{description}
+
+\subsection{Module: {\tt\bf stogprod}}
+
+The purpose of this module is to compute the cumulative distribution function (cdf)
+of the product of two normal random variables.
+This module is based on Alan Miller'implementation of the cdf
+({\tt https://jblevins.org/mirror/amiller/}).
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[fnprod:] compute the cdf of the product of two normal random variables.
+\end{description}
+
+\subsection{Module: {\tt\bf stoanam}}
+
+The purpose of this module is to transform a random variable
+from one distribution to another.
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[gau\_to\_gam:] transform a normal random variable into a gamma random variable;
+\item[gau\_to\_beta:] transform a normal random variable into a beta random variable;
+\item[gprod\_to\_gau:] transform the product of two normal random variables
+                       into a normal random variable.
+\end{description}
+
+\subsection{Module: {\tt\bf storfg}}
+
+The purpose of this module is to generate random fields with specified spectrum
+in the basis of the spherical harmonics.
+Routines to generate 1D or 2D random fields with a continuous spectrum are also included
+in the module, but they need to be reconsidered and they are not described below.
+
+\subsubsection*{Method}
+
+The approach is to generate two-dimensional random fields $w(\theta,\varphi)$,
+function of latitude ($\theta$) and longitude ($\varphi$),
+by linear combination of the sperical harmonics $Y_{lm}(\theta,\varphi)$:
+
+\begin{equation}
+\label{eq:ranw}
+w(\theta,\varphi) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^l
+                    a_{lm} \, \xi_{lm} \, Y_{lm}(\theta,\varphi)
+\end{equation}
+
+\noindent
+where $l$ and $m$ are the degree and order of each spherical harmonics,
+$\xi_{lm}$ are independent Gaussian noises (with zero mean and unit variance),
+and $a_{lm}$ are spectral amplitudes defining the spatial
+correlation structure of the random field.
+
+The amplitudes~$a_{lm}$ defines the spectrum of~$w$
+in the basis of spherical harmonics, for instance:
+
+\begin{equation}
+\label{eq:amplw}
+a^2_{lm} = \frac{k}{2l+1} \left[ 1 + \left( l/l_c \right)^{2p} \right]^{-1}
+\end{equation}
+
+\noindent
+where the degree~$l_c$ defines the characteristic length scale
+($\ell_c=R_c/l_c$, where $R_c$ is the earth radius),
+the exponent~$p$ modifies the shape of the spectrum, and
+the coefficient~$k$ is chosen to specify the variance ($\sigma^2$) of~$w$,
+i.e.\ so that:
+
+\begin{equation}
+\label{eq:amplw-norm}
+\sum_{l=0}^{l_{\max}} \sum_{m=-l}^l a^2_{lm} = \sigma^2
+\end{equation}
+
+\noindent
+Choosing the~$a_{lm}$ independent of~$m$ [as in Eq.~(\ref{eq:amplw})]
+means that the random field~$w$ is homogeneous and isotropic on the sphere.
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[gen\_field\_2s:] to generate the random field.
+  \begin{description}
+  \item[{\tt ranfield} (output)]: random field on the requested grid;
+  \item[{\tt lon} (input)]: longitude of grid points;
+  \item[{\tt lat} (input)]: latitude of grid points;
+  \item[{\tt pow\_spect} (input)]: callback routine providing the requested power spectrum;
+  \item[{\tt lmin} (input)]: minimum degree of the spherical harmonics;
+  \item[{\tt lmax} (input)]: maximum degree of the spherical harmonics.
+  \end{description}
+\end{description}
+
+\subsubsection*{Computational cost}
+
+The computational complexity (leading asymptotic behaviour for large systems)
+is given by:
+
+\begin{equation}
+C \sim k n  l_{\max}^2 = k n \left( \frac{2\pi R}{\lambda_c} \right)^2
+\end{equation}
+
+\noindent
+where $n$ is the number of grid points in the random field,
+$l_{\max}$ is the maximum degree of spherical harmonics, and
+$k$ is the number of operation required for one single evaulation
+of spherical harmonics.
+
+\section{Examples}
+
+In this section,
+the examples provided with the library are described,
+giving for each of them:
+the purpose of the examples,
+the list of modules/routines that are illustrated,
+the input parameters and data,
+the calling sequence of the library routines,
+with a description of inputs and outputs for each of them, and
+a description of the final result that is expected.
+
+\subsection{Random field on the sphere}
+
+The purpose of this example is to illustrate
+the generation of a random field on the sphere.
+Input data are: the maximum degree of the spherical harmonics
+used to generate the random field, the power spectrum of the random field,
+and the definition of the output grid
+(where to provide the random field).
+The output is a random field on the sphere written in NetCDF.
+
+
+\end{document}
+

@@ -1,0 +1,445 @@
+\documentclass[11pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[a4paper,top=1in,left=1in,right=1in,bottom=1in]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{natbib}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\centerline{
+\includegraphics[height=22mm]{Logos/logo_uga.png}
+\hspace{5mm}
+\includegraphics[height=22mm]{Logos/logo_cnrs.png}
+\hfill
+\includegraphics[height=22mm]{Logos/logo_ige.png}
+}
+
+\vspace{20mm}
+
+\begin{center}
+
+{\Huge\bf TranSpHO}
+
+\vspace{10mm}
+
+{\Large\bf Transformation along the Spherical Harmonics\\for Ocean applications}
+
+\vspace{10mm}
+
+{\Large\bf User's guide}
+
+\vspace{10mm}
+
+{\large\bf Jean-Michel Brankart}
+
+\vspace{5mm}
+{\tt http://pp.ige-grenoble.fr/pageperso/brankarj/}
+
+\vspace{5mm}
+{\large Institut des G\'eosciences de l'Environnement}
+
+\vspace{1mm}
+{\large Universit\'e Grenoble Alpes, CNRS, France}
+
+\end{center}
+
+\vspace{20mm}
+The main purpose of the TranSpHO modules is to provide all tools needed
+to transform the ocean data assimilation problem
+by projection on the spherical harmonics.
+The objective is to separate scales and
+to make the assimilation system behave differently for different scales
+(e.g.\ different localization algorithm,
+different error parameterization,\ldots).
+
+The tools are provided as a library of modules,
+which can be easily plugged in any assimilation software.
+Examples are provided to illustrate
+how the main routines can be used an
+to check that the library has been installed correctly.
+
+This library includes:
+
+\begin{itemize}
+\item the forward and backward transformation of gridded data,
+\item the regression of observation data on the spherical harmonics. and
+\end{itemize}
+
+\clearpage
+
+\pagestyle{plain}
+
+\section{Description of the modules}
+
+In this section,
+the modules are described one by one,
+giving for each of them:
+the method that has been implemented,
+the list of public routines that can be called by the user
+(with a description of input and output data), and
+an estimation of the computational cost
+as a function of the size of the problem.
+
+\subsection{Module: {\tt sphylm}}
+
+The purpose of this module is to perform
+(i)~the forward and backward transformation
+of a two-dimansional field on the sphere
+in the basis of the spherical harmonics
+(section~\ref{sec:tran}), and
+(ii)~the regression of observation data
+on the spherical harmonics (section~\ref{sec:regr}).
+
+\subsubsection{Forward and backward transformation}
+\label{sec:tran}
+
+\subsubsection*{Method}
+
+The approach is to project the two-dimensional field
+in spherical coordinates $f(\theta,\varphi)$ on the spherical harmonics
+$Y_{lm}(\theta,\varphi)$:
+
+\begin{equation}
+\label{eq:spect}
+f_{lm} = \int_{\Omega} f(\theta,\varphi) Y_{lm}(\theta,\varphi) \; d\Omega
+\end{equation}
+
+\noindent
+where $l$ and $m$ are the degree and order of each spherical harmonics.
+The integral is over the whole sphere but $f(\theta,\varphi)$
+can be extended with zeroes outside of the available domain,
+at least for our assimilation purpose
+(since only differences between two model state play a role in the assimilation algorithm).
+From the spectrum~$f_{lm}$ can then be reconstructed
+using the inverse transformation:
+
+\begin{equation}
+\label{eq:spect-inv}
+f(\theta,\varphi) = \sum_{l=0}^\infty \sum_{m=-l}^l
+                    f_{lm} Y_{lm}(\theta,\varphi)
+\end{equation}
+
+\noindent
+so that any spectral band can be extracted by limiting
+the sum over a specific range of~$l$
+(remembering that the wavelength $\lambda=2\pi R/l$, where $R$ is the earth radius).
+
+\subsubsection*{Routines}
+
+The implementation of the above equations
+is made of 3 public routines that can be called
+by an outside program, and 2 private routines that are only called
+inside the module.
+The public routines are:
+\begin{description}
+\item[init\_ylm:] to precompute the Legendre functions
+  [used in the computation of the spherical harmonics: $Y_{lm}(\theta,\varphi)$]
+  up to the required degree ({\tt kjpl}),
+  on the required latitude range ({\tt latmin} to {\tt latmax})
+  and with the required resolution ({\tt dlatmax});
+\item[proj\_ylm:] to project a gridded two-dimensional field
+  on all spherical harmonics up to degree {\tt kjpl}:
+  {\tt ktab} is the array with the field data (already weighted
+              with the spherical surface of each grid cell,
+              so that the integral simplifies to a simple sum),
+  {\tt klon} is the array with the corresponding longitudes,
+  {\tt klat} is the array with the corresponding latitudes, and
+  {\tt kproj} is the resulting projection array (or spectrum
+              in the basis of spherical harmonics).
+\item[back\_ylm:] to perform the inverse transformation from the
+              spectrum ({\tt kproj}) to the spherical coordinates
+              (specified in {\tt klon} and {\tt klat} as above),
+              {\tt ktab} is here the output data
+              (containing only the scales between degrees
+              {\tt jlmin} and {\tt kjpl}).
+\end{description}
+The private routines are:
+\begin{description}
+\item[plm:] to evaluate the Legendre functions, recursively
+            up to the required degree ({\tt jpl});
+\item[ylm:] to evaluate the spherical harmonics
+            (degree: {\tt kl}, order: {\tt km})
+            at the specified spherical coordinates
+            (longitude: {\tt klon}, latitude: {\tt klat}).
+\end{description}
+
+\subsubsection*{Computational cost}
+
+The computational complexity (leading asymptotic behaviour for large systems)
+is given by:
+
+\begin{equation}
+C \sim k n  l_{\max}^2 = k n \left( \frac{2\pi R}{\lambda_c} \right)^2
+\end{equation}
+
+\noindent
+where $n$ is the number of grid points (size of {\tt ktab}),
+$l_{\max}$ is the maximum degree of spherical harmonics ({\tt kjpl}), and
+$k$ is the number of operation required for one single evaluation
+of spherical harmonics (i.e\. one call to {\tt ylm}).
+In this code, $k\simeq 5$, plus the cost of one evaluation of the sine or cosine function.
+In the second formula, $R$ is the earth radius
+and $\lambda_c$ is the cutting wave length.
+
+\subsubsection{Regression of observations}
+\label{sec:regr}
+
+\subsubsection*{Method}
+
+The approach is to look for the spectral amplitudes~$f_{lm}$
+so that the corresponding field~$f(\theta,\varphi)$
+(up to degree~$l_{\max}$):
+
+\begin{equation}
+\label{eq:spect-inv-lmax}
+f(\theta,\varphi) = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^l
+                    f_{lm} Y_{lm}(\theta,\varphi)
+\end{equation}
+
+\noindent
+minimizes the following distance to observations
+($f^o_k$ at coordinates $\theta_k,\varphi_k$, $k=1,\ldots,p$):
+
+\begin{equation}
+\label{eq:Jo}
+J^o = \sum_{k=1}^p \frac{1}{{\sigma^o_k}^2}
+         \left[ f(\theta_k,\varphi_k) - f^o_k \right]^2
+\end{equation}
+
+\noindent
+where $\sigma^o_k$ is typically the observation error standard deviation
+(including the representativity error corresponding
+to the signal above degree~$l_{\max}$).
+
+If the observation system is insufficient to control all spectral components
+with sufficient accuracy, the penalty function~$J$ can include
+a regularization term~$J^b$: $J=J^o + \rho J^b$,
+where the parameter~$\rho$ can be tuned (between 0 and 1)
+to modify the importance of $J^b$ with respect to~$J^o$.
+The regularization term~$J^b$ is the following norm
+of the spectral amplitudes~$f_{lm}$:
+
+\begin{equation}
+\label{eq:Jb}
+J^b = \sum_{l=0}^{l_{\max}} \sum_{m=-l}^l
+      \frac{f_{lm}^2}{\sigma_{lm}^2}
+\end{equation}
+
+\noindent
+where $\sigma_{lm}$ is typically the standard deviation
+of the signal along each spherical harmonics.
+
+{\em Scale localization of the regression}. In order to improve
+the efficiency of the above algorithm (if $l_{\max}$ and $p$ are large),
+options to apply the above algorithm locally have been implemented.
+This corresponds to solving the regression problem
+for a limited block of degrees~$l$ in Eq.~(\ref{eq:spect-inv-lmax}),
+and loop over all blocks from 0 to~$l_{\max}$.
+This is controlled by two parameters specifying
+the number of degrees~$l$ in the last block ({\tt kmaxbloc})
+and the overlap between the blocks ({\tt koverlap}).
+(The number of degrees in each block is automatically modified
+as a function of~$l$ to keep about the same number
+of spherical harmonics in each block of degrees,
+and thus minimize the overall cost.)
+
+In addition to that, this localization approximation requires 
+iterating on the local regressions until covergence.
+Two possibilities have been implemented:
+(i)~perform the loop from 0 to~$l_{\max}$
+several times until convergence (this is the {\tt 'local'} option), and
+(ii)~~perform the loop from 0 to current block
+several times until convergence, before going to the next block of degrees
+(this is the {\tt 'sublocal'} option).
+These iterations are controlled by two parameters specifying
+the maximum number of iterations ({\tt kmaxiter}), hopefully never reached, and
+the maximum relative variation for convergence ({\tt kepsilon}).
+
+This makes quite a large number of parameters to specify,
+but it can be expected that the default values (see below)
+should be sufficient for most applications
+(especially if the weights {\tt kwei} and {\tt kobswei} are correctly tuned).
+
+\subsubsection*{Routines}
+
+The implementation of the above equations
+is made of 2 public routines that can be called
+by an outside program, and 3 private routines that are only called
+inside the module.
+The public routines are:
+\begin{description}
+\item[init\_regr\_ylm:] to modify the default parameters
+  in the regression of observations:
+  the type of regression ({\tt ktype} = {\tt 'global'}, {\tt 'local'} or {\tt 'sublocal'}),
+  the maximum number of iterations ({\tt kmaxiter}),
+  the number of degrees~$l$ in the last block ({\tt kmaxbloc}),
+  the overlap between the blocks ({\tt koverlap}),
+  the maximum relative variation for convergence ({\tt kepsilon}),
+  the weight of the background term in the cost function ({\tt krho}).
+  The default values are: {\tt ktype}={\tt 'local'}, {\tt kmaxiter}=50,
+  {\tt kmaxbloc}=1, {\tt koverlap}=1, {\tt kepsilon}=0.01, {\tt krho}=1;
+\item[regr\_ylm:] to perform the regression of observations:
+  {\tt kregr} is the resulting array with the amplitudes
+              (or spectrum in the basis of spherical harmonics),
+  {\tt kwei} is the weight to give to each spherical harmonics ($\sigma_{lm}$),
+  {\tt kobs} is the array with observations,
+  {\tt klon} is the array with the corresponding longitudes,
+  {\tt klat} is the array with the corresponding latitudes, and
+  {\tt kproj} is the resulting projection array (or spectrum
+              in the basis of spherical harmonics).
+  {\tt kobswei} is the weight to give to each observation ($1/\sigma_k^o$),
+\end{description}
+The private routines are:
+\begin{description}
+\item[regr\_ylm\_loc:] to perform the regression 
+            over a local range of degrees of the spherical harmonics;
+\item[regr\_calc\_ab:] to compute the matrix {\bf A} and vector {\bf b}
+            of the linear system {\bf A}{\bf x}={\bf b}.
+\item[regr\_calc\_x:] to solve of the linear system {\bf A}{\bf x}={\bf b}.
+\end{description}
+
+\subsubsection*{Computational cost}
+
+The computational complexity (leading asymptotic behaviour for large systems)
+of the global regression algorithm is given by:
+
+\begin{equation}
+C \sim k \, p  \, l_{\max}^4 + \frac{1}{6} \, l_{\max}^6
+\end{equation}
+
+\noindent
+where $p$ is the number of observations (size of {\tt kobs}),
+$l_{\max}$ is the maximum degree of spherical harmonics ({\tt kjpl}), and
+$k$ is the number of operation required for one single evaluation
+of spherical harmonics (i.e\. one call to {\tt ylm}).
+In this code, $k\simeq 5$, plus the cost of one evaluation of the sine or cosine function.
+The first term corresponds to the computation of the {\bf A} matrix
+in routine {\bf regr\_calc\_ab}, and the second term to the resolution
+of the linear system in routine {\bf regr\_calc\_x}.
+
+For the local regression, the computational complexity of each iteration is given by:
+
+\begin{equation}
+C \sim k \, p  \, l_{\max}^3  \frac{(b+o)^2}{b}
+       + \frac{1}{6} \, l_{\max}^4 \frac{(b+o)^3}{b^2}
+\end{equation}
+
+\noindent
+where $b$ is the size of the local blocks (parameter {\tt kmaxbloc})
+and $o$ is overlap between the blocks (parameter {\tt koverlap}).
+The defaults values are $b=o=1$.
+
+\subsection{Module: {\tt spharea}}
+
+The purpose of this module is to compute the spherical area
+$\Delta\Omega_i$ associated to each data point $f(\theta_i,\varphi_i)$
+in the numerical evaluation of the integral in equation~(\ref{eq:spect}).
+
+\subsubsection*{Method}
+
+For gridded data the method is to use spherical trigonometry formula
+to compute the surface of each grid cell. The standard formula
+applied in the code are:
+
+\begin{itemize}
+\item Great-circle distance between two points on a sphere (with unit radius):
+
+\begin{equation}
+\Delta \sigma = \arccos \left(
+    \sin\phi_1 \cdot \sin\phi_2 + \cos\phi_1 \cdot \cos\phi_2 \cdot \cos(\Delta\lambda)
+                        \right)
+\end{equation}
+
+\noindent
+where $\phi_1,\lambda_1$ and $\phi_2,\lambda_2$ are the gerographical
+latitudes and longitudes in radians of the two points,
+and $\Delta\lambda=\lambda_1-\lambda_2$.
+
+\item Area of a spherical triangle (on a sphere with unit radius):
+
+\begin{equation}
+\Delta\Omega =
+  4 \arctan
+  \sqrt{
+    \tan \frac{s}{2} \tan \frac{s-a}{2} \tan \frac{s-b}{2} \tan \frac{s-c}{2}
+  }
+\end{equation}
+
+\noindent
+where $a$, $b$, $c$ are the great-circle lengths of the edges of the triangle, and $s=(a+b+c)/2$.
+
+\end{itemize}
+
+\subsubsection*{Routines}
+
+The module implementing the above equations
+contains one public routine:
+\begin{description}
+\item[mesh\_area:] to compute the spherical area ({\tt area})
+associated to each quadrangle of the grid
+from the latitude and longitude of the mesh vertices ({\tt lon} and {\tt lat}).
+\end{description}
+
+\subsubsection*{Computational cost}
+
+Negligible.
+
+\clearpage
+
+\section{Examples}
+
+In this section,
+the examples provided with the library are described,
+giving for each of them:
+the purpose of the examples,
+the list of modules/routines that are illustrated,
+the input parameters and data,
+the calling sequence of the library routines,
+with a description of inputs and outputs for each of them, and
+a description of the final result that is expected.
+
+\subsection{Low-pass filter on the sphere}
+
+The purpose of this example is to illustrate
+how to use the module {\tt sphylm} to extract
+the large scale component of an anomaly field.
+This is done by calling successivley the following routines
+from the module {\tt sphylm}:
+
+\begin{description}
+\item[init\_ylm:] to initialize the computation of the spherical harmonics;
+\item[proj\_ylm:] to compute the spectrum of the input field;
+\item[back\_ylm:] to reconstruct the original field up to a given scale.
+\end{description}
+
+\noindent
+Input data are: the random field generated by the example given in StochTools,
+and the maximum degree of the spherical harmonics to keep in the filtered field.
+The output is the filtered field written in NetCDF.
+
+\subsection{Observation regression on the sphere}
+
+The purpose of this example is to illustrate
+how to use the module {\tt sphylm} to perform
+the regression of observations on the spherical harmonics
+up to a specified degree.
+This is done by calling successivley the following routines
+from the module {\tt sphylm}:
+
+\begin{description}
+\item[init\_ylm:] to initialize the computation of the spherical harmonics;
+\item[init\_regr\_ylm:] to define the parameters of observation regression;
+\item[regr\_ylm:] to perform the regression of observations;
+\item[back\_ylm:] to reconstruct the original field up to a given scale.
+\end{description}
+
+\noindent
+Input data are: the large-scale field generated by the previous example,
+and the observation sampling ratio (e.g.\ one observation every 50 grid points).
+The output is the regressed field written in NetCDF.
+
+\end{document}
+

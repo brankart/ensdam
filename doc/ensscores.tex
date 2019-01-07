@@ -1,0 +1,215 @@
+\documentclass[11pt]{article}
+
+\usepackage[latin1]{inputenc}
+\usepackage[a4paper,top=1in,left=1in,right=1in,bottom=1in]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{natbib}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\centerline{
+\includegraphics[height=22mm]{Logos/logo_uga.png}
+\hspace{5mm}
+\includegraphics[height=22mm]{Logos/logo_cnrs.png}
+\hfill
+\includegraphics[height=22mm]{Logos/logo_ige.png}
+}
+
+\vspace{20mm}
+
+\begin{center}
+
+{\Huge\bf EnsScores}
+
+\vspace{10mm}
+
+{\Large\bf Ensemble Scores}
+
+\vspace{10mm}
+
+{\Large\bf User's guide}
+
+\vspace{10mm}
+
+{\large\bf Jean-Michel Brankart}
+
+\vspace{5mm}
+{\tt http://pp.ige-grenoble.fr/pageperso/brankarj/}
+
+\vspace{5mm}
+{\large Institut des G\'eosciences de l'Environnement}
+
+\vspace{1mm}
+{\large Universit\'e Grenoble Alpes, CNRS, France}
+
+\end{center}
+
+\vspace{20mm}
+The purpose of EnsScores is to provide tools
+to compute probabilistic scores of ensemble simulations.
+The scores evaluates the reliability and the resolution of the simulation
+by comparison to verification data.
+
+The tools are provided as a library of modules,
+which can be easily plugged in any existing software.
+This library includes:
+
+\begin{itemize}
+\item the computation of the Continuous Rank Probability Score (CRPS);
+\item the computation of the Reduced Centered Random variable (RCRV) score;
+\item the computation of scores based on the relative entropy of user-defined events.
+\end{itemize}
+
+\clearpage
+
+\pagestyle{plain}
+
+\section{Description of the modules}
+
+In this section,
+the modules are described one by one,
+giving for each of them:
+the method that has been implemented,
+the list of public variables and public routines
+(with a description of input and output data),
+the MPI parallelization, and
+an estimation of the computational cost
+as a function of the size of the problem.
+
+\subsection{Module: {\tt\bf score\_crps}}
+
+The purpose of this module is to compute the CRPS
+of an ensemble simulation by comparison to verification data.
+
+\subsubsection*{Method}
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[mpi\_comm\_score\_crps] MPI communicator to use (default=mpi\_comm\_world).
+\item[crps\_missing\_value] missing value to use where no valid data is available (default=-9999.).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[crps\_score:] compute CRPS score (with option to partition the data):
+  \begin{description}
+  \item[{\tt crps} (output)]: CRPS score for each subset of data;
+  \item[{\tt reliability} (output)]: reliability part of CRPS;
+  \item[{\tt resolution} (output)]: resolution part of CRPS;
+  \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to verification data);
+  \item[{\tt verif} (input)]: verification data;
+  \item[{\tt partition} (input, optional)]: partition of verification data.
+  \end{description}
+\item[crps\_cumul:] accumulate data to prepare the final computation of the score
+                    (for advanced use, if the full ensemble is only made progressively available).
+\item[crps\_final:] compute final score from accumulated data
+                    (for advanced use, if the full ensemble is only made progressively available).
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+\subsubsection*{Computational cost}
+
+\subsection{Module: {\tt\bf score\_rcrv}}
+
+The purpose of this module is to compute the RCRV
+of an ensemble simulation by comparison to verification data.
+
+\subsubsection*{Method}
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[mpi\_comm\_score\_rcrv] MPI communicator to use (default=mpi\_comm\_world).
+\item[rcrv\_missing\_value] missing value to use where no valid data is available (default=-9999.).
+\item[rcrv\_with\_anamorphosis] use anamorphosis to compute reduced variable (default=.FALSE.).
+\item[rcrv\_number\_of\_quantiles] number of quantiles to perform anamorphosis (default=11).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[rcrv\_score:] compute RCRV score (with option to partition the data):
+  \begin{description}
+  \item[{\tt ens\_bias} (output)]: bias component of RCRV (should be 0);
+  \item[{\tt ens\_spread} (output)]: spread component of RCRV (should be 1);
+  \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to verification data);
+  \item[{\tt verif} (input)]: verification data;
+  \item[{\tt partition} (input, optional)]: partition of verification data.
+  \end{description}
+\item[rcrv\_cumul:] accumulate data to prepare the final computation of the score
+                    (for advanced use, if the full ensemble is only made progressively available).
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+\subsubsection*{Computational cost}
+
+\subsection{Module: {\tt\bf score\_entropy}}
+
+The purpose of this module is to compute
+scores based on the relative entropy of user-defined events.
+
+\subsubsection*{Method}
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[mpi\_comm\_score\_entropy] MPI communicator to use (default=mpi\_comm\_world).
+\item[score\_entropy\_base] base to use in the computation of logarithms (default=2.).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[events\_score:] compute entropy based score:
+  \begin{description}
+  \item[{\tt score} (output)]: ensemble score for each event;
+  \item[{\tt ens} (input)]: ensemble to evaluate;
+  \item[{\tt pref} (input)]: reference probability distribution for each event;
+  \item[{\tt events\_outcome} (input)]: callback routine providing the outcome
+                                        of the events for a given member.
+  \end{description}
+\item[events\_relative\_entropy:] compute relative entropy:
+  \begin{description}
+  \item[{\tt relative\_entropy} (output)]: relative entropy (with respect to reference distribution);
+  \item[{\tt ens} (input)]: ensemble to evaluate;
+  \item[{\tt pref} (input)]: reference probability distribution for each event;
+  \item[{\tt events\_outcome} (input)]: callback routine providing the outcome
+                                        of the events for a given member.
+  \end{description}
+\item[events\_cross\_entropy:] compute cross entropy:
+  \begin{description}
+  \item[{\tt cross\_entropy} (output)]: cross entropy (with reference distribution);
+  \item[{\tt ens} (input)]: ensemble to evaluate;
+  \item[{\tt pref} (input)]: reference probability distribution for each event;
+  \item[{\tt events\_outcome} (input)]: callback routine providing the outcome
+                                        of the events for a given member.
+  \end{description}
+\item[events\_entropy:] compute ensemble entropy:
+  \begin{description}
+  \item[{\tt entropy} (output)]: ensemble entropy;
+  \item[{\tt number\_outcome} (input)]: number of possible outcomes for the events;
+  \item[{\tt ens} (input)]: ensemble to evaluate;
+  \item[{\tt events\_outcome} (input)]: callback routine providing the outcome
+                                        of the events for a given member.
+  \end{description}
+\item[events\_probability:] compute events marginal probability distributions from the ensemble:
+  \begin{description}
+  \item[{\tt pens} (output)]: ensemble probability distribution for each event;
+  \item[{\tt ens} (input)]: ensemble to evaluate;
+  \item[{\tt events\_outcome} (input)]: callback routine providing the outcome
+                                        of the events for a given member.
+  \end{description}
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+\subsubsection*{Computational cost}
+
+\end{document}
+
