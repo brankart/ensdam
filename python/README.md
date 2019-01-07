@@ -31,6 +31,7 @@ Many modules have not been tested from python (see the list below).
 -  o=interface has been tested, to use with care
 
 
+<blockquote>
 -    ensdam.ensanam : ensemble anamorphosis transformation
   - (x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
   - (x)       ensdam.ensanam.ana_forward : forward transformation
@@ -112,3 +113,4 @@ Many modules have not been tested from python (see the list below).
 (x)       ensdam.transpho.regr_ylm : regression of observations on spherical harmonics
 (x)       ensdam.transpho.disp_ylm : output one single spherical harmonics
 (x)       ensdam.transpho.ylm : evaluate spherical harmonics
+ </blockquote>
