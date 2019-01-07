@@ -1,7 +1,8 @@
 
-Julia interface to EnsDAM
+##Julia interface to EnsDAM
 
-Warning: This interface is still experimental.
+###Warning: This interface is still experimental.
+
 Only a few simple functions have been tested from julia (see the list below).
 
 To access to more functions, another possibility
@@ -13,8 +14,9 @@ using PyCall
 
 @pyimport ensdam
 
-List of available functions in ensdam.jl
+###List of available functions in ensdam.jl
 
+```
 ensdam
 o       ensdam.cdf_gaussian : compute cdf of the Gaussian distribution N(0,1)
 o       ensdam.cdf_gamma : compute cdf of the Gamma distribution Gamma(k,1)
@@ -28,4 +30,4 @@ o       ensdam.invcdf_beta : compute inverse cdf of the Beta distribution Beta(a
 o       ensdam.logpdf_gaussian : compute the log of the pdf of the Gaussian distribution N(0,1)
 o       ensdam.logpdf_gamma : compute the log of the pdf of the Gamma distribution Gamma(k,1)
 o       ensdam.logpdf_beta : compute the log of the pdf of the Beta distribution Beta(a,b)
-
+```
