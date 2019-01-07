@@ -1,0 +1,16 @@
+
+NETCDF = /opt/old/opt/netcdf/4.2-intel
+NCDF_LIB=$(NETCDF)/lib
+NCDF_INC=$(NETCDF)/include
+
+FC = ifort
+LD = ifort
+AR = ar
+FPPFLAGS =
+FFLAGS = -fpic -O3 -fp-model precise -module ../include/ -I$(NCDF_INC)
+LDFLAGS = -L${NCDF_LIB} -lnetcdf -lnetcdff -lhdf5 -lhdf5_hl
+SHFLAGS = -shared -L${NCDF_LIB} -lnetcdf -lnetcdff -lhdf5 -lhdf5_hl
+ARFLAGS = -rv
+LIST =
+
+INSTALL_DIR=$(HOME)

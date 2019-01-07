@@ -1,0 +1,17 @@
+# Fortran settings
+FC = mpiifort
+LD = mpiifort
+AR = ar
+FPPFLAGS = -DMPI
+FFLAGS = -CB -fpic -module ../include/ ${IDEV_PATH}
+#FFLAGS = -O3 -fp-model precise -module ../include/ ${IDEV_PATH}
+LDFLAGS = ${LDEV_PATH} -lnetcdf -lnetcdff
+SHFLAGS = -shared ${LDEV_PATH} -lnetcdf -lnetcdff
+ARFLAGS = -rv
+LIST =
+INSTALL_DIR=$(HOME)
+
+# f2py settings
+FVENDOR="intelem"
+FCOMPILER="/smplocal/pub/Modules/IDRIS/wrappers/mpiifort"
+F2PYFLAGS="--fcompiler=$FVENDOR --f90exec=$FCOMPILER"
