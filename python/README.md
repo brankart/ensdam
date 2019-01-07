@@ -23,7 +23,7 @@ Many modules have not been tested from python (see the list below).
 
 ## List of available EnsDAM modules
 
-# Legend:
+### Legend:
 -  x=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
 -  u=interface is still untested
 -  p=interface is only partially tested
@@ -31,17 +31,18 @@ Many modules have not been tested from python (see the list below).
 -  o=interface has been tested, to use with care
 
 
--    ensdam.ensanam : ensemble anamorphosis transformation
-  - (x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
-  - (x)       ensdam.ensanam.ana_forward : forward transformation
-  - (x)       ensdam.ensanam.ana_backward : backward transformation
-  - (x)       ensdam.ensanam.ana_obs : transformation of observations
-  - (x)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
-  - (x)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
--   ensdam.ensaugm : ensemble augmentation
-  - (x)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
-  - (x)       ensdam.ensaugm.newproduct : sample new Schur product
-  - (x)       ensdam.ensaugm.getproduct : get specified Schur product
+```bash
+    ensdam.ensanam : ensemble anamorphosis transformation
+(x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
+(x)       ensdam.ensanam.ana_forward : forward transformation
+(x)       ensdam.ensanam.ana_backward : backward transformation
+(x)       ensdam.ensanam.ana_obs : transformation of observations
+(x)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
+(x)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
+    ensdam.ensaugm : ensemble augmentation
+(x)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
+(x)       ensdam.ensaugm.newproduct : sample new Schur product
+(x)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
 (x)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
 (x)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
@@ -70,9 +71,9 @@ Many modules have not been tested from python (see the list below).
 (x)       ensdam.interptools.grid2D_locate : locate data point in 2D grid
 (x)       ensdam.interptools.grid2D_interp : compute interpolation weights in 2D grid
     ensdam.obserror ! observation error
-(x       ensdam.obserror.obserror_logpdf : compute logarithm of observation error probability density function
-(x       ensdam.obserror.obserror_cdf : compute cumulate distribution function for observation errors
-(x       ensdam.obserror.obserror_sample : sample probability distribution of observation errors
+(x)       ensdam.obserror.obserror_logpdf : compute logarithm of observation error probability density function
+(x)       ensdam.obserror.obserror_cdf : compute cumulate distribution function for observation errors
+(x)       ensdam.obserror.obserror_sample : sample probability distribution of observation errors
     ensdam.stochtools ! stochastic tools
 (o)       ensdam.stochtools.kiss : 64-bit KISS random number generator (period ~ 2^250)
 (o)       ensdam.stochtools.kiss_seed : define seeds for KISS random number generator
@@ -112,3 +113,4 @@ Many modules have not been tested from python (see the list below).
 (x)       ensdam.transpho.regr_ylm : regression of observations on spherical harmonics
 (x)       ensdam.transpho.disp_ylm : output one single spherical harmonics
 (x)       ensdam.transpho.ylm : evaluate spherical harmonics
+```
