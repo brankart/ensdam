@@ -1,7 +1,7 @@
 
-##Julia interface to EnsDAM
+## Julia interface to EnsDAM
 
-###Warning: This interface is still experimental.
+### Warning: This interface is still experimental.
 
 Only a few simple functions have been tested from julia (see the list below).
 
@@ -14,7 +14,7 @@ using PyCall
 
 @pyimport ensdam
 
-###List of available functions in ensdam.jl
+### List of available functions in ensdam.jl
 
 ```
 ensdam
