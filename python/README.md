@@ -1,10 +1,10 @@
 
-Python interface to EnsDAM
+#Python interface to EnsDAM
 
-Warning: This interface is still experimental.
-Many modules have not been tested from python (see the list below).
+###Warning: This interface is still experimental.
+###Many modules have not been tested from python (see the list below).
 
-To generate the Python interface (with f2py) :
+##To generate the Python interface (with f2py) :
 
  - edit the 'make.macro' file corresponding to your compiler in the 'macro' directory.
    This is the Makefile configurable part, which specifies options to pass to f2py.
@@ -17,17 +17,19 @@ To generate the Python interface (with f2py) :
    have been created in the 'lib' directory,
    ready to be imported in the python interface module (ensdam.py).
 
-To import EnsDAM in python:
+##To import EnsDAM in python:
 
  - import ensdam
 
-List of available EnsDAM modules
-  x=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
-  u=interface is still untested
-  p=interface is only partially tested
-  b=interface has bugs
-  o=interface has been tested, to use with care
+##List of available EnsDAM modules
 
+-  x=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
+-  u=interface is still untested
+-  p=interface is only partially tested
+-  b=interface has bugs
+-  o=interface has been tested, to use with care
+
+<addr>
 ensdam
     ensdam.ensanam : ensemble anamorphosis transformation
 x       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
