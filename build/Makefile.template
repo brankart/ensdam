@@ -1,0 +1,60 @@
+# Template Makefile for EnsDAM
+# ----------------------------
+# J.-M. Brankart, October 2018
+# 
+include ../macro/make.linux_ifort
+#
+EXAMPLE_DIR = ../examples
+DOC_DIR = ../doc
+LIB_ENSDAM = ../lib/libensdam.a
+LIB_ENSDAM_SHARED = ../lib/libensdam.so
+MOD_DIR = ../include
+#
+#========================================================
+#          Compile modules
+#========================================================
+#
+modules: $(LIB_ENSDAM)
+#
+#========================================================
+#          Compile examples
+#========================================================
+#
+examples: $(LIB_ENSDAM)
+	cd $(EXAMPLE_DIR) ; make
+#
+#========================================================
+#          Compile documentation
+#========================================================
+#
+doc:
+	cd $(DOC_DIR) ; make
+#
+#========================================================
+#          Install library
+#========================================================
+#
+solib: $(OBJ)
+	$(LD) -o $(LIB_ENSDAM_SHARED) $(SHFLAGS) $(OBJ)
+
+ranlib: $(LIB_ENSDAM)
+	ranlib $(LIB_ENSDAM)
+#
+install: ranlib solib
+	cp $(LIB_ENSDAM) $(INSTALL_DIR)/lib/
+	cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR)/lib/
+	cp $(MOD_DIR)/*.mod $(INSTALL_DIR)/include/
+#
+uninstall:
+	rm -f $(INSTALL_DIR)/$(LIB_ENSDAM)
+	rm -f $(INSTALL_DIR)/include/ensdam_*.mod
+#
+#========================================================
+#          Clean everything
+#========================================================
+#
+clean_examples:
+	rm -f ../examples/*.x
+#
+clean_modules:
+	rm -f ../include/*.mod
