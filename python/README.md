@@ -1,7 +1,8 @@
 # Python interface to EnsDAM
 
 ### Warning: This interface is still experimental.
-### Many modules have not been tested from python (see the list below).
+
+Many modules have not been tested from python (see the list below).
 
 ## To generate the Python interface (with f2py) :
 
@@ -22,6 +23,7 @@
 
 ## List of available EnsDAM modules
 
+# Legend:
 -  x=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
 -  u=interface is still untested
 -  p=interface is only partially tested
@@ -31,15 +33,15 @@
 
 -    ensdam.ensanam : ensemble anamorphosis transformation
   - (x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
-(x)       ensdam.ensanam.ana_forward : forward transformation
-(x)       ensdam.ensanam.ana_backward : backward transformation
-(x)       ensdam.ensanam.ana_obs : transformation of observations
-(x)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
-(x)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
-    ensdam.ensaugm : ensemble augmentation
-(x)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
-(x)       ensdam.ensaugm.newproduct : sample new Schur product
-(x)       ensdam.ensaugm.getproduct : get specified Schur product
+  - (x)       ensdam.ensanam.ana_forward : forward transformation
+  - (x)       ensdam.ensanam.ana_backward : backward transformation
+  - (x)       ensdam.ensanam.ana_obs : transformation of observations
+  - (x)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
+  - (x)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
+-   ensdam.ensaugm : ensemble augmentation
+  - (x)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
+  - (x)       ensdam.ensaugm.newproduct : sample new Schur product
+  - (x)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
 (x)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
 (x)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
