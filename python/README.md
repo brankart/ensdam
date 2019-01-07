@@ -23,15 +23,16 @@ Many modules have not been tested from python (see the list below).
 
 ## List of available EnsDAM modules
 
-### Legend:
--  x=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
--  u=interface is still untested
--  p=interface is only partially tested
--  b=interface has bugs
--  o=interface has been tested, to use with care
+```
+Legend:
+(x)=interface not yet available in ensdam.py, try importing directly the .so file generated bu f2py
+(u)=interface is still untested
+(p)=interface is only partially tested
+(b)=interface has bugs
+(o)=interface has been tested, to use with care
+```
 
-
-```bash
+```
     ensdam.ensanam : ensemble anamorphosis transformation
 (x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
 (x)       ensdam.ensanam.ana_forward : forward transformation
