@@ -28,7 +28,7 @@ ready to be imported in the python interface module (ensdam.py).
 import ensdam
 ```
 
-### List of available EnsDAM modules
+### List of available EnsDAM functions
 
 ```
 Legend:

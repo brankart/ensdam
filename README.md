@@ -30,9 +30,9 @@ make examples
 ```
 
 - if everything goes well, the EnsDAM library 'libensdam.a'
-  has been created in the 'lib' directory, the module files (*.mod)
+  has been created in the 'lib' directory, the module files (.mod)
   have been created in the 'include' directory' and the example
-  exexutables (*.x) have been created in the 'examples' directory.
+  exexutables (.x) have been created in the 'examples' directory.
 
  To check the installation :
 
