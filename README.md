@@ -6,6 +6,9 @@ that can be useful to ensemble data assimilation systems.
 EnsDAM is distributed under the terms of the CeCILL free software license agreement.
 See LICENSE.txt for more information. 
 
+EnsDAM code is written in Fortran.
+Interfaces to python and julia are in development.
+
 ### Installation of EnsDAM
 
 You need a FORTRAN-90 compiler and the NetCDF library (with f90 support) installed.
