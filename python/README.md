@@ -66,18 +66,18 @@ Legend:
 (u)       ensdam.ensstat.ensemble_representer : compute representer from input ensemble
 (u)       ensdam.ensstat.ensemble_covariance : compute covariance from input ensemble
 (u)       ensdam.ensstat.update_meancov : update mean and covariance with one additional input member
-    ensdam.ensupdate ! ensemble observational update
-    ensdam.interptools ! interpolation tools
+    ensdam.ensupdate : ensemble observational update
+    ensdam.interptools : interpolation tools
 (x)       ensdam.interptools.grid1D_locate : locate data point in 1D grid
 (x)       ensdam.interptools.grid1D_interp : compute interpolation weights in 1D grid
 (x)       ensdam.interptools.grid2D_init : initialize 2D grid
 (x)       ensdam.interptools.grid2D_locate : locate data point in 2D grid
 (x)       ensdam.interptools.grid2D_interp : compute interpolation weights in 2D grid
-    ensdam.obserror ! observation error
+    ensdam.obserror : observation error
 (x)       ensdam.obserror.obserror_logpdf : compute logarithm of observation error probability density function
 (x)       ensdam.obserror.obserror_cdf : compute cumulate distribution function for observation errors
 (x)       ensdam.obserror.obserror_sample : sample probability distribution of observation errors
-    ensdam.stochtools ! stochastic tools
+    ensdam.stochtools : stochastic tools
 (o)       ensdam.stochtools.kiss : 64-bit KISS random number generator (period ~ 2^250)
 (o)       ensdam.stochtools.kiss_seed : define seeds for KISS random number generator
 (o)       ensdam.stochtools.kiss_save : save current state of KISS (for future restart)
@@ -108,7 +108,7 @@ Legend:
 (o)       ensdam.stochtools.gau_to_beta : transform Gaussian number into beta number
 (o)       ensdam.stochtools.gprod_to_gau : transform Gaussian product into Gaussian number
 (u)       ensdam.stochtools.gen_field_2s : generate 2D random field with specified power spectrum (on the sphere)
-    ensdam.transpho ! scale separation (by projection on the spherical harmonics)(
+    ensdam.transpho : scale separation (by projection on the spherical harmonics)
 (x)       ensdam.transpho.init_ylm : initialize computation of spherical harmonics
 (x)       ensdam.transpho.init_regr_ylm : initialize regression of observations
 (x)       ensdam.transpho.proj_ylm : project on spherical harmonics
