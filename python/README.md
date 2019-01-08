@@ -11,7 +11,12 @@ This is the Makefile configurable part, which specifies options to pass to f2py.
 
 - edit the Makefile to include this 'make.macro' file (first line below the title)
 
-- compile with "make" (gmake)
+- compile with:
+
+```bash
+cd python
+make
+```
 
 - if everything goes well, the EnsDAM shared librares should
 have been created in the 'lib' directory,
