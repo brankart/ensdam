@@ -1,7 +1,10 @@
 ## EnsDAM : Ensemble Data Assimilation Modules
 
-The purpose of the EnsDAM is to compile a collection of FORTRAN modules
+EnsDAM is a collection of FORTRAN modules
 that can be useful to ensemble data assimilation systems.
+
+EnsDAM is distributed under the terms of the CeCILL free software license agreement.
+See LICENSE.txt for more information. 
 
 ### Installation of EnsDAM
 
