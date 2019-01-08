@@ -4,15 +4,23 @@
 ### Warning: This interface is still experimental.
 
 Only a few simple functions have been tested from julia (see the list below).
+To import then in julia:
+
+```julia
+push!(LOAD_PATH, "./")
+import ensdam
+```
 
 To access to more functions, another possibility
 is to import the python modules in julia:
 
+```julia
 import Pkg; Pkg.add("PyCall")
 
 using PyCall
 
 @pyimport ensdam
+```
 
 ### List of available functions in ensdam.jl
 
