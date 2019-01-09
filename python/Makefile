@@ -8,7 +8,7 @@ OBJ = anaobs.so anaqua.so anatra.so anautil.so covariance.so ensaugm.so interp.s
 #
 all: $(OBJ)
 	@echo "Building all shared libraries: $(OBJ)"
-	-mv $(OBJ) lib
+	-mv $(OBJ) modules
 #
 clean:
 	-rm -f $(OBJ)
