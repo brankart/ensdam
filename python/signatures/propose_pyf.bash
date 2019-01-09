@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-SRCDIR="$HOME/src/EnsDAM/src"
+SRCDIR="../../src"
 
 for ffile in `ls ${SRCDIR}/*/*.[fF]90` ; do
  modname=$(basename $(basename $ffile .f90) .F90)
