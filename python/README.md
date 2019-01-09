@@ -19,7 +19,7 @@ make
 ```
 
 - if everything goes well, the EnsDAM shared librares should
-have been created in the 'lib' directory,
+have been created in the 'modules' directory,
 ready to be imported in the python interface module (ensdam.py).
 
 ### To import EnsDAM in python:
