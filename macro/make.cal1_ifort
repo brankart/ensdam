@@ -1,0 +1,16 @@
+
+NETCDF = /opt/modules/netcdf/nompi/netcdf-4.4.1_intel15
+NCDF_LIB=$(NETCDF)/lib
+NCDF_INC=$(NETCDF)/include
+
+FC = ifort
+LD = ifort
+AR = ar
+FPPFLAGS =
+FFLAGS = -fpic -O3 -fp-model precise -module ../include/ -I$(NCDF_INC)
+LDFLAGS = -L${NCDF_LIB} -lnetcdf -lnetcdff
+SHFLAGS = -shared -L${NCDF_LIB} -lnetcdf -lnetcdff
+ARFLAGS = -rv
+LIST =
+
+INSTALL_DIR=$(HOME)

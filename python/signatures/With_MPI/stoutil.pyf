@@ -1,0 +1,82 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module stoutil ! in 
+    interface  ! in :stoutil
+        module ensdam_stoutil ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90
+            real(kind=8), private :: dg
+            real(kind=8), private :: dy
+            real(kind=8), private :: g
+            integer, private :: iter
+            logical, save,public,optional :: nominal_accuracy=.false.
+            integer, save,public,optional :: maxiter=50
+            real(kind=8), private :: y
+            real(kind=8), parameter,private,optional :: pi=3.14159265359
+            real(kind=8), save,public,optional :: accuracy=1.d-3
+            function cdf_gaussian(x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: cdf_gaussian
+            end function cdf_gaussian
+            function pdf_gaussian(x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: pdf_gaussian
+            end function pdf_gaussian
+            function logpdf_gaussian(x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: logpdf_gaussian
+            end function logpdf_gaussian
+            function invcdf_gaussian(rank_bn) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: rank_bn
+                real(kind=8) :: invcdf_gaussian
+            end function invcdf_gaussian
+            function cdf_gamma(a,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: cdf_gamma
+            end function cdf_gamma
+            function pdf_gamma(a,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: pdf_gamma
+            end function pdf_gamma
+            function logpdf_gamma(k,theta,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: k
+                real(kind=8) intent(in) :: theta
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: logpdf_gamma
+            end function logpdf_gamma
+            function invcdf_gamma(a,rank_bn) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: rank_bn
+                real(kind=8) :: invcdf_gamma
+            end function invcdf_gamma
+            function cdf_beta(a,b,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: b
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: cdf_beta
+            end function cdf_beta
+            function pdf_beta(a,b,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: b
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: pdf_beta
+            end function pdf_beta
+            function logpdf_beta(a,b,x) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: b
+                real(kind=8) intent(in) :: x
+                real(kind=8) :: logpdf_beta
+            end function logpdf_beta
+            function invcdf_beta(a,b,rank_bn) ! in :stoutil:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoutil.f90:ensdam_stoutil
+                real(kind=8) intent(in) :: a
+                real(kind=8) intent(in) :: b
+                real(kind=8) intent(in) :: rank_bn
+                real(kind=8) :: invcdf_beta
+            end function invcdf_beta
+        end module ensdam_stoutil
+    end interface 
+end python module stoutil
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

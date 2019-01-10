@@ -1,0 +1,70 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module score_optimality__user__routines
+    interface  ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality
+        function callback_cdf_obs(o,y,obs_idx) ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality:unknown_interface
+            real(kind=8) intent(in) :: o
+            real(kind=8) intent(in) :: y
+            integer intent(in) :: obs_idx
+            real(kind=8) :: callback_cdf_obs
+        end function callback_cdf_obs
+    end interface
+end python module score_optimality__user__routines
+
+python module score_optimality ! in 
+    interface  ! in :score_optimality
+        module ensdam_score_optimality ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90
+            integer, private,save,public,optional :: mpi_comm_score_optimality=mpi_comm_world
+            integer, private,save :: mpi_code
+            real(kind=8), private,save,public,optional :: optimality_missing_value=-9999.0
+            interface  ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality
+                function callback_cdf_obs(o,y,obs_idx) ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality:unknown_interface
+                    real(kind=8) intent(in) :: o
+                    real(kind=8) intent(in) :: y
+                    integer intent(in) :: obs_idx
+                    real(kind=8) :: callback_cdf_obs
+                end function callback_cdf_obs
+            end interface 
+            subroutine optimality_score_global(ens_optimality,ens_optimality_bias,ens_optimality_spread,ens,obs,cdf_obs) ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality
+                use ensdam_score_optimality, only: callback_cdf_obs
+                use score_optimality__user__routines, cdf_obs=>callback_cdf_obs
+                real(kind=8) intent(out) :: ens_optimality
+                real(kind=8) intent(out) :: ens_optimality_bias
+                real(kind=8) intent(out) :: ens_optimality_spread
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(:),intent(in) :: obs
+                real(kind=8) intent(callback) :: cdf_obs
+                external cdf_obs
+            end subroutine optimality_score_global
+            subroutine optimality_score_partition(ens_optimality,ens_optimality_bias,ens_optimality_spread,ens,obs,partition,cdf_obs) ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality
+                use ensdam_score_optimality, only: callback_cdf_obs
+                use score_optimality__user__routines, cdf_obs=>callback_cdf_obs
+                real(kind=8) dimension(:),intent(out) :: ens_optimality
+                real(kind=8) dimension(:),intent(out) :: ens_optimality_bias
+                real(kind=8) dimension(:),intent(out) :: ens_optimality_spread
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(:),intent(in) :: obs
+                integer dimension(:),intent(in) :: partition
+                real(kind=8) intent(callback) :: cdf_obs
+                external cdf_obs
+            end subroutine optimality_score_partition
+            subroutine optimality_cumul(e,o,idx,mean,sqrs,cdf_obs) ! in :score_optimality:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_optimality.F90:ensdam_score_optimality
+                use ensdam_score_optimality, only: callback_cdf_obs
+                use score_optimality__user__routines, cdf_obs=>callback_cdf_obs
+                use ensdam_stoutil
+                use ensdam_meanstd
+                real(kind=8) dimension(:),intent(in) :: e
+                real(kind=8) intent(in) :: o
+                integer intent(in) :: idx
+                real(kind=8) intent(inout) :: mean
+                real(kind=8) intent(inout) :: sqrs
+                real(kind=8) intent(callback) :: cdf_obs
+                external cdf_obs
+            end subroutine optimality_cumul
+        end module ensdam_score_optimality
+    end interface 
+end python module score_optimality
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

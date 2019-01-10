@@ -1,0 +1,29 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module stoanam ! in 
+    interface  ! in :stoanam
+        module ensdam_stoanam ! in :stoanam:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoanam.f90
+            use ensdam_stoutil
+            use ensdam_stogprod
+            subroutine gprod_to_gau(y,x) ! in :stoanam:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoanam.f90:ensdam_stoanam
+                real(kind=8) intent(out) :: y
+                real(kind=8) intent(in) :: x
+            end subroutine gprod_to_gau
+            subroutine gau_to_gam(y,x,k) ! in :stoanam:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoanam.f90:ensdam_stoanam
+                real(kind=8) intent(out) :: y
+                real(kind=8) intent(in) :: x
+                real(kind=8) intent(in) :: k
+            end subroutine gau_to_gam
+            subroutine gau_to_beta(y,x,mu,stdmax) ! in :stoanam:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stoanam.f90:ensdam_stoanam
+                real(kind=8) intent(out) :: y
+                real(kind=8) intent(in) :: x
+                real(kind=8) intent(in) :: mu
+                real(kind=8) intent(in) :: stdmax
+            end subroutine gau_to_beta
+        end module ensdam_stoanam
+    end interface 
+end python module stoanam
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

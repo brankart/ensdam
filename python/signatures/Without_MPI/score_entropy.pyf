@@ -1,0 +1,73 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module score_entropy ! in 
+    interface  ! in :score_entropy
+        module ensdam_score_entropy ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90
+            real(kind=8), save,public :: score_entropy_base=2.0
+            subroutine events_score(score,ens,pref,events_outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                real(kind=8) dimension(:),intent(out) :: score
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(:,:),intent(in) :: pref
+                external events_outcome
+                interface  ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                    subroutine events_outcome(member,outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy:unknown_interface
+                        real(kind=8) dimension(:),intent(in) :: member
+                        integer dimension(:),intent(out) :: outcome
+                    end subroutine events_outcome
+                end interface
+            end subroutine events_score
+            subroutine events_relative_entropy(relative_entropy,ens,pref,events_outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                real(kind=8) dimension(:),intent(out) :: relative_entropy
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(:,:),intent(in) :: pref
+                external events_outcome
+                interface  ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                    subroutine events_outcome(member,outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy:unknown_interface
+                        real(kind=8) dimension(:),intent(in) :: member
+                        integer dimension(:),intent(out) :: outcome
+                    end subroutine events_outcome
+                end interface
+            end subroutine events_relative_entropy
+            subroutine events_cross_entropy(cross_entropy,entropy,ens,pref,events_outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                real(kind=8) dimension(:),intent(out) :: cross_entropy
+                real(kind=8) dimension(:),intent(out) :: entropy
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(:,:),intent(in) :: pref
+                external events_outcome
+                interface  ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                    subroutine events_outcome(member,outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy:unknown_interface
+                        real(kind=8) dimension(:),intent(in) :: member
+                        integer dimension(:),intent(out) :: outcome
+                    end subroutine events_outcome
+                end interface
+            end subroutine events_cross_entropy
+            subroutine events_entropy(entropy,ens,events_outcome,number_outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                real(kind=8) dimension(:),intent(out) :: entropy
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                external events_outcome
+                integer intent(in) :: number_outcome
+                interface  ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                    subroutine events_outcome(member,outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy:unknown_interface
+                        real(kind=8) dimension(:),intent(in) :: member
+                        integer dimension(:),intent(out) :: outcome
+                    end subroutine events_outcome
+                end interface
+            end subroutine events_entropy
+            subroutine events_probability(pens,ens,events_outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                real(kind=8) dimension(:,:),intent(out) :: pens
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                external events_outcome
+                interface  ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy
+                    subroutine events_outcome(member,outcome) ! in :score_entropy:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_entropy.F90:ensdam_score_entropy:unknown_interface
+                        real(kind=8) dimension(:),intent(in) :: member
+                        integer dimension(:),intent(out) :: outcome
+                    end subroutine events_outcome
+                end interface
+            end subroutine events_probability
+        end module ensdam_score_entropy
+    end interface 
+end python module score_entropy
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

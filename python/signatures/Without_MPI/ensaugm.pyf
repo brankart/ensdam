@@ -1,0 +1,34 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module ensaugm ! in 
+    interface  ! in :ensaugm
+        module ensdam_ensaugm ! in :ensaugm:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAugm/ensaugm.F90
+            use ensdam_storng
+            use ensdam_schurprod
+            integer, save,public,optional :: ensaugm_chain_index=1
+            integer, save,public,optional :: ensaugm_with_renormalization=.false.
+            subroutine sample_augmented_ensemble(maxchain,augens,ens,multiplicity) ! in :ensaugm:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAugm/ensaugm.F90:ensdam_ensaugm
+                integer intent(in) :: maxchain
+                real(kind=8) dimension(:,:),intent(inout) :: augens
+                real(kind=8) dimension(size(augens,1),:,:),intent(in) :: ens
+                integer dimension(:),intent(in) :: multiplicity
+            end subroutine sample_augmented_ensemble
+            subroutine newproduct(new_bn,ens,multiplicity,sample) ! in :ensaugm:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAugm/ensaugm.F90:ensdam_ensaugm
+                real(kind=8) dimension(:),intent(out) :: new_bn
+                real(kind=8) dimension(size(new_bn,1),:,:),intent(in) :: ens
+                integer dimension(:),intent(in) :: multiplicity
+                integer dimension(:),intent(out) :: sample
+            end subroutine newproduct
+            subroutine getproduct(new_bn,ens,multiplicity,sample) ! in :ensaugm:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAugm/ensaugm.F90:ensdam_ensaugm
+                real(kind=8) dimension(:),intent(out) :: new_bn
+                real(kind=8) dimension(size(new_bn,1),:,:),intent(in) :: ens
+                integer dimension(:),intent(in) :: multiplicity
+                integer dimension(:),intent(in) :: sample
+            end subroutine getproduct
+        end module ensdam_ensaugm
+    end interface 
+end python module ensaugm
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

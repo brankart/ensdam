@@ -1,0 +1,42 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module score_crps ! in 
+    interface  ! in :score_crps
+        module ensdam_score_crps ! in :score_crps:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_crps.F90
+            real(kind=8), save,public,optional :: crps_missing_value=-9999.0
+            subroutine crps_score_global(crps,reliability,resolution,ens,verif) ! in :score_crps:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_crps.F90:ensdam_score_crps
+                real(kind=8) intent(out) :: crps
+                real(kind=8) intent(out) :: reliability
+                real(kind=8) intent(out) :: resolution
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(size(ens,1)),intent(in) :: verif
+            end subroutine crps_score_global
+            subroutine crps_score_partition(crps,reliability,resolution,ens,verif,partition) ! in :score_crps:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_crps.F90:ensdam_score_crps
+                real(kind=8) dimension(:),intent(out) :: crps
+                real(kind=8) dimension(size(crps,1)),intent(out) :: reliability
+                real(kind=8) dimension(size(crps,1)),intent(out) :: resolution
+                real(kind=8) dimension(:,:),intent(in) :: ens
+                real(kind=8) dimension(size(ens,1)),intent(in) :: verif
+                integer dimension(size(ens,1)),intent(in) :: partition
+            end subroutine crps_score_partition
+            subroutine crps_cumul(ens,a,aa,bb) ! in :score_crps:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_crps.F90:ensdam_score_crps
+                use ensdam_anaqua
+                real(kind=8) dimension(:),intent(in) :: ens
+                real(kind=8) intent(in) :: a
+                real(kind=8) dimension(0:),intent(inout) :: aa
+                real(kind=8) dimension(0:),intent(inout) :: bb
+            end subroutine crps_cumul
+            subroutine crps_final(aa,bb,reli,resol,crps) ! in :score_crps:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsScores/score_crps.F90:ensdam_score_crps
+                real(kind=8) dimension(0:),intent(inout) :: aa
+                real(kind=8) dimension(0:),intent(inout) :: bb
+                real(kind=8) intent(out) :: reli
+                real(kind=8) intent(out) :: resol
+                real(kind=8) intent(out) :: crps
+            end subroutine crps_final
+        end module ensdam_score_crps
+    end interface 
+end python module score_crps
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

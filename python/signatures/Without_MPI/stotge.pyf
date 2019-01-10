@@ -1,0 +1,27 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module stotge ! in 
+    interface  ! in :stotge
+        module ensdam_stotge ! in :stotge:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stotge.f90
+            use ensdam_storng
+            subroutine ranv_tg(tgvsmpl,matarm,vecbm) ! in :stotge:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stotge.f90:ensdam_stotge
+                real(kind=8) dimension(:,:),intent(inout) :: tgvsmpl
+                real(kind=8) dimension(size(tgvsmpl,2),:),intent(in) :: matarm
+                real(kind=8) dimension(size(matarm,2)),intent(in) :: vecbm
+            end subroutine ranv_tg
+            subroutine ran_tg(tgsmpl,aa,bb) ! in :stotge:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stotge.f90:ensdam_stotge
+                real(kind=8) dimension(:),intent(inout) :: tgsmpl
+                real(kind=8) intent(in) :: aa
+                real(kind=8) intent(in) :: bb
+            end subroutine ran_tg
+            subroutine ran_te(teran,a) ! in :stotge:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stotge.f90:ensdam_stotge
+                real(kind=8) intent(out) :: teran
+                real(kind=8) intent(in) :: a
+            end subroutine ran_te
+        end module ensdam_stotge
+    end interface 
+end python module stotge
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

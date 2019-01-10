@@ -1,0 +1,30 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module stogprod ! in 
+    interface  ! in :stogprod
+        module ensdam_stogprod ! in :stogprod:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stogprod.f90
+            use ensdam_constants_nswc
+            real(kind=dp), private,save :: xmuyp
+            real(kind=dp), private,save :: xmuxp
+            real(kind=dp), private,save :: rhop
+            real(kind=dp), private,save :: zp
+            real(kind=dp), private,save :: rootr
+            subroutine fnprod(xmux,xmuy,rho,z,answer,ier,abserr,last) ! in :stogprod:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/stogprod.f90:ensdam_stogprod
+                use ensdam_constants_nswc
+                use ensdam_adapt_quad
+                real(kind=dp) intent(in) :: xmux
+                real(kind=dp) intent(in) :: xmuy
+                real(kind=dp) intent(in) :: rho
+                real(kind=dp) intent(in) :: z
+                real(kind=dp) intent(out) :: answer
+                integer intent(out) :: ier
+                real(kind=dp), optional,intent(out) :: abserr
+                integer, optional,intent(out) :: last
+            end subroutine fnprod
+        end module ensdam_stogprod
+    end interface 
+end python module stogprod
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

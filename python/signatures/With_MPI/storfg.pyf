@@ -1,0 +1,61 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module storfg__user__routines
+    interface  ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg
+        function fun_pow_spect_sph(l,m) ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg:unknown_interface
+            integer intent(in) :: l
+            integer intent(in) :: m
+            real(kind=8) :: fun_pow_spect_sph
+        end function fun_pow_spect_sph
+    end interface
+end python module storfg__user__routines
+
+python module storfg ! in 
+    interface  ! in :storfg
+        module ensdam_storfg ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90
+            use mpi
+            use ensdam_sphylm
+            use ensdam_storng
+            real(kind=8), private,parameter,optional :: twopi=6.28318530718
+            real(kind=8), save,public,optional :: storfg_ylm_resolution=0.01
+            integer, private,save :: mpi_code
+            integer, save,public,optional :: mpi_comm_storfg=mpi_comm_world
+            real(kind=8), private,parameter,optional,depend(twopi) :: deg2rad=0.0174532925199
+            logical, private,optional :: pleg_precomputed=.false.
+            integer, private :: jpfreq
+            interface  ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg
+                function fun_pow_spect_sph(l,m) ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg:unknown_interface
+                    integer intent(in) :: l
+                    integer intent(in) :: m
+                    real(kind=8) :: fun_pow_spect_sph
+                end function fun_pow_spect_sph
+            end interface 
+            subroutine gen_field_2s_new(ranfield,lon,lat,pow_spect,lmin,lmax) ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg
+                use ensdam_storfg, only: fun_pow_spect_sph
+                use storfg__user__routines, pow_spect=>fun_pow_spect_sph
+                real(kind=8) dimension(:),intent(out) :: ranfield
+                real(kind=8) dimension(size(ranfield,1)),intent(in) :: lon
+                real(kind=8) dimension(size(ranfield,1)),intent(in) :: lat
+                real(kind=8) intent(callback) :: pow_spect
+                external pow_spect
+                integer intent(in) :: lmin
+                integer intent(in) :: lmax
+            end subroutine gen_field_2s_new
+            subroutine gen_field_2s_new2(ranfield,lon,lat,pow_spect,lmin,lmax) ! in :storfg:/linkhome/rech/egi/regi700/src/EnsDAM/src/StochTools/storfg.F90:ensdam_storfg
+                use ensdam_storfg, only: fun_pow_spect_sph
+                use storfg__user__routines, pow_spect=>fun_pow_spect_sph
+                real(kind=8) dimension(:,:),intent(out) :: ranfield
+                real(kind=8) dimension(size(ranfield,1),size(ranfield,2)),intent(in) :: lon
+                real(kind=8) dimension(size(ranfield,1),size(ranfield,2)),intent(in) :: lat
+                real(kind=8) intent(callback) :: pow_spect
+                external pow_spect
+                integer intent(in) :: lmin
+                integer intent(in) :: lmax
+            end subroutine gen_field_2s_new2
+        end module ensdam_storfg
+    end interface 
+end python module storfg
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
