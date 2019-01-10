@@ -57,6 +57,8 @@ import stoutil
 from ctypes import *
 import numpy
 
+mpi=False
+
 # Get default public variables from the FORTRAN modules
 # From anautil
 anautil_reference_cdf = anautil.ensdam_anautil.anautil_reference_cdf
@@ -65,9 +67,11 @@ anautil_b = anautil.ensdam_anautil.anautil_b
 # From ensaugm
 ensaugm_chain_index  = ensaugm.ensdam_ensaugm.ensaugm_chain_index
 ensaugm_with_renormalization = ensaugm.ensdam_ensaugm.ensaugm_with_renormalization
-mpi_comm_ensaugm = ensaugm.ensdam_ensaugm.mpi_comm_ensaugm
+if mpi:
+    mpi_comm_ensaugm = ensaugm.ensdam_ensaugm.mpi_comm_ensaugm
 # From meanstd
-mpi_comm_meanstd = meanstd.ensdam_meanstd.mpi_comm_meanstd
+if mpi:
+    mpi_comm_meanstd = meanstd.ensdam_meanstd.mpi_comm_meanstd
 # From schurprod
 schurprod_gpmin = schurprod.ensdam_schurprod.schurprod_gpmin
 schurprod_gpmax = schurprod.ensdam_schurprod.schurprod_gpmax
@@ -75,15 +79,18 @@ schurprod_precompute = schurprod.ensdam_schurprod.schurprod_precompute
 schurprod_tablesize = schurprod.ensdam_schurprod.schurprod_tablesize
 # From score_crps
 crps_missing_value = score_crps.ensdam_score_crps.crps_missing_value
-mpi_comm_score_crps = score_crps.ensdam_score_crps.mpi_comm_score_crps
+if mpi:
+    mpi_comm_score_crps = score_crps.ensdam_score_crps.mpi_comm_score_crps
 # From score_entropy
-mpi_comm_score_entropy = score_entropy.ensdam_score_entropy.mpi_comm_score_entropy
+if mpi:
+    mpi_comm_score_entropy = score_entropy.ensdam_score_entropy.mpi_comm_score_entropy
 score_entropy_base = score_entropy.ensdam_score_entropy.score_entropy_base
 # From score_rcrv
 rcrv_number_of_quantiles = score_rcrv.ensdam_score_rcrv.rcrv_number_of_quantiles
 rcrv_with_anamorphosis = score_rcrv.ensdam_score_rcrv.rcrv_with_anamorphosis
 rcrv_missing_value = score_rcrv.ensdam_score_rcrv.rcrv_missing_value
-mpi_comm_score_rcrv = score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv
+if mpi:
+    mpi_comm_score_rcrv = score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv
 # From sphylm
 regr_epsilon = sphylm.ensdam_sphylm.regr_epsilon
 regr_overlap = sphylm.ensdam_sphylm.regr_overlap
@@ -92,10 +99,12 @@ regr_type = sphylm.ensdam_sphylm.regr_type
 regr_rho = sphylm.ensdam_sphylm.regr_rho
 regr_maxbloc = sphylm.ensdam_sphylm.regr_maxbloc
 external_vector_decomposition = sphylm.ensdam_sphylm.external_vector_decomposition
-mpi_comm_sphylm = sphylm.ensdam_sphylm.mpi_comm_sphylm
+if mpi:
+    mpi_comm_sphylm = sphylm.ensdam_sphylm.mpi_comm_sphylm
 # From storfg:
 storfg_ylm_resolution = storfg.ensdam_storfg.storfg_ylm_resolution
-mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
+if mpi:
+    mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
 # From stoutil:
 nominal_accuracy = stoutil.ensdam_stoutil.nominal_accuracy
 accuracy = stoutil.ensdam_stoutil.accuracy
