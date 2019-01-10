@@ -57,7 +57,16 @@ import stoutil
 from ctypes import *
 import numpy
 
+# Get MPI public variables from the FORTRAN modules
 mpi=False
+if mpi:
+    mpi_comm_ensaugm = ensaugm.ensdam_ensaugm.mpi_comm_ensaugm
+    mpi_comm_meanstd = meanstd.ensdam_meanstd.mpi_comm_meanstd
+    mpi_comm_score_crps = score_crps.ensdam_score_crps.mpi_comm_score_crps
+    mpi_comm_score_entropy = score_entropy.ensdam_score_entropy.mpi_comm_score_entropy
+    mpi_comm_score_rcrv = score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv
+    mpi_comm_sphylm = sphylm.ensdam_sphylm.mpi_comm_sphylm
+    mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
 
 # Get default public variables from the FORTRAN modules
 # From anautil
@@ -67,11 +76,6 @@ anautil_b = anautil.ensdam_anautil.anautil_b
 # From ensaugm
 ensaugm_chain_index  = ensaugm.ensdam_ensaugm.ensaugm_chain_index
 ensaugm_with_renormalization = ensaugm.ensdam_ensaugm.ensaugm_with_renormalization
-if mpi:
-    mpi_comm_ensaugm = ensaugm.ensdam_ensaugm.mpi_comm_ensaugm
-# From meanstd
-if mpi:
-    mpi_comm_meanstd = meanstd.ensdam_meanstd.mpi_comm_meanstd
 # From schurprod
 schurprod_gpmin = schurprod.ensdam_schurprod.schurprod_gpmin
 schurprod_gpmax = schurprod.ensdam_schurprod.schurprod_gpmax
@@ -79,18 +83,12 @@ schurprod_precompute = schurprod.ensdam_schurprod.schurprod_precompute
 schurprod_tablesize = schurprod.ensdam_schurprod.schurprod_tablesize
 # From score_crps
 crps_missing_value = score_crps.ensdam_score_crps.crps_missing_value
-if mpi:
-    mpi_comm_score_crps = score_crps.ensdam_score_crps.mpi_comm_score_crps
 # From score_entropy
-if mpi:
-    mpi_comm_score_entropy = score_entropy.ensdam_score_entropy.mpi_comm_score_entropy
 score_entropy_base = score_entropy.ensdam_score_entropy.score_entropy_base
 # From score_rcrv
 rcrv_number_of_quantiles = score_rcrv.ensdam_score_rcrv.rcrv_number_of_quantiles
 rcrv_with_anamorphosis = score_rcrv.ensdam_score_rcrv.rcrv_with_anamorphosis
 rcrv_missing_value = score_rcrv.ensdam_score_rcrv.rcrv_missing_value
-if mpi:
-    mpi_comm_score_rcrv = score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv
 # From sphylm
 regr_epsilon = sphylm.ensdam_sphylm.regr_epsilon
 regr_overlap = sphylm.ensdam_sphylm.regr_overlap
@@ -99,12 +97,8 @@ regr_type = sphylm.ensdam_sphylm.regr_type
 regr_rho = sphylm.ensdam_sphylm.regr_rho
 regr_maxbloc = sphylm.ensdam_sphylm.regr_maxbloc
 external_vector_decomposition = sphylm.ensdam_sphylm.external_vector_decomposition
-if mpi:
-    mpi_comm_sphylm = sphylm.ensdam_sphylm.mpi_comm_sphylm
 # From storfg:
 storfg_ylm_resolution = storfg.ensdam_storfg.storfg_ylm_resolution
-if mpi:
-    mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
 # From stoutil:
 nominal_accuracy = stoutil.ensdam_stoutil.nominal_accuracy
 accuracy = stoutil.ensdam_stoutil.accuracy
@@ -138,6 +132,120 @@ class ensanam:
     ana_obs(),ana_obs_sym(),ana_util_quaref()
     """
 
+    @staticmethod
+    def ens_quantiles(ens,quadef,enswei=(),ensweiloc=()):
+        """
+        qua = ens_quantiles_vector(ens,quadef,[enswei,ensweiloc])
+
+        Compute quantiles from input ensemble
+
+        Parameters
+        ----------
+        ens : input rank-1 or rank-2 array('d')
+        quadef : input rank-1 array('d')
+
+        Other Parameters
+        ----------------
+        enswei : input rank-1 array('d')
+        ensweiloc : input rank-1 or rank-2 array('d')
+
+        Returns
+        -------
+        qua : rank-1 or rank-2 array('d')
+        """
+
+    @staticmethod
+    def ana_forward(ens,qua,quaref,rank=()):
+        """
+        ana_forward_ensemble(ens,qua,quaref,[rank])
+
+        Perform forward anamorphosis transformation
+
+        Parameters
+        ----------
+        ens : in/output rank-2 array('d') with bounds (f2py_ens_d0,f2py_ens_d1)
+        qua : input rank-2 array('d') with bounds (size(ens,1),f2py_qua_d1)
+        quaref : input rank-1 array('d') with bounds (size(qua,2))
+
+        Other Parameters
+        ----------------
+        rank_bn : input rank-1 array('d') with bounds (f2py_rank_bn_d0)
+        """
+
+    @staticmethod
+    def ana_backward(ens,qua,quaref):
+        """
+        ana_backward_ensemble(ens,qua,quaref)
+
+        Perform backward anamorphosis transformation
+
+        Parameters
+        ----------
+        ens : in/output rank-2 array('d') with bounds (f2py_ens_d0,f2py_ens_d1)
+        qua : input rank-2 array('d') with bounds (size(ens,1),f2py_qua_d1)
+        quaref : input rank-1 array('d') with bounds (size(qua,2))
+        """
+
+    @staticmethod
+    def ana_obs(obsens,obs,obserror,quadef,quaref):
+        """
+        anaobs = ana_obs(obsens,obs,obserror,quadef,quaref)
+
+        Transform observation probability distribution
+
+        Parameters
+        ----------
+        obsens : input rank-2 array('d') with bounds (size(anaobs,1),f2py_obsens_d1)
+        obs : input rank-1 array('d') with bounds (size(anaobs,1))
+        obserror : input rank-1 array('d') with bounds (size(anaobs,1))
+        quadef : input rank-1 array('d') with bounds (f2py_quadef_d0)
+        quaref : input rank-1 array('d') with bounds (size(quadef,1))
+
+        Returns
+        -------
+        anaobs : rank-2 array('d') with bounds (f2py_anaobs_d0,f2py_anaobs_d1)
+        """
+
+    @staticmethod
+    def ana_obs_sym(obs,obserror,obsqua,quaref):
+        """
+        anaobs = ana_obs_sym(obs,obserror,obsqua,quaref)
+
+        Transform observation probability distribution
+        (simplified for symmetric observation error distribution)
+
+        Parameters
+        ----------
+        obs : input rank-1 array('d') with bounds (size(anaobs,1))
+        obserror : input rank-1 array('d') with bounds (size(anaobs,1))
+        obsqua : input rank-2 array('d') with bounds (size(anaobs,1),f2py_obsqua_d1)
+        quaref : input rank-1 array('d') with bounds (size(obsqua,2))
+
+        Returns
+        -------
+        anaobs : rank-2 array('d') with bounds (f2py_anaobs_d0,f2py_anaobs_d1)
+        """
+
+    @staticmethod
+    def ana_util_quaref(quadef):
+        """
+        quaref = ana_util_quaref(quadef)
+
+        Compute quantiles of reference distribution
+
+        Parameters
+        ----------
+        quadef : input rank-1 array('d') with bounds (size(quaref,1))
+
+        Returns
+        -------
+        quaref : rank-1 array('d') with bounds (f2py_quaref_d0)
+        """
+        # Update module public variables
+        anautil.ensdam_anautil.anautil_reference_cdf = anautil_reference_cdf
+        anautil.ensdam_anautil.anautil_a = anautil_a
+        anautil.ensdam_anautil.anautil_b = anautil_b
+
 class ensaugm:
     """
     The purpose of EnsAugm is to provide tools
@@ -151,6 +259,72 @@ class ensaugm:
     Available functions:
     sample_augmented_ensemble(),newproduct(),getproduct()
     """
+
+    @staticmethod
+    def sample_augmented_ensemble(maxchain,augens,ens,multiplicity):
+        """
+        sample_augmented_ensemble(maxchain,augens,ens,multiplicity)
+
+        Ensemble augmentation by Schur product with large scale patterns
+
+        Parameters
+        ----------
+        maxchain : input int
+        augens : in/output rank-2 array('d') with bounds (f2py_augens_d0,f2py_augens_d1)
+        ens : input rank-3 array('d') with bounds (size(augens,1),f2py_ens_d1,f2py_ens_d2)
+        multiplicity : input rank-1 array('i') with bounds (f2py_multiplicity_d0)
+        """
+        # Update module public variables
+        ensaugm.ensdam_ensaugm.ensaugm_chain_index = ensaugm_chain_index
+        ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
+        if mpi:
+            ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
+
+    @staticmethod
+    def newproduct(ens,multiplicity):
+        """
+        new,sample = newproduct(ens,multiplicity)
+
+        Compute new multiple Schur product
+
+        Parameters
+        ----------
+        ens : input rank-3 array('d') with bounds (size(new_bn,1),f2py_ens_d1,f2py_ens_d2)
+        multiplicity : input rank-1 array('i') with bounds (f2py_multiplicity_d0)
+
+        Returns
+        -------
+        new : rank-1 array('d') with bounds (f2py_new_bn_d0)
+        sample : rank-1 array('i') with bounds (f2py_sample_d0)
+        """
+        # Update module public variables
+        ensaugm.ensdam_ensaugm.ensaugm_chain_index = ensaugm_chain_index
+        ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
+        if mpi:
+            ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
+
+    @staticmethod
+    def getproduct(ens,multiplicity,sample):
+        """
+        new = newproduct(ens,multiplicity,sample)
+
+        Compute specified multiple Schur product
+
+        Parameters
+        ----------
+        ens : input rank-3 array('d') with bounds (size(new_bn,1),f2py_ens_d1,f2py_ens_d2)
+        multiplicity : input rank-1 array('i') with bounds (f2py_multiplicity_d0)
+        sample : rank-1 array('i') with bounds (f2py_sample_d0)
+
+        Returns
+        -------
+        new : rank-1 array('d') with bounds (f2py_new_bn_d0)
+        """
+        # Update module public variables
+        ensaugm.ensdam_ensaugm.ensaugm_chain_index = ensaugm_chain_index
+        ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
+        if mpi:
+            ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
 
 class ensscores:
     """
@@ -200,7 +374,8 @@ class ensstat:
 
         """
         # Update module public variables
-        meanstd.ensdam_meanstd.mpi_comm_meanstd = mpi_comm_meanstd
+        if mpi:
+            meanstd.ensdam_meanstd.mpi_comm_meanstd = mpi_comm_meanstd
         # Check optional argument
         if weight == ():
             weight=numpy.ones(ens.shape)
@@ -236,7 +411,8 @@ class ensstat:
         """
         print "Warning: python interface only partially tested !!"
         # Update module public variables
-        meanstd.ensdam_meanstd.mpi_comm_meanstd = mpi_comm_meanstd 
+        if mpi:
+            meanstd.ensdam_meanstd.mpi_comm_meanstd = mpi_comm_meanstd 
         # Check the presence of weights
         if weight == ():
             # Check type of input
@@ -426,6 +602,94 @@ class interptools:
     grid1d_locate(),grid1d_interp(),grid2d_init(),grid2d_locate(),grid2d_interp()
     """
 
+    @staticmethod
+    def grid1d_locate(kgrid,kx):
+        """
+        grid1d_locate,ki = grid1d_locate(kgrid,kx)
+
+        Locate data point in 1D grid
+
+        Parameters
+        ----------
+        kgrid : input rank-1 array('d') with bounds (f2py_kgrid_d0)
+        kx : input float
+
+        Returns
+        -------
+        grid1d_locate : int
+        ki : int
+        """
+
+    @staticmethod
+    def grid1d_interp(kgrid,kx,ki):
+        """
+        w = grid1d_interp(kgrid,kx,ki)
+
+        Compute interpolation weight in 1D grid
+
+        Parameters
+        ----------
+        kgrid : input rank-1 array('d') with bounds (f2py_kgrid_d0)
+        kx : input float
+        ki : input int
+
+        Returns
+        -------
+        w : float
+        """
+
+    @staticmethod
+    def grid2d_init(kxg,kyg,gtype):
+        """
+        grid2d_init(kxg,kyg,gtype)
+
+        Initialize 2D grid
+
+        Parameters
+        ----------
+        kxg : input rank-2 array('d') with bounds (f2py_kxg_d0,f2py_kxg_d1)
+        kyg : input rank-2 array('d') with bounds (size(kxg,1),size(kxg,2))
+        gtype : input string(len=-1)
+        """
+
+    @staticmethod
+    def grid2d_locate(kx,ky):
+        """
+        grid2d_locate,ki,kj = grid2d_locate(kx,ky)
+
+        Locate data point in 2D grid
+
+        Parameters
+        ----------
+        kx : input float
+        ky : input float
+
+        Returns
+        -------
+        grid2d_locate : int
+        ki : int
+        kj : int
+        """
+
+    @staticmethod
+    def grid2d_interp(kx,ky,ki,kj):
+        """
+        kw = grid2d_interp(kx,ky,ki,kj)
+
+        Compute interpolation weight in 2D grid
+
+        Parameters
+        ----------
+        kx : input float
+        ky : input float
+        ki : input int
+        kj : input int
+
+        Returns
+        -------
+        kw : rank-2 array('d') with bounds (2,2)
+        """
+
 class obserror:
     """
     The purpose of ObsError is to provide tools to deal with observation errors.
@@ -436,6 +700,64 @@ class obserror:
     Available functions:
     obserror_logpdf(),obserror_cdf(),obserror_sample()
     """
+
+    @staticmethod
+    def obserror_logpdf(y,x,sigma):
+        """
+        obserror_logpdf_variable = obserror_logpdf_variable(y,x,sigma)
+
+        Compute logarithm of observation error probability density function
+
+        Parameters
+        ----------
+        y : input float
+        x : input float
+        sigma : input float
+
+        Returns
+        -------
+        obserror_logpdf_variable : float
+        """
+
+    @staticmethod
+    def obserror_cdf(y,x,sigma):
+        """
+        obserror_cdf_variable = obserror_cdf_variable(y,x,sigma)
+
+        Compute cumulate distribution function for observation errors
+
+        Parameters
+        ----------
+        y : input float
+        x : input float
+        sigma : input float
+
+        Returns
+        -------
+        obserror_cdf_variable : float
+        """
+
+    @staticmethod
+    def obserror_sample(x,sigma,rank=(),reuse_last_rank=()):
+        """
+        obserror_sample_variable = obserror_sample_variable(x,sigma,[rank,reuse_last_rank])
+
+        Sample probability distribution of observation errors
+
+        Parameters
+        ----------
+        x : input float
+        sigma : input float
+
+        Other Parameters
+        ----------------
+        rank : input float
+        reuse_last_rank : input int
+
+        Returns
+        -------
+        obserror_sample_variable : float
+        """
 
 class stochtools:
     """
