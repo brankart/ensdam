@@ -38,3 +38,5 @@ zz*
 # Vi swap files
 .*.swp
 
+# Python stuff
+*.pyc
