@@ -58,7 +58,7 @@ EnsAnam : ensemble anamorphosis transformation
 EnsAugm : ensemble augmentation
   module ensdam_ensaugm : sample augmented ensemble
   module ensdam_schurprod : compute Schur products
-EnsScores :
+EnsScores : ensemble scores
   module ensdam_score_crps : compute CRPS score
   module ensdam_score_rcrv : compute RCRV score
   module ensdam_score_optimality : compute optimality score
