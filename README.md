@@ -15,11 +15,14 @@ You need a FORTRAN-90 compiler and the NetCDF library (with f90 support) install
 
 To compile the library and the examples :
 
-- create a 'make.macro' file corresponding to your compiler in the 'macro' directory.
+- create a 'make.(MY_MACHINE)' file corresponding to your compiler in the 'macro' directory.
   This is the Makefile configurable part, which specifies
   your compiler options and where to find the NetCDF library.
 
-- edit the file 'build/Makefile.template' to include this 'make.macro' file (first line below the title)
+```bash
+cd build
+ln -sf ../macro/make.(MY_MACHINE) Makefile.macro
+```
 
 - compile (library and examples) with:
 

@@ -2,7 +2,7 @@
 # ----------------------------
 # J.-M. Brankart, October 2018
 # 
-include ../macro/make.linux_ifort
+include Makefile.macro
 #
 EXAMPLE_DIR = ../examples
 DOC_DIR = ../doc

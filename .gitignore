@@ -40,3 +40,6 @@ zz*
 
 # Python stuff
 *.pyc
+
+# Personal settings
+make.macro
