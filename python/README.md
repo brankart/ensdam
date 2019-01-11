@@ -41,16 +41,16 @@ Legend:
 
 ```
     ensdam.ensanam : ensemble anamorphosis transformation
-(x)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
-(x)       ensdam.ensanam.ana_forward : forward transformation
-(x)       ensdam.ensanam.ana_backward : backward transformation
-(x)       ensdam.ensanam.ana_obs : transformation of observations
-(x)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
-(x)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
+(u)       ensdam.ensanam.ens_quantiles : computation of ensemble quantiles
+(u)       ensdam.ensanam.ana_forward : forward transformation
+(u)       ensdam.ensanam.ana_backward : backward transformation
+(u)       ensdam.ensanam.ana_obs : transformation of observations
+(u)       ensdam.ensanam.ana_obs_sym : transformation of observations (symmetric case)
+(u)       ensdam.ensanam.ana_util_quaref : compute the quantiles of the target distribution
     ensdam.ensaugm : ensemble augmentation
-(x)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
-(x)       ensdam.ensaugm.newproduct : sample new Schur product
-(x)       ensdam.ensaugm.getproduct : get specified Schur product
+(u)       ensdam.ensaugm.sample_augmented_ensemble : sample augmented ensemble
+(u)       ensdam.ensaugm.newproduct : sample new Schur product
+(u)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
 (x)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
 (x)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
@@ -73,15 +73,15 @@ Legend:
 (u)       ensdam.ensstat.update_meancov : update mean and covariance with one additional input member
     ensdam.ensupdate : ensemble observational update
     ensdam.interptools : interpolation tools
-(x)       ensdam.interptools.grid1D_locate : locate data point in 1D grid
-(x)       ensdam.interptools.grid1D_interp : compute interpolation weights in 1D grid
-(x)       ensdam.interptools.grid2D_init : initialize 2D grid
-(x)       ensdam.interptools.grid2D_locate : locate data point in 2D grid
-(x)       ensdam.interptools.grid2D_interp : compute interpolation weights in 2D grid
+(o)       ensdam.interptools.grid1D_locate : locate data point in 1D grid
+(o)       ensdam.interptools.grid1D_interp : compute interpolation weights in 1D grid
+(u)       ensdam.interptools.grid2D_init : initialize 2D grid
+(u)       ensdam.interptools.grid2D_locate : locate data point in 2D grid
+(u)       ensdam.interptools.grid2D_interp : compute interpolation weights in 2D grid
     ensdam.obserror : observation error
-(x)       ensdam.obserror.obserror_logpdf : compute logarithm of observation error probability density function
-(x)       ensdam.obserror.obserror_cdf : compute cumulate distribution function for observation errors
-(x)       ensdam.obserror.obserror_sample : sample probability distribution of observation errors
+(u)       ensdam.obserror.obserror_logpdf : compute logarithm of observation error probability density function
+(u)       ensdam.obserror.obserror_cdf : compute cumulate distribution function for observation errors
+(u)       ensdam.obserror.obserror_sample : sample probability distribution of observation errors
     ensdam.stochtools : stochastic tools
 (o)       ensdam.stochtools.kiss : 64-bit KISS random number generator (period ~ 2^250)
 (o)       ensdam.stochtools.kiss_seed : define seeds for KISS random number generator

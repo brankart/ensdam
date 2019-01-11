@@ -135,7 +135,7 @@ class ensanam:
     @staticmethod
     def ens_quantiles(ens,quadef,enswei=(),ensweiloc=()):
         """
-        qua = ens_quantiles_vector(ens,quadef,[enswei,ensweiloc])
+        qua = ens_quantiles(ens,quadef,[enswei,ensweiloc])
 
         Compute quantiles from input ensemble
 
@@ -153,9 +153,32 @@ class ensanam:
         -------
         qua : rank-1 or rank-2 array('d')
         """
+        if ens.ndim == 1:
+            m = ens.shape[0] # ensemble size
+            if enswei == ():
+                enswei=numpy.ones([m])
+            api_ens = _iarraydouble(ens)
+            api_quadef = _iarraydouble(quadef)
+            api_enswei = _iarraydouble(enswei)
+            qua = anaqua.ensdam_anaqua.ens_quantiles_variable(api_ens,api_quadef,api_enswei)
+        elif ens.ndim == 2:
+            n = ens.shape[0] # number of variables
+            m = ens.shape[1] # ensemble size
+            if enswei == ():
+                enswei=numpy.ones([m])
+            if ensweiloc == ():
+                enswei=numpy.ones([n,m])
+            api_ens = _iarraydouble(ens)
+            api_quadef = _iarraydouble(quadef)
+            api_enswei = _iarraydouble(enswei)
+            api_ensweiloc = _iarraydouble(ensweiloc)
+            qua = anaqua.ensdam_anaqua.ens_quantiles_vector(api_ens,api_quadef,api_enswei,api_ensweiloc)
+        else:
+            raise ValueError("Invalid array dimension: ",ens.ndim)
+        return qua
 
     @staticmethod
-    def ana_forward(ens,qua,quaref,rank=()):
+    def ana_forward(ens,qua,quaref,rank):
         """
         ana_forward_ensemble(ens,qua,quaref,[rank])
 
@@ -166,11 +189,26 @@ class ensanam:
         ens : in/output rank-2 array('d') with bounds (f2py_ens_d0,f2py_ens_d1)
         qua : input rank-2 array('d') with bounds (size(ens,1),f2py_qua_d1)
         quaref : input rank-1 array('d') with bounds (size(qua,2))
-
-        Other Parameters
-        ----------------
-        rank_bn : input rank-1 array('d') with bounds (f2py_rank_bn_d0)
+        rank : input rank-1 array('d') with bounds (f2py_rank_bn_d0)
         """
+        api_qua = _iarraydouble(qua)
+        api_quaref = _iarraydouble(quaref)
+        if numpy.isscalar(ens):
+            anatra.ensdam_anatra.ana_forward_variable(ens,api_qua,api_quaref,rank)
+        elif ens.ndim == 1:
+            m = ens.shape[0] # ensemble size
+            api_ens = _iarraydouble(ens)
+            anatra.ensdam_anatra.ana_forward_ensemble(api_ens,api_qua,api_quaref,rank)
+            ens = api_ens
+        elif ens.ndim == 2:
+            n = ens.shape[0] # number of variables
+            m = ens.shape[1] # ensemble size
+            api_ens = _iarraydouble(ens)
+            api_rank = _iarraydouble(rank)
+            anatra.ensdam_anatra.ana_forward_ensemble(api_ens,api_qua,api_quaref,rank)
+            ens = api_ens
+        else:
+            raise ValueError("Invalid array dimension: ",ens.ndim)
 
     @staticmethod
     def ana_backward(ens,qua,quaref):
@@ -185,6 +223,23 @@ class ensanam:
         qua : input rank-2 array('d') with bounds (size(ens,1),f2py_qua_d1)
         quaref : input rank-1 array('d') with bounds (size(qua,2))
         """
+        api_qua = _iarraydouble(qua)
+        api_quaref = _iarraydouble(quaref)
+        if numpy.isscalar(ens):
+            anatra.ensdam_anatra.ana_backward_variable(ens,api_qua,api_quaref)
+        elif ens.ndim == 1:
+            m = ens.shape[0] # ensemble size
+            api_ens = _iarraydouble(ens)
+            anatra.ensdam_anatra.ana_backward_ensemble(api_ens,api_qua,api_quaref)
+            ens = api_ens
+        elif ens.ndim == 2:
+            n = ens.shape[0] # number of variables
+            m = ens.shape[1] # ensemble size
+            api_ens = _iarraydouble(ens)
+            anatra.ensdam_anatra.ana_backward_ensemble(api_ens,api_qua,api_quaref)
+            ens = api_ens
+        else:
+            raise ValueError("Invalid array dimension: ",ens.ndim)
 
     @staticmethod
     def ana_obs(obsens,obs,obserror,quadef,quaref):
@@ -205,6 +260,13 @@ class ensanam:
         -------
         anaobs : rank-2 array('d') with bounds (f2py_anaobs_d0,f2py_anaobs_d1)
         """
+        api_obsens = _iarraydouble(obsens)
+        api_obs = _iarraydouble(obs)
+        api_obserror = _iarraydouble(obserror)
+        api_quadef = _iarraydouble(quadef)
+        api_quaref = _iarraydouble(quaref)
+        anaobs = anaobs.ensdam_anaobs.ana_obs(api_obsens,api_obs,api_obserror,api_quadef,api_quaref)
+        return anaobs
 
     @staticmethod
     def ana_obs_sym(obs,obserror,obsqua,quaref):
@@ -225,6 +287,12 @@ class ensanam:
         -------
         anaobs : rank-2 array('d') with bounds (f2py_anaobs_d0,f2py_anaobs_d1)
         """
+        api_obs = _iarraydouble(obs)
+        api_obserror = _iarraydouble(obserror)
+        api_obsqua = _iarraydouble(obsqua)
+        api_quaref = _iarraydouble(quaref)
+        anaobs = anaobs.ensdam_anaobs.ana_obs_sym(api_obs,api_obserror,api_obsqua,api_quaref)
+        return anaobs
 
     @staticmethod
     def ana_util_quaref(quadef):
@@ -235,16 +303,20 @@ class ensanam:
 
         Parameters
         ----------
-        quadef : input rank-1 array('d') with bounds (size(quaref,1))
+        quadef : input rank-1 array('d') : definition of quantiles
 
         Returns
         -------
-        quaref : rank-1 array('d') with bounds (f2py_quaref_d0)
+        quaref : rank-1 array('d') : quantiles of reference distribution
         """
         # Update module public variables
         anautil.ensdam_anautil.anautil_reference_cdf = anautil_reference_cdf
         anautil.ensdam_anautil.anautil_a = anautil_a
         anautil.ensdam_anautil.anautil_b = anautil_b
+        # Call to Fortran function
+        api_quadef = _iarraydouble(quadef)
+        quaref = anautil.ensdam_anautil.ana_util_quaref(api_quadef)
+        return quaref
 
 class ensaugm:
     """
@@ -279,6 +351,12 @@ class ensaugm:
         ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
         if mpi:
             ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
+        # Call to Fortran function
+        api_augens = _iarraydouble(augens)
+        api_ens = _iarraydouble(ens)
+        api_multiplicity = _iarrayint(multiplicity)
+        ensaugm.ensdam_ensaugm.sample_augmented_ensemble(maxchain,api_augens,api_ens,api_multiplicity)
+        augens = api_augens
 
     @staticmethod
     def newproduct(ens,multiplicity):
@@ -302,6 +380,11 @@ class ensaugm:
         ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
         if mpi:
             ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
+        # Call to Fortran function
+        api_ens = _iarraydouble(ens)
+        api_multiplicity = _iarrayint(multiplicity)
+        new,sample = ensaugm.ensdam_ensaugm.newproduct(api_ens,api_multiplicity)
+        return new,sample
 
     @staticmethod
     def getproduct(ens,multiplicity,sample):
@@ -325,6 +408,12 @@ class ensaugm:
         ensaugm.ensdam_ensaugm.ensaugm_with_renormalization = ensaugm_with_renormalization
         if mpi:
             ensaugm.ensdam_ensaugm.mpi_comm_ensaugm = mpi_comm_ensaugm
+        # Call to Fortran function
+        api_ens = _iarraydouble(ens)
+        api_multiplicity = _iarrayint(multiplicity)
+        api_sample = _iarrayint(sample)
+        new = ensaugm.ensdam_ensaugm.newproduct(api_ens,api_multiplicity,api_sample)
+        return new,sample
 
 class ensscores:
     """
@@ -605,7 +694,7 @@ class interptools:
     @staticmethod
     def grid1d_locate(kgrid,kx):
         """
-        grid1d_locate,ki = grid1d_locate(kgrid,kx)
+        located,ki = grid1d_locate(kgrid,kx)
 
         Locate data point in 1D grid
 
@@ -616,9 +705,12 @@ class interptools:
 
         Returns
         -------
-        grid1d_locate : int
+        located : int
         ki : int
         """
+        api_grid = _iarraydouble(kgrid)
+        located,ki = interp.ensdam_interp.grid1d_locate(api_grid,kx)
+        return located,ki
 
     @staticmethod
     def grid1d_interp(kgrid,kx,ki):
@@ -637,6 +729,9 @@ class interptools:
         -------
         w : float
         """
+        api_grid = _iarraydouble(kgrid)
+        w = interp.ensdam_interp.grid1d_interp(api_grid,kx,ki)
+        return w
 
     @staticmethod
     def grid2d_init(kxg,kyg,gtype):
@@ -651,11 +746,14 @@ class interptools:
         kyg : input rank-2 array('d') with bounds (size(kxg,1),size(kxg,2))
         gtype : input string(len=-1)
         """
+        api_xg = _iarraydouble(kxg)
+        api_yg = _iarraydouble(kyg)
+        interp.ensdam_interp.grid2d_init(api_xg,api_yg,gtype)
 
     @staticmethod
     def grid2d_locate(kx,ky):
         """
-        grid2d_locate,ki,kj = grid2d_locate(kx,ky)
+        located,ki,kj = grid2d_locate(kx,ky)
 
         Locate data point in 2D grid
 
@@ -670,11 +768,14 @@ class interptools:
         ki : int
         kj : int
         """
+        located,ki,kj = interp.ensdam_interp.grid2d_locate(kx,ky)
+        return located,ki,kj
+      
 
     @staticmethod
     def grid2d_interp(kx,ky,ki,kj):
         """
-        kw = grid2d_interp(kx,ky,ki,kj)
+        w = grid2d_interp(kx,ky,ki,kj)
 
         Compute interpolation weight in 2D grid
 
@@ -689,6 +790,8 @@ class interptools:
         -------
         kw : rank-2 array('d') with bounds (2,2)
         """
+        w = interp.ensdam_interp.grid2d_interp(kx,ky,ki,kj)
+        return w
 
 class obserror:
     """
@@ -704,60 +807,107 @@ class obserror:
     @staticmethod
     def obserror_logpdf(y,x,sigma):
         """
-        obserror_logpdf_variable = obserror_logpdf_variable(y,x,sigma)
+        obserror_logpdf = obserror_logpdf(y,x,sigma)
 
         Compute logarithm of observation error probability density function
 
         Parameters
         ----------
-        y : input float
-        x : input float
-        sigma : input float
+        y : input float or rank-1 array('d') 
+        x : input float or rank-1 array('d')
+        sigma : input float or rank-1 array('d')
 
         Returns
         -------
-        obserror_logpdf_variable : float
+        obserror_logpdf : float
         """
+        if numpy.isscalar(y):
+            logpdf = obserror.endam_obserror.obserror_logpdf_variable(y,x,sigma)
+        elif y.ndim == 1:
+            api_y = _iarraydouble(y)
+            api_x = _iarraydouble(x)
+            if numpy.isscalar(sigma):
+                logpdf = obserror.endam_obserror.obserror_logpdf_vector_homogeneous(api_y,api_x,sigma)
+            elif sigma.ndim == 1:
+                api_sigma = _iarraydouble(sigma)
+                logpdf = obserror.endam_obserror.obserror_logpdf_vector(api_y,api_x,api_sigma)
+            else:
+                raise ValueError("Invalid array dimension")
+        else:
+            raise ValueError("Invalid array dimension")
+        return logpdf
 
     @staticmethod
     def obserror_cdf(y,x,sigma):
         """
-        obserror_cdf_variable = obserror_cdf_variable(y,x,sigma)
+        obserror_cdf = obserror_cdf(y,x,sigma)
 
         Compute cumulate distribution function for observation errors
 
         Parameters
         ----------
-        y : input float
-        x : input float
-        sigma : input float
+        y : input float or rank-1 array('d')
+        x : input float or rank-1 array('d')
+        sigma : input float or rank-1 array('d')
 
         Returns
         -------
-        obserror_cdf_variable : float
+        obserror_cdf : float or rank-1 array('d')
         """
+        if numpy.isscalar(y):
+            cdf = obserror.endam_obserror.obserror_cdf_variable(y,x,sigma)
+        elif y.ndim == 1:
+            api_y = _iarraydouble(y)
+            api_x = _iarraydouble(x)
+            if numpy.isscalar(sigma):
+                cdf = obserror.endam_obserror.obserror_cdf_vector_homogeneous(api_y,api_x,sigma)
+            elif sigma.ndim == 1:
+                api_sigma = _iarraydouble(sigma)
+                cdf = obserror.endam_obserror.obserror_cdf_vector(api_y,api_x,api_sigma)
+            else:
+                raise ValueError("Invalid array dimension")
+        else:
+            raise ValueError("Invalid array dimension")
+        return cdf
 
     @staticmethod
-    def obserror_sample(x,sigma,rank=(),reuse_last_rank=()):
+    def obserror_sample(x,sigma,rank,reuse_last_rank=False):
         """
-        obserror_sample_variable = obserror_sample_variable(x,sigma,[rank,reuse_last_rank])
+        obserror_sample = obserror_sample(x,sigma,rank,[reuse_last_rank])
 
         Sample probability distribution of observation errors
 
         Parameters
         ----------
-        x : input float
-        sigma : input float
+        x : input float or rank-1 array('d')
+        sigma : input float or rank-1 array('d')
+        rank : input float or rank-1 array('i')
 
         Other Parameters
         ----------------
-        rank : input float
         reuse_last_rank : input int
 
         Returns
         -------
-        obserror_sample_variable : float
+        obserror_sample : float
         """
+        if numpy.isscalar(x):
+            if reuse_last_rank==():
+                reuse_last_rank = False
+            sample = obserror.endam_obserror.obserror_sample_variable(x,sigma,rank,reuse_last_rank)
+        elif y.ndim == 1:
+            api_x = _iarraydouble(x)
+            if numpy.isscalar(sigma):
+                sample = obserror.endam_obserror.obserror_sample_vector_homogeneous(api_x,sigma,rank,reuse_last_rank)
+            elif sigma.ndim == 1:
+                api_sigma = _iarraydouble(sigma)
+                api_rank = _iarraydouble(rank)
+                sample = obserror.endam_obserror.obserror_sample_vector(api_x,api_sigma,api_rank,reuse_last_rank)
+            else:
+                raise ValueError("Invalid array dimension")
+        else:
+            raise ValueError("Invalid array dimension")
+        return sample
 
 class stochtools:
     """
@@ -957,7 +1107,7 @@ class stochtools:
         print "Warning: python interface untested !!"
         api_matarm = _iarraydouble(matarm)
         api_vecbm = _iarraydouble(vecbm)
-        r = matarm.shape[1] # number of dimensions
+        r = matarm.shape[0] # number of dimensions
         api_smp = _iarraydouble(numpy.zeros([n,r]))
         stotge.ensdam_stotge.ran_tg(api_smp,api_matarm,api_vecbm)
         return api_smp
