@@ -1560,3 +1560,185 @@ class transpho:
     regr_ylm(),disp_ylm(),ylm(),mesh_area()
     """
 
+    @staticmethod
+    def init_ylm(kjpl,kjlmin,latmin,latmax,dlatmax):
+        """
+        init_ylm(kjpl,kjlmin,latmin,latmax,dlatmax)
+
+        Initialize computation of spherical harmonics
+
+        Parameters
+        ----------
+        kjpl : input int
+        kjlmin : input int
+        latmin : input float
+        latmax : input float
+        dlatmax : input float
+        """
+        ensdam.transpho.init_ylm(kjpl,kjlmin,latmin,latmax,dlatmax)
+
+    @staticmethod
+    def init_regr_ylm(ktype,kmaxiter,kmaxbloc,koverlap,kepsilon,krho):
+        """
+        init_regr_ylm(ktype,kmaxiter,kmaxbloc,koverlap,kepsilon,krho)
+
+        Initialize regression of observations
+
+        Parameters
+        ----------
+        ktype : input string(len=-1)
+        kmaxiter : input int
+        kmaxbloc : input int
+        koverlap : input int
+        kepsilon : input float
+        krho : input float
+        """
+
+    @staticmethod
+    def proj_ylm(ktab,klon,klat):
+        """
+        kproj = proj_ylm(ktab,klon,klat)
+
+        Project on spherical harmonics
+
+        Parameters
+        ----------
+        ktab : input rank-1 array('d') with bounds (f2py_ktab_d0)
+        klon : input rank-1 array('d') with bounds (f2py_klon_d0)
+        klat : input rank-1 array('d') with bounds (f2py_klat_d0)
+
+        Returns
+        -------
+        kproj : rank-2 array('d') with bounds (f2py_kproj_d0,f2py_kproj_d1)
+        """
+        # Update module public variables
+        sphylm.ensdam_sphylm.external_vector_decomposition = external_vector_decomposition
+
+    @staticmethod
+    def back_ylm(kproj,klon,klat):
+        """
+        ktab = back_ylm(kproj,klon,klat)
+
+        Transform back on the sphere
+
+        Parameters
+        ----------
+        kproj : input rank-2 array('d') with bounds (f2py_kproj_d0,f2py_kproj_d1)
+        klon : input rank-1 array('d') with bounds (f2py_klon_d0)
+        klat : input rank-1 array('d') with bounds (f2py_klat_d0)
+
+        Returns
+        -------
+        ktab : rank-1 array('d') with bounds (f2py_ktab_d0)
+        """
+        # Update module public variables
+        sphylm.ensdam_sphylm.external_vector_decomposition = external_vector_decomposition
+
+    @staticmethod
+    def back_ylm_loc(kproj,klon,klat,kl0,kl1):
+        """
+        ktab = back_ylm_loc(kproj,klon,klat,kl0,kl1)
+
+        Transform back on the sphere (for a range of degrees)
+
+        Parameters
+        ----------
+        kproj : input rank-2 array('d') with bounds (f2py_kproj_d0,f2py_kproj_d1)
+        klon : input rank-1 array('d') with bounds (f2py_klon_d0)
+        klat : input rank-1 array('d') with bounds (f2py_klat_d0)
+        kl0 : input int
+        kl1 : input int
+
+        Returns
+        -------
+        ktab : rank-1 array('d') with bounds (f2py_ktab_d0)
+        """
+        # Update module public variables
+        sphylm.ensdam_sphylm.external_vector_decomposition = external_vector_decomposition
+
+    @staticmethod
+    def regr_ylm(kwei,kobs,klon,klat,kobswei):
+        """
+        kregr = regr_ylm(kwei,kobs,klon,klat,kobswei)
+
+        Regression of observations on spherical harmonics
+
+        Parameters
+        ----------
+        kwei : input rank-2 array('d') with bounds (f2py_kwei_d0,f2py_kwei_d1)
+        kobs : in/output rank-1 array('d') with bounds (f2py_kobs_d0)
+        klon : input rank-1 array('d') with bounds (f2py_klon_d0)
+        klat : input rank-1 array('d') with bounds (f2py_klat_d0)
+        kobswei : input rank-1 array('d') with bounds (f2py_kobswei_d0)
+
+        Returns
+        -------
+        kregr : rank-2 array('d') with bounds (f2py_kregr_d0,f2py_kregr_d1)
+        """
+        # Update module public variables
+        sphylm.ensdam_sphylm.external_vector_decomposition = external_vector_decomposition
+        sphylm.ensdam_sphylm.regr_epsilon = regr_epsilon
+        sphylm.ensdam_sphylm.regr_overlap = regr_overlap
+        sphylm.ensdam_sphylm.regr_maxiter = regr_maxiter
+        sphylm.ensdam_sphylm.regr_type = regr_type
+        sphylm.ensdam_sphylm.regr_rho = regr_rho
+        sphylm.ensdam_sphylm.regr_maxbloc = regr_maxbloc
+
+    @staticmethod
+    def disp_ylm(klon,klat,kl,km):
+        """
+        ktab = disp_ylm(klon,klat,kl,km)
+
+        Output one single spherical harmonics
+
+        Parameters
+        ----------
+        klon : input rank-1 array('d') with bounds (f2py_klon_d0)
+        klat : input rank-1 array('d') with bounds (f2py_klat_d0)
+        kl : input int
+        km : input int
+
+        Returns
+        -------
+        ktab : rank-1 array('d') with bounds (f2py_ktab_d0)
+        """
+        # Update module public variables
+        sphylm.ensdam_sphylm.external_vector_decomposition = external_vector_decomposition
+
+
+    @staticmethod
+    def ylm(kl,km,klon,klat):
+        """
+        ylm = ylm(kl,km,klon,klat)
+
+        Evaluate spherical harmonics
+
+        Parameters
+        ----------
+        kl : input int
+        km : input int
+        klon : input float
+        klat : input float
+
+        Returns
+        -------
+        ylm : float
+        """
+        v = sphylm.ensdam_sphylm.ylm(kl,km,klon,klat)
+        return v
+
+    @staticmethod
+    def mesh_area(lon,lat):
+        """
+        area = mesh_area(lon,lat)
+
+        Parameters
+        ----------
+        lon : input rank-2 array('d') with bounds (f2py_lon_d0,f2py_lon_d1)
+        lat : input rank-2 array('d') with bounds (size(lon,1),size(lon,2))
+
+        Returns
+        -------
+        area : rank-2 array('d') with bounds (size(lon,1)-1,size(lon,2)-2)
+        """
+

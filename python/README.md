@@ -114,11 +114,12 @@ Legend:
 (o)       ensdam.stochtools.gprod_to_gau : transform Gaussian product into Gaussian number
 (u)       ensdam.stochtools.gen_field_2s : generate 2D random field with specified power spectrum (on the sphere)
     ensdam.transpho : scale separation (by projection on the spherical harmonics)
-(x)       ensdam.transpho.init_ylm : initialize computation of spherical harmonics
-(x)       ensdam.transpho.init_regr_ylm : initialize regression of observations
-(x)       ensdam.transpho.proj_ylm : project on spherical harmonics
-(x)       ensdam.transpho.back_ylm : transform back on the sphere
-(x)       ensdam.transpho.regr_ylm : regression of observations on spherical harmonics
-(x)       ensdam.transpho.disp_ylm : output one single spherical harmonics
-(x)       ensdam.transpho.ylm : evaluate spherical harmonics
+(u)       ensdam.transpho.init_ylm : initialize computation of spherical harmonics
+(u)       ensdam.transpho.init_regr_ylm : initialize regression of observations
+(u)       ensdam.transpho.proj_ylm : project on spherical harmonics
+(u)       ensdam.transpho.back_ylm : transform back on the sphere
+(u)       ensdam.transpho.regr_ylm : regression of observations on spherical harmonics
+(u)       ensdam.transpho.disp_ylm : output one single spherical harmonics
+(b)       ensdam.transpho.ylm : evaluate spherical harmonics
+(u)       ensdam.transpho.mesh_area : compute spherical areas of mesh cells
 ```
