@@ -52,18 +52,18 @@ Legend:
 (u)       ensdam.ensaugm.newproduct : sample new Schur product
 (u)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
-(x)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
-(x)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
-(x)       ensdam.ensscores.crps_final : compute final score from accumulated data
-(x)       ensdam.ensscores.rcrv_score : compute RCRV score (with option to partition the data)
-(x)       ensdam.ensscores.rcrv_cumul : accumulate data to prepare the final computation of the RCRV score
-(x)       ensdam.ensscores.optimality_score : compute optimality score (with option to partition the data)
-(x)       ensdam.ensscores.optimality_cumul : accumulate data to prepare the final computation of the RCRV score
-(x)       ensdam.ensscores.events_score : compute ensemble entropy score for the required events
-(x)       ensdam.ensscores.events_relative_entropy : compute relative entropy between ensemble distribution and reference distribution
-(x)       ensdam.ensscores.events_cross_entropy : compute cross entropy between ensemble distribution and reference distribution
-(x)       ensdam.ensscores.events_entropy : compute entropy of ensemble distribution for the required events
-(x)       ensdam.ensscores.events_probability : compute events marginal probability distributions from the ensemble
+(u)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
+(u)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
+(u)       ensdam.ensscores.crps_final : compute final score from accumulated data
+(u)       ensdam.ensscores.rcrv_score : compute RCRV score (with option to partition the data)
+(u)       ensdam.ensscores.rcrv_cumul : accumulate data to prepare the final computation of the RCRV score
+(u)       ensdam.ensscores.optimality_score : compute optimality score (with option to partition the data)
+(u)       ensdam.ensscores.optimality_cumul : accumulate data to prepare the final computation of the RCRV score
+(u)       ensdam.ensscores.events_score : compute ensemble entropy score for the required events
+(u)       ensdam.ensscores.events_relative_entropy : compute relative entropy between ensemble distribution and reference distribution
+(u)       ensdam.ensscores.events_cross_entropy : compute cross entropy between ensemble distribution and reference distribution
+(u)       ensdam.ensscores.events_entropy : compute entropy of ensemble distribution for the required events
+(u)       ensdam.ensscores.events_probability : compute events marginal probability distributions from the ensemble
     ensdam.ensstat : ensemble statistics
 (p)       ensdam.ensstat.ensemble_meanstd : compute mean and standard deviation from input ensemble
 (p)       ensdam.ensstat.update_meanstd : update mean and standard deviation with one additional input member
