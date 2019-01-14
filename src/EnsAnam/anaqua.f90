@@ -247,7 +247,7 @@ MODULE ensdam_anaqua
         REAL(KIND=8), DIMENSION(:), INTENT( in ) :: quadef
         REAL(KIND=8), DIMENSION(:), INTENT( in ), OPTIONAL :: enswei
 
-        INTEGER :: jpm,jpq,jm,jq,il,ih,im
+        INTEGER :: jpm,jpq,jm,jq,il,ih,im,maxm
         REAL(KIND=8) :: rm, a, b
 
         jpm = SIZE(ens_sort,1)
@@ -257,53 +257,70 @@ MODULE ensdam_anaqua
           IF (SIZE(enswei,1).NE.jpm) STOP 'Inconsistent size in get_quantiles'
         ENDIF
 
-        IF (.NOT.present(enswei)) THEN
-
-!         For each required quantile
-          DO jq = 1,jpq
-
-            rm = 1+quadef(jq)*(jpm-1)
-            jm = INT(rm)
-
-            b  = rm - jm
-            a  = 1.0 - b
-
-            qua(jq)=a*ens_sort(jm)
-            IF (b.GT.0.) THEN
-              qua(jq)=qua(jq)+b*ens_sort(jm+1)
+!       Deal with possible special values
+        maxm = 0
+        IF (any(ens_sort(:).eq.huge(ens_sort))) THEN
+          DO jm = 1,jpm
+            IF (ens_sort(jm).eq.huge(ens_sort)) THEN
+              maxm = jm - 1 ; EXIT
             ENDIF
-
           ENDDO
+        ELSE
+          maxm = jpm
+        ENDIF
+
+        IF (maxm.GT.0) THEN
+          IF (.NOT.present(enswei)) THEN
+
+            ! For each required quantile
+            DO jq = 1,jpq
+
+              rm = 1+quadef(jq)*(maxm-1)
+              jm = INT(rm)
+
+              b  = rm - jm
+              a  = 1.0 - b
+
+              qua(jq)=a*ens_sort(jm)
+              IF (b.GT.0.) THEN
+                qua(jq)=qua(jq)+b*ens_sort(jm+1)
+              ENDIF
+
+            ENDDO
+
+          ELSE
+
+            ! For each required quantile
+            DO jq = 1,jpq
+
+              ! Find rank by dichotomy in cumulated weights
+              il = 1
+              ih = maxm
+              DO WHILE (il.LT.ih-1)
+                im = (il+ih)/2
+                IF (quadef(jq).GT.enswei(im)) THEN
+                  il = im
+                ELSE
+                  ih = im
+                ENDIF
+              ENDDO
+              jm = il
+              ! Compute interpolation weights (a,b)
+              IF ( enswei(il+1) == enswei(il) ) THEN
+                b = 0.
+              ELSE
+                b = ( quadef(jq) - enswei(il) ) / ( enswei(il+1) - enswei(il) )
+              ENDIF
+              a  = 1.0 - b
+              ! Interpolate to get the required quantile
+              qua(jq)=a*ens_sort(jm)+b*ens_sort(jm+1)
+
+            ENDDO
+
+          ENDIF
 
         ELSE
-
-!         For each required quantile
-          DO jq = 1,jpq
-
-!           Find rank by dichotomy in cumulated weights
-            il = 1
-            ih = jpm
-            DO WHILE (il.LT.ih-1)
-              im = (il+ih)/2
-              IF (quadef(jq).GT.enswei(im)) THEN
-                il = im
-              ELSE
-                ih = im
-              ENDIF
-            ENDDO
-            jm = il
-!           Compute interpolation weights (a,b)
-            IF ( enswei(il+1) == enswei(il) ) THEN
-              b = 0.
-            ELSE
-              b = ( quadef(jq) - enswei(il) ) / ( enswei(il+1) - enswei(il) )
-            ENDIF
-            a  = 1.0 - b
-!           Interpolate to get the required quantile
-            qua(jq)=a*ens_sort(jm)+b*ens_sort(jm+1)
-
-          ENDDO
-
+          qua(:) = huge(qua)
         ENDIF
 
         END SUBROUTINE get_quantiles
