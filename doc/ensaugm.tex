@@ -269,7 +269,7 @@ can then be obtained by random linear combinations:
 
 \begin{equation}
 \label{eq:augm_linear_combination}
-\hat{\bf x}_i = \sum_{k=1}^{N} w_{ik} \, {\bf x}_{\alpha(k)}
+\hat{\bf x}_i = \frac{1}{\sqrt{N} \sum_{k=1}^{N} w_{ik} \, {\bf x}_{\alpha(k)}
 \end{equation}
 
 \noindent
@@ -296,11 +296,11 @@ as the result of the sequence:
 \noindent
 In this way, the augmented members are constructed progressively with more and more Schur products,
 and can be viewed as an ensemble of MCMC chains converging towards the requested sample.
-Everything is thus ready to condition the localized augmented ensemble to observations
-using a Metropolis/Hasting algorithm
-(by accepting or rejecting new draws in the above chain
-according to observation likelihood),
-as implemented in the {\bf\tt EnsUpdate} modules.
+%Everything is thus ready to condition the localized augmented ensemble to observations
+%using a Metropolis/Hasting algorithm
+%(by accepting or rejecting new draws in the above chain
+%according to observation likelihood),
+%as implemented in the {\bf\tt EnsUpdate} modules.
 
 \section{Description of the modules}
 
