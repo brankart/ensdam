@@ -18,6 +18,37 @@ module ensdam
 const libdir = "../lib"
 const lib = joinpath(libdir,"libensdam") 
 
+###################
+# Wrapper to storng
+###################
+
+function kiss_uniform()
+  x=Float64[1]
+  ccall((:ensdam_storng_mp_kiss_uniform_,lib), Cvoid, (Ptr{Float64},), x)
+  return x[1]
+end
+
+function kiss_gaussian()
+  x=Float64[1]
+  ccall((:ensdam_storng_mp_kiss_gaussian_,lib), Cvoid, (Ptr{Float64},), x)
+  return x[1]
+end
+
+function kiss_gamma(k)
+  k=Float64[k]
+  x=Float64[1]
+  ccall((:ensdam_storng_mp_kiss_gamma_,lib), Cvoid, (Ptr{Float64},Ptr{Float64}), x, k)
+  return x[1]
+end
+
+function kiss_beta(a,b)
+  a=Float64[a]
+  b=Float64[b]
+  x=Float64[1]
+  ccall((:ensdam_storng_mp_kiss_beta_,lib), Cvoid, (Ptr{Float64},Ptr{Float64},Ptr{Float64}), x, a, b)
+  return x[1]
+end
+
 ####################
 # Wrapper to stoutil
 ####################
