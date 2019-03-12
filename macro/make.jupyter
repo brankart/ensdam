@@ -6,7 +6,7 @@ FC = gfortran
 LD = gfortran
 AR = ar
 FPPFLAGS =
-FFLAGS = -fPIC -ffree-line-length-256 -fconvert=big-endian -I$(NCDF_INC)
+FFLAGS = -fPIC -ffree-line-length-256 -fconvert=big-endian -J../include -I$(NCDF_INC)
 LDFLAGS = -L${NCDF_LIB} -lnetcdf -lnetcdff
 SHFLAGS = -shared -L${NCDF_LIB} -lnetcdf -lnetcdff
 ARFLAGS = -rv
