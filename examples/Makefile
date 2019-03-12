@@ -2,7 +2,7 @@
 # ----------------------------
 # J.-M. Brankart, November 2018
 # 
-include ../macro/make.linux_ifort
+include ../build/Makefile.macro
 #
 # Add EnsDAM library to compile examples:
 LIB_ENSDAM = ../lib/libensdam.a

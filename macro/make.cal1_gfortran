@@ -1,0 +1,16 @@
+
+NCDF_LIB=/usr/lib/x86_64-linux-gnu
+NCDF_INC=/usr/include
+
+FC = gfortran
+LD = gfortran
+AR = ar
+FPPFLAGS =
+FFLAGS = -fPIC -ffree-line-length-256 -fconvert=big-endian -J../include -I$(NCDF_INC)
+LDFLAGS = -L${NCDF_LIB} -lnetcdf -lnetcdff
+SHFLAGS = -shared -L${NCDF_LIB} -lnetcdf -lnetcdff
+ARFLAGS = -rv
+LIST =
+
+INSTALL_DIR=$(HOME)
+

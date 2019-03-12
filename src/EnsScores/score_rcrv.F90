@@ -35,7 +35,7 @@ MODULE ensdam_score_rcrv
       END INTERFACE
 
       LOGICAL, PUBLIC, SAVE  :: rcrv_with_anamorphosis = .FALSE. ! use anamorphosis to compute reduced variable
-      LOGICAL, PUBLIC, SAVE  :: rcrv_number_of_quantiles = 11    ! number of quantiles to perform anamorphosis
+      INTEGER, PUBLIC, SAVE  :: rcrv_number_of_quantiles = 11    ! number of quantiles to perform anamorphosis
       REAL(KIND=8), PUBLIC, SAVE  :: rcrv_missing_value = -9999.
 
       ! module variable defining quantiles for anamorphosis transformation

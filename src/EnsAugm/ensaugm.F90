@@ -35,7 +35,7 @@ MODULE ensdam_ensaugm
 
       ! Public variables parameterizing the behaviour of the MCMC chain
       INTEGER, PUBLIC, SAVE :: ensaugm_chain_index=1  ! Current iteration index in MCMC chain (intialized to 1)
-      INTEGER, PUBLIC, SAVE :: ensaugm_with_renormalization=.FALSE.  ! Restore N(0,1) marginal distributions
+      LOGICAL, PUBLIC, SAVE :: ensaugm_with_renormalization=.FALSE.  ! Restore N(0,1) marginal distributions
 
       ! Definition for MPI
 #if defined MPI
