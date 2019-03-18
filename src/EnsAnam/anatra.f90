@@ -157,7 +157,12 @@ MODULE ensdam_anatra
           call kiss_uniform(rr)
         ENDIF
 
-        call qualoc_fwd(jqinf,jqsup,var,qua(:))
+        ! Deal with possible special values
+        IF (var.eq.huge(var)) THEN
+          return
+        ELSE
+          call qualoc_fwd(jqinf,jqsup,var,qua(:))
+        ENDIF
 
         IF (jqinf.EQ.jqsup) THEN
           ! Non-empty interval between quantiles
