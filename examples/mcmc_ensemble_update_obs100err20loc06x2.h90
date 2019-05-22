@@ -1,0 +1,51 @@
+  ! Program parameters -> problem definition
+  character(len=256), parameter :: expt='obs100err20loc06x2' ! Name of the experiment
+  integer, parameter :: mcmc_maxiter=1000000 ! maximum number of iteration in MCMC chain
+  integer, parameter :: augm_maxiter=1000 ! number of iterations used for sampling the augmented ensemble
+  integer, parameter :: convergence_check=100 ! Number of iterations between convergence checks
+  integer, parameter :: m = 100 ! ensemble size
+  integer, parameter :: mup = 100 ! updated ensemble size
+  integer, parameter :: maug = 10 ! number of augmented members to ouptut
+  integer, parameter :: nlon=720 , nlat=360  ! grid size
+  integer, parameter :: lmax=90 ! max degree of the spherical harmonics
+  integer, parameter :: plegres=10 ! resolution required for Legendre polynomials
+
+  ! Characterisctics of the prior ensemble
+  real(kind=8), parameter :: lm=0   ! scale of power spectrum maximum
+  real(kind=8), parameter :: lc=12.8 ! power spectrum characteristic scale
+  real(kind=8), parameter :: anisotropy=2.0 ! anisotropy (set to 0 for isotropic statisctics)
+  real(kind=8), parameter :: gamma_nu = 0.3 ! std / mean
+  !real(kind=8), parameter :: gamma_shift = 0.0 ! shift of gamma distribution
+  real(kind=8), parameter :: gamma_shift = 0.8 ! shift of gamma distribution
+
+  real(kind=8), parameter :: obs_coverage=1./100.  ! observation coverage (between 0 and 1)
+  real(kind=8), parameter :: obs_error_ratio=0.2 ! obs error std (fraction of the expected value)
+  real(kind=8), parameter :: obs_error_epsilon=0.01 ! minimum expected value of observation error distribution
+  logical, parameter :: obs_max_location=.TRUE. ! observe location of the maximum of the field
+  real(kind=8), parameter :: obs_location_error_std=0.05 ! obs location error std (fraction of the sphere radius)
+  logical, parameter :: obs_zero_surface=.TRUE. ! observe the fraction of the surface where the field is equal to zero
+  real(kind=8), parameter :: obs_surface_error_std=0.001 ! obs surface error std (fraction of the surface of the sphere)
+
+  ! Program parameters -> method definition
+  integer, parameter :: q = 11  ! number of quantiles used in anamorphosis transformation
+  integer, parameter :: obs_sample_size=100 ! sample size for anamorphosis of observations
+  real(kind=8), parameter :: obs_error_min=0.01 ! minimum transformed observation error (ratio to max error)
+
+  integer, parameter :: s = 2   ! number of scales in multiple scale ensemble
+  integer, dimension(s), parameter :: scales=(/ 0, 12 /)  ! scales for multiple scale ensemble
+  integer, dimension(s), parameter :: multiplicity=(/ 1, 4 /)  ! multiplicity of each scale in the Schur products
+
+  real(kind=8), parameter :: convergence_epsilon=0.01 ! maximal relative variation of the optimality score for convergence
+
+  ! Seeding of random number generator
+  integer, parameter :: seedloop = 4 ! number of additional iterations to generate seed
+
+  ! Program parameters -> options
+  logical, parameter :: observation_anamorphosis=.FALSE.
+  logical, parameter :: diagnose_correlation=.TRUE.
+  logical, parameter :: sample_aug_ensemble=.FALSE.
+  logical, parameter :: weighted_observation_sampling=.TRUE. ! observation coverage is in grid points at the equator
+  logical, parameter :: laplacian_penalty=.FALSE.
+  logical, parameter :: perform_observational_update=.TRUE.
+  logical, parameter :: compute_scores=.TRUE.
+  logical, parameter :: check_convergence=.TRUE.

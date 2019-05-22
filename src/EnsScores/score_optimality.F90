@@ -65,21 +65,17 @@ MODULE ensdam_score_optimality
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      SUBROUTINE optimality_score_global( ens_optimality, ens_optimality_bias, ens_optimality_spread, ens, obs, cdf_obs )
+      SUBROUTINE optimality_score_global( ens_optimality, ens, obs, cdf_obs )
 !----------------------------------------------------------------------
 ! ** Purpose :   compute optimality score
 ! 
 ! ** Arguments :
 !         ens    : ensemble to evaluate (equivalent to observation data)
 !         obs  : observation data
-!         ens_optimality : optimality score (should be )
-!         ens_optimality_bias : bias component of optimality score (should be )
-!         ens_optimality_spread : spread component of optimality score (should be 1)
+!         ens_optimality : optimality score (should be 1)
 !----------------------------------------------------------------------
       IMPLICIT NONE
       REAL(KIND=8), INTENT( out ) :: ens_optimality
-      REAL(KIND=8), INTENT( out ) :: ens_optimality_bias
-      REAL(KIND=8), INTENT( out ) :: ens_optimality_spread
       REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: obs
       PROCEDURE(callback_cdf_obs) :: cdf_obs
@@ -91,50 +87,40 @@ MODULE ensdam_score_optimality
 
       IF (SIZE(obs,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
 
-      ens_optimality_bias = 0. ; ens_optimality_spread = 0. ; nbr = 0
+      ens_optimality = 0. ; nbr = 0
 
       DO ji=1,jpi
         nbr = nbr + 1
-        CALL optimality_cumul(ens(ji,:),obs(ji),nbr,ens_optimality_bias,ens_optimality_spread,cdf_obs)
+        CALL optimality_cumul(ens(ji,:),obs(ji),nbr,ens_optimality,cdf_obs)
       ENDDO
 
 #if defined MPI
-      ens_optimality_bias = ens_optimality_bias * nbr
-      ens_optimality_spread = ens_optimality_spread * nbr
-      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality_bias, 1, MPI_DOUBLE_PRECISION,  &
-                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
-      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality_spread, 1, MPI_DOUBLE_PRECISION,  &
+      ens_optimality = ens_optimality * nbr
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality, 1, MPI_DOUBLE_PRECISION,  &
                       &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
       CALL MPI_ALLREDUCE (MPI_IN_PLACE, nbr, 1, MPI_INTEGER,  &
                       &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
-      IF (nbr.GT.0) ens_optimality_bias = ens_optimality_bias / nbr
-      IF (nbr.GT.0) ens_optimality_spread = ens_optimality_spread / nbr
+      IF (nbr.GT.0) ens_optimality = ens_optimality / nbr
 #endif
 
-      IF (nbr.GT.0) ens_optimality_spread = SQRT( ens_optimality_spread )
-
-      IF (nbr.GT.0) ens_optimality = SQRT ( ens_optimality_spread**2 + ens_optimality_bias **2 )
+      IF (nbr.GT.0) ens_optimality = SQRT( ens_optimality )
 
       END SUBROUTINE optimality_score_global
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      SUBROUTINE optimality_score_partition( ens_optimality, ens_optimality_bias, ens_optimality_spread, ens, obs, partition, cdf_obs )
+      SUBROUTINE optimality_score_partition( ens_optimality, ens, obs, partition, cdf_obs )
 !----------------------------------------------------------------------
 ! ** Purpose :   compute optimality score with partition of the data)
 ! 
 ! ** Arguments :
 !         ens    : ensemble to evaluate (equivalent to observation data)
 !         obs  : observation data
-!         ens_optimality : optimality score (should be )
-!         ens_optimality_bias : bias component of optimality score (should be )
-!         ens_optimality_spread : spread component of optimality score (should be 1)
+!         ens_optimality : optimality score (should be 1)
 !         partition   : partition of observation data
 !----------------------------------------------------------------------
       IMPLICIT NONE
       REAL(KIND=8), DIMENSION(:), INTENT( out ) :: ens_optimality
-      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: ens_optimality_bias
-      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: ens_optimality_spread
       REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: obs
       INTEGER, DIMENSION(:), INTENT( in ) :: partition
@@ -153,56 +139,44 @@ MODULE ensdam_score_optimality
       submin = MINVAL(partition)  ! Maximum index of subdomains in observation data
       submax = MAXVAL(partition)  ! Maximum index of subdomains in observation data
 
-      IF (LBOUND(ens_optimality_bias,1).NE.submin) STOP 'Inconsistent array bounds in score_optimality'
-      IF (UBOUND(ens_optimality_bias,1).NE.submax) STOP 'Inconsistent array bounds in score_optimality'
-      IF (LBOUND(ens_optimality_spread,1).NE.submin) STOP 'Inconsistent array bounds in score_optimality'
-      IF (UBOUND(ens_optimality_spread,1).NE.submax) STOP 'Inconsistent array bounds in score_optimality'
+      IF (LBOUND(ens_optimality,1).NE.submin) STOP 'Inconsistent array bounds in score_optimality'
+      IF (UBOUND(ens_optimality,1).NE.submax) STOP 'Inconsistent array bounds in score_optimality'
 
       allocate( nbr(submin:submax), stat=allocstat )
       IF (allocstat.NE.0) STOP 'Allocation error in score_optimality'
 
-      ens_optimality_bias = 0. ; ens_optimality_spread = 0.
+      ens_optimality = 0. ; nbr = 0
 
       DO ji=1,jpi
         nbr(partition(ji)) = nbr(partition(ji)) + 1
         CALL optimality_cumul(ens(ji,:),obs(ji),nbr(partition(ji)), &
-             & ens_optimality_bias(partition(ji)),ens_optimality_spread(partition(ji)),cdf_obs)
+             & ens_optimality(partition(ji)),cdf_obs)
       ENDDO
 
 #if defined MPI
-      ens_optimality_bias = ens_optimality_bias * nbr
-      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality_bias, submax-submin+1, MPI_DOUBLE_PRECISION,  &
-                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
-      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality_spread, submax-submin+1, MPI_DOUBLE_PRECISION,  &
+      ens_optimality = ens_optimality * nbr
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality, submax-submin+1, MPI_DOUBLE_PRECISION,  &
                       &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
       CALL MPI_ALLREDUCE (MPI_IN_PLACE, nbr, submax-submin+1, MPI_INTEGER,  &
                       &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
       WHERE (nbr.GT.0)
-        ens_optimality_bias = ens_optimality_bias / nbr
+        ens_optimality = ens_optimality / nbr
       ELSEWHERE
-        ens_optimality_bias = optimality_missing_value
+        ens_optimality = optimality_missing_value
       ENDWHERE
 #endif
 
       WHERE (nbr.GT.0)
-        ens_optimality_spread = SQRT( ens_optimality_spread / nbr )
-      ELSEWHERE
-        ens_optimality_spread = optimality_missing_value
-      ENDWHERE
-
-      WHERE (nbr.GT.0)
-        ens_optimality = SQRT ( ens_optimality_spread**2 + ens_optimality_bias **2 )
+        ens_optimality = SQRT( ens_optimality )
       ELSEWHERE
         ens_optimality = optimality_missing_value
       ENDWHERE
-
-      deallocate(nbr)
 
       END SUBROUTINE optimality_score_partition
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      SUBROUTINE optimality_cumul(e,o,idx,mean,sqrs,cdf_obs)
+      SUBROUTINE optimality_cumul(e,o,idx,sqrs,cdf_obs)
 !----------------------------------------------------------------------
 ! ** Purpose :   Accumulate one more piece of information to compute optimality score
 ! 
@@ -210,39 +184,37 @@ MODULE ensdam_score_optimality
 !         e    : input ensemble
 !         o    : observation
 !         idx  : index of accumulated piece of information
-!         mean : mean to update
 !         sqrs : square sum to update
 !----------------------------------------------------------------------
-      use ensdam_meanstd
       use ensdam_stoutil
       IMPLICIT NONE
 
       REAL(KIND=8), DIMENSION(:), INTENT(IN) :: e
       REAL(KIND=8), INTENT(IN) :: o
       INTEGER, INTENT(IN) :: idx
-      REAL(KIND=8), INTENT(INOUT) :: mean, sqrs
+      REAL(KIND=8), INTENT(INOUT) :: sqrs
       PROCEDURE(callback_cdf_obs) :: cdf_obs
 
       INTEGER :: n, i
-      REAL(KIND=8) :: rank, z, ens_mean, ens_msqr
+      REAL(KIND=8) :: rank, z, ens_msqr, misfit
 
       n = size(e)  ! ensemble size
 
-      ens_mean = 0. ; ens_msqr = 0
+      ens_msqr = 0
       DO i=1,n
         ! compute rank of observation yo in p(yo|Hx), given ensemble member e(i)
         rank = cdf_obs(o,e(i),idx)
         ! transform this rank into N(0,1) distribution
         z = invcdf_gaussian(rank)
-        ! update ensemble mean and square sum of z
-        CALL update_meanstd( z, i, ens_mean, ens_msqr )
+        ! update ensemble square sum of z
+        ens_msqr = ens_msqr + z * z
       ENDDO
       ! Compute ensemble mean square from ensemble square sum
-      ens_msqr = ens_msqr / n + ens_mean * ens_mean
+      ens_msqr = ens_msqr / n
 
       ! Update global averages with contribution from this observation
-      CALL update_meanstd( ens_mean, idx, mean )
-      CALL update_meanstd( ens_msqr, idx, sqrs )
+      misfit = ens_msqr - sqrs
+      sqrs = sqrs + misfit / idx
 
       END SUBROUTINE optimality_cumul
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
