@@ -21,11 +21,9 @@ By default, this file points to `mcmc_ensemble_update_obs100err20loc06.h90`,
 which corresponds to the parameters used in the reference example
 described in the paper.
 
-Two other parameter files are provided:
-
+Two other parameter files are provided:\\
 `mcmc_ensemble_update_obs100err20loc06x2.h90` and
-`mcmc_ensemble_update_obs100err20loc06x4.h90`.
-
+`mcmc_ensemble_update_obs100err20loc06x4.h90`.\\
 They correspond to multiplying the grid resolution
 by 2 and 4 respectively.
 
