@@ -15,15 +15,18 @@ to illustrating the TranSpHO modules.
 
 ### Example: mcmc_ensemble_update
 
-The parameter file is `mcmc_ensemble_update_parameters.h90`
-(pointing to `mcmc_ensemble_update_obs100err20loc06.h90`).
-This corresponds to the parameters used in the reference example
+The parameter file is `mcmc_ensemble_update_parameters.h90`.
+
+By default, this file points to `mcmc_ensemble_update_obs100err20loc06.h90`,
+which corresponds to the parameters used in the reference example
 described in the paper.
 
-Two other parameter files are provides:
+Two other parameter files are provided:
+
 `mcmc_ensemble_update_obs100err20loc06x2.h90` and
-`mcmc_ensemble_update_obs100err20loc06x4.h90`,
-which correspond to multiplying the grid resolution
+`mcmc_ensemble_update_obs100err20loc06x4.h90`.
+
+They correspond to multiplying the grid resolution
 by 2 and 4 respectively.
 
 All experiments described in the paper
