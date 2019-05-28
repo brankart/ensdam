@@ -70,6 +70,7 @@ EnsStat : ensemble statistics
   module ensdam_meanstd : compute/update ensemble mean and standard deviation
   module ensdam_covariance : compute/update ensemble covariance/correlation
 EnsUpdate : ensemble observational update
+  module ensdam_mcmc_update : MCMC ensemble observational update
 InterpTools : interpolation tools
   module ensdam_interp : locate/interpolate in 1D/2D grids (cartesian or spherical coordinates)
 ObsError : observation error
