@@ -16,7 +16,7 @@ to illustrating the TranSpHO modules.
 ### Example: mcmc_ensemble_update
 
 The parameter file is `mcmc_ensemble_update_parameters.h90`,
-which points to `mcmc_ensemble_update_obs100err20loc06.h90`.
+(pointing to `mcmc_ensemble_update_obs100err20loc06.h90`).
 This corresponds to the parameters used in the reference example
 described in the paper.
 
