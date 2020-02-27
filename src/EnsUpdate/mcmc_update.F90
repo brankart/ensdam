@@ -37,6 +37,8 @@ MODULE ensdam_mcmc_update
       INTEGER, PUBLIC, SAVE :: mcmc_convergence_check=1000   ! Number of iterations between convergence checks
       LOGICAL, PUBLIC, SAVE :: mcmc_convergence_stop=.FALSE. ! Stop iterating at convergence
       INTEGER, PUBLIC, SAVE :: mcmc_member_test=1  ! Number of test to perform with the same Schur product
+      LOGICAL, PUBLIC, SAVE :: mcmc_proposal=.FALSE. ! Input is a proposal distribution, not a prior ensemble
+      REAL(KIND=8), PUBLIC, SAVE :: mcmc_proposal_std=1._8 ! Standard deviation of proposal distribution
 
 #if defined MPI
       ! Public definitions for MPI
@@ -306,8 +308,18 @@ MODULE ensdam_mcmc_update
 #if defined MPI
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
-              beta = 1. / SQRT(REAL(mcmc_index,8))
-              alpha = SQRT( 1. - beta*beta )
+              ! select proposal distribution
+              IF (mcmc_proposal) THEN
+                ! assuming that the input is the proposal distribution
+                alpha = 1._8
+                beta = mcmc_proposal_std
+              ELSE
+                ! assuming that the input is a prior ensemble to update
+                beta = 1._8 / SQRT(REAL(mcmc_index,8))
+                alpha = SQRT( 1._8 - beta*beta )
+              ENDIF
+
+              ! get draw from proposal distribution
               vtest = alpha * upens(:,jup) + beta * coefficient * vtest
 
               IF ( accept_new_draw( vtest, jup ) ) THEN
