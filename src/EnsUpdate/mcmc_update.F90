@@ -33,6 +33,7 @@ MODULE ensdam_mcmc_update
 
       ! Public variables parameterizing the behaviour of the MCMC chain
       INTEGER, PUBLIC, SAVE :: mcmc_index=1  ! Current iteration index in MCMC chain (intialized to 1)
+      LOGICAL, PUBLIC, SAVE :: mcmc_zero_start=.TRUE. ! Start MCMC chains from zero
       INTEGER, PUBLIC, SAVE :: mcmc_control_print=1000  ! Number of iterations between control prints
       INTEGER, PUBLIC, SAVE :: mcmc_convergence_check=1000   ! Number of iterations between convergence checks
       LOGICAL, PUBLIC, SAVE :: mcmc_convergence_stop=.FALSE. ! Stop iterating at convergence
@@ -208,7 +209,7 @@ MODULE ensdam_mcmc_update
         IF (mcmc_index.EQ.1) THEN
 
           ! Initialize the ensemble of Markov chains
-          upens = 0.
+          IF (mcmc_zero_start) upens = 0.
 
           ! Allocate cost function (one for each chain)
           IF (allocated(cost_jo_saved)) deallocate(cost_jo_saved)
