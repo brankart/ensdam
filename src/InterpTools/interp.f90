@@ -31,6 +31,7 @@
         PUBLIC grid2D_init
         PUBLIC grid2D_locate
         PUBLIC grid2D_interp
+        PUBLIC sph_dist
 
         LOGICAL, SAVE :: periodic = .TRUE. ! periodic search in 2D grid
         CHARACTER(len=20) :: grid_type = 'cartesian' ! type of 2D grid
