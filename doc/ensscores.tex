@@ -36,7 +36,7 @@
 {\large\bf Jean-Michel Brankart}
 
 \vspace{5mm}
-{\tt http://pp.ige-grenoble.fr/pageperso/brankarj/}
+{\tt https://github.com/brankart/ensdam}
 
 \vspace{5mm}
 {\large Institut des G\'eosciences de l'Environnement}
@@ -48,23 +48,31 @@
 
 \vspace{20mm}
 The purpose of EnsScores is to provide tools
-to compute probabilistic scores of ensemble simulations.
-The scores evaluates the reliability and the resolution of the simulation
+to compute probabilistic scores for ensemble simulations.
+The scores evaluates the reliability and/or the resolution of an ensemble simulation
 by comparison to verification data.
+For posterior ensembles (conditioned to obervations),
+there is also a score to evaluate the optimality of the result,
+by testing its compatibility with observation uncertainty.
 
 The tools are provided as a library of modules,
-which can be easily plugged in any existing software.
+which can be easily plugged in an existing software.
 This library includes:
 
 \begin{itemize}
 \item the computation of the Continuous Rank Probability Score (CRPS);
 \item the computation of the Reduced Centered Random variable (RCRV) score;
-\item the computation of scores based on the relative entropy of user-defined events.
+\item the computation of scores based on the relative entropy of user-defined events;
+\item the computation of an optimality score for posterior ensembles.
 \end{itemize}
 
 \clearpage
 
 \pagestyle{plain}
+
+\section{Description of the methods}
+
+\clearpage
 
 \section{Description of the modules}
 
@@ -85,24 +93,32 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{Method}
 
+The algorithm loops on the verification data,
+to accumulate the contribution of each of them
+(in the intermediate arrays {\tt aa} and {\tt bb}),
+and then compute the overal CRPS score,
+together with the reliability and resolution components.
+
 \subsubsection*{Public variables}
 
 \begin{description}
-\item[mpi\_comm\_score\_crps] MPI communicator to use (default=mpi\_comm\_world).
-\item[crps\_missing\_value] missing value to use where no valid data is available (default=-9999.).
+\item[mpi\_comm\_score\_crps:] MPI communicator to use (default=mpi\_comm\_world).
+\item[crps\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
 \end{description}
 
 \subsubsection*{Public routines}
 
 \begin{description}
-\item[crps\_score:] compute CRPS score (with option to partition the data):
+\item[crps\_score:] compute CRPS score (with an option to partition the data
+                    and compute the score for each subset of data):
   \begin{description}
   \item[{\tt crps} (output)]: CRPS score for each subset of data;
   \item[{\tt reliability} (output)]: reliability part of CRPS;
   \item[{\tt resolution} (output)]: resolution part of CRPS;
   \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to verification data);
   \item[{\tt verif} (input)]: verification data;
-  \item[{\tt partition} (input, optional)]: partition of verification data.
+  \item[{\tt partition} (input, optional)]: partition of verification data
+                                  (giving the index of the subset for each element of the data).
   \end{description}
 \item[crps\_cumul:] accumulate data to prepare the final computation of the score
                     (for advanced use, if the full ensemble is only made progressively available).
@@ -112,7 +128,17 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{MPI parallelization}
 
+Parallelization is obtained by making each processor call the routine
+for a different chunk of the verification data.
+The routine combines the contributions from all processors
+to compute a global score.
+
 \subsubsection*{Computational cost}
+
+The cost mainly results from the sorting of the ensemble members
+for each variable in the verification data.
+It is thus proportional to $n m \log_2 m$,
+if $m$ is the size of the ensemble and $n$, the size of the verification dataset.
 
 \subsection{Module: {\tt\bf score\_rcrv}}
 
@@ -121,25 +147,37 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{Method}
 
+The algorithm loops on the verification data,
+to accumulate the contribution of each of them
+(to the reduced bias and reduce spread),
+and then compute the overal RCRV score
+(bias component and spread component).
+If the anamorphosis option is activated (see below),
+the reduced variable (zero mean, unit standard deviation, Gaussian distribution)
+is obtained by anamorphosis (using quantiles of the input ensemble)
+rather than center/reduction (using the ensemble mean and standard deviation).
+
 \subsubsection*{Public variables}
 
 \begin{description}
-\item[mpi\_comm\_score\_rcrv] MPI communicator to use (default=mpi\_comm\_world).
-\item[rcrv\_missing\_value] missing value to use where no valid data is available (default=-9999.).
-\item[rcrv\_with\_anamorphosis] use anamorphosis to compute reduced variable (default=.FALSE.).
-\item[rcrv\_number\_of\_quantiles] number of quantiles to perform anamorphosis (default=11).
+\item[mpi\_comm\_score\_rcrv:] MPI communicator to use (default=mpi\_comm\_world).
+\item[rcrv\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
+\item[rcrv\_with\_anamorphosis:] use anamorphosis to compute reduced variable (default=.FALSE.).
+\item[rcrv\_number\_of\_quantiles:] number of quantiles to perform anamorphosis (default=11).
 \end{description}
 
 \subsubsection*{Public routines}
 
 \begin{description}
-\item[rcrv\_score:] compute RCRV score (with option to partition the data):
+\item[rcrv\_score:] compute RCRV score (with an option to partition the data
+                    and compute the score for each subset of data):
   \begin{description}
   \item[{\tt ens\_bias} (output)]: bias component of RCRV (should be 0);
   \item[{\tt ens\_spread} (output)]: spread component of RCRV (should be 1);
   \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to verification data);
-  \item[{\tt verif} (input)]: verification data;
-  \item[{\tt partition} (input, optional)]: partition of verification data.
+  \item[{\tt verif} (input)]: verification data.
+  \item[{\tt partition} (input, optional)]: partition of verification data
+                                  (giving the index of the subset for each element of the data).
   \end{description}
 \item[rcrv\_cumul:] accumulate data to prepare the final computation of the score
                     (for advanced use, if the full ensemble is only made progressively available).
@@ -147,7 +185,21 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{MPI parallelization}
 
+Parallelization is obtained by making each processor call the routine
+for a different chunk of the verification data.
+The routine combines the contributions from all processors
+to compute a global score.
+
 \subsubsection*{Computational cost}
+
+Without anamorphosis, the cost grows linearly with the ensemble size ($m$)
+and the size of the verification dataset ($n$).
+It is thus proportional to $n m$.
+
+\noindent
+With anamorphosis, the cost mainly results from the sorting of the ensemble members
+for each variable in the verification data (to compute the quantiles).
+It is thus proportional to $n m \log_2 m$.
 
 \subsection{Module: {\tt\bf score\_entropy}}
 
@@ -156,11 +208,36 @@ scores based on the relative entropy of user-defined events.
 
 \subsubsection*{Method}
 
+To use this module, the user must provide a routine
+computing the outcome of one or several events from a given ensemble member.
+It is provided as the callback routine {\tt events\_outcome} (see below).
+The events must be discrete, with a finite number of possible outcomes
+({\tt jpo}, which should be much smaller than the ensemble size).
+The callback routine must provide the index of the outcome (between 1 and {\tt jpo}) for each event.
+From this routine, the module can then compute:
+
+\begin{itemize}
+\item the probability distribution of the events in a given ensemble (routine {\tt events\_probability}):
+this is just computed as the number of members with a given outcome, divided by the size of the ensemble;
+\item the entropy associated to each event in a given ensemble (routine {\tt events\_entropy}),
+which can be directly computed from the probability distribution;
+\item the cross entropy between the ensemble distribution and a reference distribution
+provided by the user (routine {\tt events\_cross\_entropy});
+\item the relative entropy between the ensemble distribution and a reference distribution
+provided by the user (routine {\tt events\_relative\_entropy});
+\item a score (between 0 and 1) describing the gain obtained for each event,
+as compared to the reference distribution (routine {\tt events\_scores}),
+which is computed as the ratio between entropy and cross entropy.
+\end{itemize}
+
+\noindent
+For example, the reference distribution can be a climatological distribution or a prior distribution.
+The score describes the gain in resolution provided by the ensemble as compared to this distribution.
+
 \subsubsection*{Public variables}
 
 \begin{description}
-\item[mpi\_comm\_score\_entropy] MPI communicator to use (default=mpi\_comm\_world).
-\item[score\_entropy\_base] base to use in the computation of logarithms (default=2.).
+\item[score\_entropy\_base:] base to use in the computation of logarithms (default=2.).
 \end{description}
 
 \subsubsection*{Public routines}
@@ -209,7 +286,70 @@ scores based on the relative entropy of user-defined events.
 
 \subsubsection*{MPI parallelization}
 
+No parallelization is implemented.
+
 \subsubsection*{Computational cost}
+
+The cost mainly depends on the evaluation of the outcome of an event
+in the callback routine provided by the user.
+This routine is called for each ensemble member.
+
+\subsection{Module: {\tt\bf score\_optimality}}
+
+The purpose of this module is to compute a score
+evaluating the optimality of a posterior ensemble
+by comparison to observations.
+
+\subsubsection*{Method}
+
+The algorithm loops on the observation data
+to accumulate the contribution of each of them
+(a `normalized distance' between each observation and each ensemble member)
+and then compute the overal optimality score.
+The computation of this `normalized distance' requires an evaluation
+of the observation error cdf and the inverse Gaussian cdf.
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[mpi\_comm\_score\_optimality:] MPI communicator to use (default=mpi\_comm\_world).
+\item[optimality\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[optimality\_score:] compute optimality score (with an option to partition the data
+                    and compute the score for each subset of data):
+  \begin{description}
+  \item[{\tt ens\_optimality} (output)]: optimality score (should be 1);
+  \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to observations);
+  \item[{\tt obs} (input)]: observation data;
+  \item[{\tt partition} (input, optional)]: partition of observation data
+                                  (giving the index of the subset for each element of the data);
+  \item[{\tt obs\_cdf} (input)]: callback routine providing the cdf of observation errors.
+  \end{description}
+\item[optimality\_cumul:] accumulate data to prepare the final computation of the score
+                    (for advanced use, if the full ensemble is only made progressively available).
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+Parallelization is obtained by making each processor call the routine
+for a different chunk of the verification data.
+The routine combines the contributions from all processors
+to compute a global score.
+
+\subsubsection*{Computational cost}
+
+The cost mainly depends on the evaluation of the observation error cdf
+(callback routine provided by the user) and the inverse Gaussian cdf.
+The number of calls of these two routines is $n m$,
+where $n$ is the number of observations and $m$, the ensemble size.
+
+\clearpage
+
+\section{Examples}
 
 \end{document}
 

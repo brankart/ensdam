@@ -36,13 +36,6 @@ MODULE ensdam_score_entropy
       ! Public variables parameterizing entropy unit
       REAL(KIND=8), PUBLIC, SAVE :: score_entropy_base=2.  ! Default = base 2 logarithm
 
-      ! Definition for MPI
-#if defined MPI
-      include "mpif.h"
-      INTEGER, PUBLIC, SAVE  :: mpi_comm_score_entropy=mpi_comm_world   ! definition of module global communicator
-      INTEGER, SAVE :: mpi_code
-#endif
-
       ! Module private definition of callback routine providing the outcome of events
       INTERFACE
         SUBROUTINE callback_events_outcome(member,outcome)
