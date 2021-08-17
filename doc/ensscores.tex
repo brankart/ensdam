@@ -72,6 +72,140 @@ This library includes:
 
 \section{Description of the methods}
 
+The standard protocol to evaluate the performance of ensemble simulations
+is to measure the {\em reliability} and the {\em resolution} of the ensemble
+using {\em verification data} \citep{TOTH03,CAND05,CAND07}.
+These scores can be used to compare ensemble forecasting systems,
+ensemble analyses, or to evaluate the impact of observations in these systems
+(using observation system simulation experiments).
+In the case of a posterior ensemble (conditioned on observations),
+it is also possible to check that the observations have been used optimally.
+A necessary condition of {\em optimality} is indeed that the distance
+between the observations and the ensemble members
+is compatible with the probability distribution of observation errors.
+
+\subsection{Reliability}
+
+Reliability is a measure of the consistency between the ensemble and the verification data.
+The idea is to check the hypothesis that the verification data
+are drawn from the same probability distribution as the ensemble members.
+For instance, a necessary condition of reliability is that
+verification data have the same probability to fall in every interval
+defined by the ensemble members.
+This can be checked by drawing a {\em rank histogram} of the verification data \citep{ANDE96},
+as used and described for instance in \citet{CAND15} or \citet{GARN16}.
+
+To obtain a more compact score, we can center/reduce
+the verification data with the ensemble mean and ensemble standard deviation.
+A necessary condition of reliability (less stringent than the rank histogram) is then that
+this Reduced Centered Random Variable (RCRV) has zero mean and unit standard deviation.
+This is what is checked by the RCRV score \citep{CAND07},
+as computed by the {\tt\bf score\_rcrv} module of this package.
+
+The Continuous Rank Probability Score (CRPS),
+as computed by the {\tt\bf score\_crps} module of this package.
+also provides an evaluation of reliability
+using the decomposition of the score into reliability and resolution,
+as described in \citet{HERS94}: CRPS = Reli + Resol.
+In this case, it is important to check that the reliability component
+of the CRPS is much smaller than the resolution component.
+
+Reliability is indeed the most important feature of an ensemble simulation.
+There is no point having good resolution or optimality scores
+if the ensemble is not reliable.
+
+\subsection{Resolution}
+
+Resolution is a measure of the accuracy of the ensemble,
+or the amount of information that it provides about the system.
+For instance, if the ensemble is perfectly reliable,
+a small ensemble spread will provide a better resolution
+than a large ensemble spread.
+
+The Continuous Rank Probability Score (CRPS),
+as computed by the {\tt\bf score\_crps} module of this package.
+provides an evaluation of resolution that complements
+the reliability component to explain the total CRPS score.
+The total CRPS score is a measure of the misfit between the Cumulative Distribution Functions (cdf)
+described by the ensemble (stepwise cdf) and the verification data (Heavside cdf).
+For a perfectly reliable ensemble (Reli=0), this misfit (i.e. the total CRPS score)
+is only due to the ensemble spread.
+For an ensemble without spread, this misfit is only due to a shift
+between the zero-spread ensemble and the verification data
+(a very bad reliability, unless this shift if zero).
+
+Providing that reliability has been verified,
+information theory can also provide means of evaluating
+the resolution of an ensemble simulation
+in terms of the amount of information that it provides about specific events \citep{ROUL02}.
+From the probability distribution of an event described by the ensemble,
+it is for instance possible to evaluate how much information
+has been gained as compared to a climatological distribution
+or as compared to a prior distribution.
+This is the purpose of the  {\tt\bf score\_entropy} module of this package,
+which implements the method described in \citep{GERM19}.
+In this paper, the method was used in the context
+of an Observation System Simulation Experiment,
+to evaluate how much information was gained about specific events
+for different quality of observation systems
+(in terms of coverage and accuracy).
+
+\subsection{Optimality}
+
+When a prior ensemble is conditioned to observations
+to produce a posterior ensemble,
+what is expected from the observational update is
+that the resolution can be improved (by the information brought
+by the observations), without degrading reliability.
+These scores tell us how much the updated ensemble has improved
+as compared to the prior ensemble.
+However, they do not tell us if we made the best possible use of the available observations.
+Is the updated ensemble close enough to observations
+to be consistent with the probability distribution of observation errors?
+
+To evaluate this, we can use the optimality score proposed in \citet{BRAN19},
+as implemented in the {\tt\bf score\_optimality} module of this package.
+In short, this score is obtained by computing the rank~$r_{ij}^o$
+of every observation~$y^o_j,\,j=1,\ldots,p$ in the probability
+distribution for observation errors~$p(y^o_j|{\bf x}_i)$,
+conditioned on every member~${\bf x}_i,\,i=1,\ldots,m$ of the ensemble.
+If optimality is achieved, this rank is uniformly distributed between 0 and~1.
+To obtain a single score, we transform this uniform number
+into a ${\mathcal N}(0,1)$ number, and take the mean square.
+This defines the optimality score, which is expected to be equal to~1
+(for $p\rightarrow\infty$ and $m\rightarrow\infty$).
+
+This score does not make any assumption on the probability distribution
+described by the ensemble or on observation error probability distribution.
+However, in the particular case of Gaussian distributions,
+the score is equivalent to computing the mean square misfit between the observations
+and all {\em individual ensemble members},
+and check that the result is equal to the observation error variance.
+In the Gaussian case, this mean square misfit can be decomposed as the sum
+of the variance of the residual error (ensemble spread)
+and the mean square observation misfit with the ensemble mean \citep{TALA99}.
+The more observational information, the smaller the ensemble spread,
+and the larger the observation misfit to the ensemble mean.
+It is indeed the sum of these two components that must be equal to the observation error variance.
+By looking at the misfit between observations and individual ensemble members (rather than the ensemble mean),
+we can directly compare to the observation error distribution
+and generalize the optimality check to non-Gaussian distributions.
+
+\subsection{About verification data}
+
+In the above discussion, it was assumed that the verification data are error free,
+as can be the case in twin assimilation experiments or
+in observation system simulation experiments.
+In this case, the reliability of the ensemble
+can be evaluated directly using the modules provided in this package.
+
+However, if the verification data are observations,
+the observation equivalent of the ensemble members
+must be perturbed with a random observation error
+before checking reliability (with a rank histogram or the RCRV score).
+This can be very important if observation errors are not negligible
+as compared to the spread of the ensemble.
+
 \clearpage
 
 \section{Description of the modules}
@@ -350,6 +484,117 @@ where $n$ is the number of observations and $m$, the ensemble size.
 \clearpage
 
 \section{Examples}
+
+Two examples are provided to illustrate these modules:
+(i)~a very simple idealized example illustrating how to call the routines,
+and how the results can depend on the number of verification data or the size of the ensemble, and
+(ii)~a more sophisticated example, which corresponds to the use of these modules
+to evaluate the MCMC sampler in \citep{BRAN19}.
+
+\subsection{A simple idealized test case}
+
+The code for this example is {\tt\bf score\_idealized\_example}.
+It illustrates all score modules: {\tt\bf scor\_crps}, {\tt\bf scor\_rcrv},
+{\tt\bf scor\_entropy} and {\tt\bf scor\_optimality}.
+
+In this example, a synthetic ensemble is generated
+by sampling independent Gaussian random number
+with zero mean and unit standard deviation.
+The size of the state vector is~$n=1000$ and the ensemble size is~$m=100$.
+The use of independent variables is overly simplistic,
+but it is sufficient to illustrate the computation of the scores,
+since all methods proceed in the same way
+whether the variables are independent or not.
+
+One additional ensemble member is drawn from the same distribution
+to be used as the reference truth.
+This reference truth is used to generate one pseudo-observation
+for each of the variables, with an error standard deviation equal to~$\sigma=0.1$.
+A posterior ensemble is then computed by conditioning the prior ensemble
+to these pseudo-observations.
+
+All modules are then used to evaluate the reliability, resolution
+and optimality of the prior and posterior ensemble,
+using the reference truth as verification data for reliability and resolution.
+It is then easy to see how the statistics of the scores
+can change with $n$, $m$ and~$\sigma$ in the case of independent variables.
+On can also check how the score deteriorates
+when the reference truth is sampled from a distribution
+that is different from the prior ensemble, or
+when the observational update is made non-optimal
+(for instance using a wrong parameterization of observation errors).
+
+\subsection{Evaluation of the MCMC sampler}
+
+The code for this example is {\tt\bf mcmc\_ensemble\_update}.
+It uses the score modules: {\tt\bf scor\_crps} and {\tt\bf scor\_optimality}.
+
+This code is an implementation of the work done in \citep{BRAN19}.
+Refer to this paper to understand what is done in the code.
+
+The score modules are used to evaluate the ensemble
+that results from the application of the MCMC sampler.
+Calls to the routines to evaluate reliability, resolution and optimality
+of the ensemble can be found in the code and the results
+are displayed in the figures of the paper.
+
+\clearpage
+
+\begin{thebibliography}{}
+
+\bibitem[{Anderson(1996)}]{ANDE96}
+Anderson J. 1996. A method for producing and evaluating probabilistic forecasts from ensemble model integrations. {\it J. Climate}, {\bf 9}, 1518--1530.
+
+\bibitem[Brankart(2019)]{BRAN19}
+Brankart J.-M., 2019:
+Implicitly Localized MCMC Sampler to Cope
+With Non-local/Non-linear Data Constraints in Large-Size Inverse Problems.
+\textit{Front. Appl. Math. Stat.}, 5:58.
+
+\bibitem[{Candille and Talagrand(2005)}]{CAND05}
+Candille G., and O. Talagrand, 2005:
+Evaluation of probabilistic prediction systems for a scalar variable.
+{\it Quart. J. Roy. Meteor. Soc.}, {\bf 131}, 2131--2150.
+
+\bibitem[Candille et al.(2007)]{CAND07}
+Candille G., C. C\^ot\'e, P. L. Houtekamer, and G. Pellerin, 2007:
+Verification of an ensemble prediction system against observations.
+{\it Mon. Wea. Rev.}, {\bf 135}, 2688--2699.
+
+\bibitem[Candille et al.(2015)]{CAND15}
+Candille G., J.-M. Brankart, and P. Brasseur, 2015:
+Assessment of an ensemble system that assimilates Jason-1/Envisat altimeter data
+in a probabilistic model of the North Atlantic ocean circulation.
+\textit{Ocean Science}, \textbf{11}, 425--438.
+
+\bibitem[Garnier et al.(2016)]{GARN16}
+Garnier F., J.-M. Brankart, P. Brasseur and E. Cosme, 2016:
+Stochastic parameterizations of biogeochemical uncertainties
+in a 1/4$^\circ$ NEMO/PISCES model for probabilistic comparisons
+with ocean color data.
+\textit{Journal of Marine Systems}, \textbf{155}, 59--72.
+
+\bibitem[Germineaud et al.(2019)]{GERM19}
+Germineaud, C., J.-M. Brankart, and P. Brasseur, 2019: An Ensemble-Based Probabilistic Score Approach to Compare Observation Scenarios: An Application to Biogeochemical-Argo Deployments. J. Atmos. Oceanic Technol., 36, 2307-2326.
+
+\bibitem[{Hersbach(1994)}]{HERS94}
+Hersbach H., 2000:
+Decomposition of the continuous ranked probability score for ensemble prediction systems.
+\textit{Wea. Forecasting}, \textbf{15}, 559--570.
+
+\bibitem[{Roulston and Smith(2002)}]{ROUL02}
+Roulston M. S. and L. Smith, 2002. Evaluating probabilistic forecast using information theory. {\it Mon. Wea. Review}, {\bf 130}, 1653--1660.
+
+\bibitem[Talagrand(1999)]{TALA99}
+Talagrand, O., 1999:
+A posteriori verification of analysis and assimilation algorithms,
+in: Workshop on diagnosis of data assimilation systems,
+2--4 November 1998, ECMWF, Reading, UK, 1999.
+
+\bibitem[Toth et al.(2003)]{TOTH03}
+Toth Z., O. Talagrand, G. Candille, and Y. Zhu. 2003. Probability and ensemble forecasts,  in Forecast Verification: A Practitioner's Guide in Atmospheric Science, Jolliffe I. and D. B. Stephenson (eds), Wiley: UK. ISBN: 0-471-49 759-2, 137--163.
+
+\end{thebibliography}
 
 \end{document}
 
