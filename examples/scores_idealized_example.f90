@@ -3,6 +3,7 @@ program scores_idealized_example
   use ensdam_score_rcrv
   use ensdam_score_entropy
   use ensdam_score_optimality
+  use ensdam_storng
   use ensdam_obserror
   implicit none
 
