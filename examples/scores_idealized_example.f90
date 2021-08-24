@@ -89,15 +89,15 @@ contains
   integer(kind=8), dimension(2) :: outcome  ! events outcome
 
   if (maxval(abs(x))<1.) then
-    binary_event_outcomes(1) = 1
+    outcome(1) = 1
   else
-    binary_event_outcomes(1) = 2
+    outcome(1) = 2
   endif
 
   if (maxval(abs(x))<1.) then
-    binary_event_outcomes(2) = 1
+    outcome(2) = 1
   else
-    binary_event_outcomes(2) = 2
+    outcome(2) = 2
   endif
 
   end function binary_event_outcomes
