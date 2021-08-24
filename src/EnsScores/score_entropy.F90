@@ -255,6 +255,7 @@ MODULE ensdam_score_entropy
         allocate( outcome(jpe), stat=allocstat )
         IF (allocstat.NE.0) STOP 'Allocation error in score_entropy'
 
+        pens =0.
         DO jm=1,jpm
           CALL events_outcome(ens(:,jm),outcome)
           IF (MINVAL(outcome).LT.1)   STOP 'Bad event outcome in score_entropy'
