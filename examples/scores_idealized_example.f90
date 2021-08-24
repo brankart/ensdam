@@ -100,7 +100,7 @@ contains
     outcome(2) = 2
   endif
 
-  end function binary_event_outcomes
+  end subroutine binary_event_outcomes
 
 
   ! Callback routine to compute observation error cdf:
