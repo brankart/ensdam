@@ -85,8 +85,8 @@ contains
   ! for a given ensemble member
   subroutine binary_event_outcomes(x,outcome)
   implicit none
-  integer, dimension(:), intent(in) :: x    ! ensemble member
-  integer(kind=8), dimension(2) :: outcome  ! events outcome
+  real(kind=8), dimension(:), intent(in) :: x    ! ensemble member
+  integer, dimension(:) :: outcome  ! events outcome
 
   if (maxval(abs(x))<1.) then
     outcome(1) = 1
