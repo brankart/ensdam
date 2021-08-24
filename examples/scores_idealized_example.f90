@@ -27,7 +27,7 @@ program scores_idealized_example
 
   ! Sample prior ensemble from N(0,I) distribution
   do i=1,n
-  do j=1,n
+  do j=1,m
     call kiss_gaussian(prior_ensemble(i,j))
   enddo
   enddo
