@@ -83,10 +83,10 @@ contains
 
   ! Callback routine to the outcome of the user defined events
   ! for a given ensemble member
-  function binary_event_outcomes(x)
+  subroutine binary_event_outcomes(x,outcome)
   implicit none
-  integer, dimension(:), intent(in) :: x  ! ensemble member
-  integer(kind=8), dimension(2) :: binary_event_outcomes
+  integer, dimension(:), intent(in) :: x    ! ensemble member
+  integer(kind=8), dimension(2) :: outcome  ! events outcome
 
   if (maxval(abs(x))<1.) then
     binary_event_outcomes(1) = 1
