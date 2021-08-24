@@ -28,8 +28,12 @@ program scores_idealized_example
   integer :: nproc=1  ! Number of processors
   integer :: iproc=0  ! Current processor index
 
-  ! Initialize parallel computation (so that the example is compatible with MPI version of the library)
 #if defined MPI
+  ! Definition to make the example compatible with MPI version of the library
+  include "mpif.h"
+  integer, save :: mpi_code
+
+  ! Initialize parallel computation
   call mpi_init(mpi_code)
   call mpi_comm_size(mpi_comm_world,nproc,mpi_code)
   call mpi_comm_rank(mpi_comm_world,iproc,mpi_code)
