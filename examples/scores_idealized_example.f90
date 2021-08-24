@@ -86,7 +86,7 @@ contains
   subroutine binary_event_outcomes(x,outcome)
   implicit none
   real(kind=8), dimension(:), intent(in) :: x    ! ensemble member
-  integer, dimension(:) :: outcome  ! events outcome
+  integer, dimension(:), intent(out) :: outcome  ! events outcome
 
   if (maxval(abs(x))<1.) then
     outcome(1) = 1
