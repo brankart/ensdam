@@ -25,6 +25,16 @@ program scores_idealized_example
 
   integer :: i, j    ! array indices
 
+  integer :: nproc=1  ! Number of processors
+  integer :: iproc=0  ! Current processor index
+
+  ! Initialize parallel computation (so that the example is compatible with MPI version of the library)
+#if defined MPI
+  call mpi_init(mpi_code)
+  call mpi_comm_size(mpi_comm_world,nproc,mpi_code)
+  call mpi_comm_rank(mpi_comm_world,iproc,mpi_code)
+#endif
+
   ! Sample prior ensemble from N(0,I) distribution
   do i=1,n
   do j=1,m
