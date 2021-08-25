@@ -17,7 +17,7 @@
 !
 !---------------------------------------------------------------------
 ! Computation of optimality score by comparing ensemble simulation to observations
-! by Jean-Michel Brankart, November 2018
+! by Jean-Michel Brankart, August 2021
 ! ----------------------------------------------------------------------
 ! List of routines/functions :
 ! ----------------------------
@@ -31,7 +31,8 @@ MODULE ensdam_score_optimality
       PUBLIC optimality_score, optimality_cumul
 
       INTERFACE optimality_score
-        MODULE PROCEDURE optimality_score_global, optimality_score_partition
+        MODULE PROCEDURE optimality_score_global, optimality_score_partition, &
+                       & optimality_score_global_gaussian, optimality_score_partition_gaussian
       END INTERFACE
 
       REAL(KIND=8), PUBLIC, SAVE  :: optimality_missing_value = -9999.
@@ -109,6 +110,54 @@ MODULE ensdam_score_optimality
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+      SUBROUTINE optimality_score_global_gaussian( ens_optimality, ens, obs, std_obs )
+!----------------------------------------------------------------------
+! ** Purpose :   compute optimality score
+!
+! ** Arguments :
+!         ens  : ensemble to evaluate (equivalent to observation data)
+!         obs  : observation data
+!         std_obs  : observation error standard deviation
+!         ens_optimality : optimality score (should be 1)
+!----------------------------------------------------------------------
+      IMPLICIT NONE
+      REAL(KIND=8), INTENT( out ) :: ens_optimality
+      REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
+      REAL(KIND=8), DIMENSION(:), INTENT( in ) :: obs
+      REAL(KIND=8), DIMENSION(:), INTENT( in ) :: std_obs
+
+      REAL(KIND=8) :: misfit
+      INTEGER :: jpi,jpm,nbr,ji,jm
+
+      jpi = SIZE(ens,1)  ! Size of state vector
+      jpm = SIZE(ens,2)  ! Size of ensemble
+
+      IF (SIZE(obs,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
+      IF (SIZE(std_obs,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
+
+      ens_optimality = 0. ; nbr = 0
+
+      DO jm=1,jpm
+      DO ji=1,jpi
+        nbr = nbr + 1
+        misfit = ( obs(ji) - ens(ji,jm) ) / std_obs(ji)
+        ens_optimality = ens_optimality + misfit * misfit
+      ENDDO
+      ENDDO
+
+#if defined MPI
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality, 1, MPI_DOUBLE_PRECISION,  &
+                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, nbr, 1, MPI_INTEGER,  &
+                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
+#endif
+
+      IF (nbr.GT.0) ens_optimality = SQRT( ens_optimality / nbr )
+
+      END SUBROUTINE optimality_score_global_gaussian
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+! --------------------------------------------------------------------
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
       SUBROUTINE optimality_score_partition( ens_optimality, ens, obs, partition, cdf_obs )
 !----------------------------------------------------------------------
 ! ** Purpose :   compute optimality score with partition of the data)
@@ -173,6 +222,72 @@ MODULE ensdam_score_optimality
       ENDWHERE
 
       END SUBROUTINE optimality_score_partition
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+! --------------------------------------------------------------------
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+      SUBROUTINE optimality_score_partition_gaussian( ens_optimality, ens, obs, std_obs, partition )
+!----------------------------------------------------------------------
+! ** Purpose :   compute optimality score with partition of the data)
+!
+! ** Arguments :
+!         ens  : ensemble to evaluate (equivalent to observation data)
+!         obs  : observation data
+!         std_obs  : observation error standard deviation
+!         ens_optimality : optimality score (should be 1)
+!         partition   : partition of observation data
+!----------------------------------------------------------------------
+      IMPLICIT NONE
+      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: ens_optimality
+      REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
+      REAL(KIND=8), DIMENSION(:), INTENT( in ) :: obs
+      REAL(KIND=8), DIMENSION(:), INTENT( in ) :: std_obs
+      INTEGER, DIMENSION(:), INTENT( in ) :: partition
+
+      REAL(KIND=8) :: misfit
+      INTEGER :: jpi,jpm,submin,submax,jsub,ji,jm,allocstat
+      REAL(KIND=8), DIMENSION(:,:), allocatable :: aa,bb
+      INTEGER, DIMENSION(:), allocatable :: nbr
+
+      jpi = SIZE(ens,1)  ! Size of state vector
+      jpm = SIZE(ens,2)  ! Size of ensemble
+
+      IF (SIZE(obs,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
+      IF (SIZE(std_obs,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
+      IF (SIZE(partition,1).NE.jpi) STOP 'Inconsistent size in score_optimality'
+
+      submin = MINVAL(partition)  ! Maximum index of subdomains in observation data
+      submax = MAXVAL(partition)  ! Maximum index of subdomains in observation data
+
+      IF (LBOUND(ens_optimality,1).NE.submin) STOP 'Inconsistent array bounds in score_optimality'
+      IF (UBOUND(ens_optimality,1).NE.submax) STOP 'Inconsistent array bounds in score_optimality'
+
+      allocate( nbr(submin:submax), stat=allocstat )
+      IF (allocstat.NE.0) STOP 'Allocation error in score_optimality'
+
+      ens_optimality = 0. ; nbr = 0
+
+      DO jm=1,jpm
+      DO ji=1,jpi
+        nbr(partition(ji)) = nbr(partition(ji)) + 1
+        misfit = ( obs(ji) - ens(ji,jm) ) / std_obs(ji)
+        ens_optimality(partition(ji)) = ens_optimality(partition(ji)) + misfit * misfit
+      ENDDO
+      ENDDO
+
+#if defined MPI
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, ens_optimality, submax-submin+1, MPI_DOUBLE_PRECISION,  &
+                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
+      CALL MPI_ALLREDUCE (MPI_IN_PLACE, nbr, submax-submin+1, MPI_INTEGER,  &
+                      &     MPI_SUM,mpi_comm_score_optimality,mpi_code)
+#endif
+
+      WHERE (nbr.GT.0)
+        ens_optimality = SQRT( ens_optimality / nbr )
+      ELSEWHERE
+        ens_optimality = optimality_missing_value
+      ENDWHERE
+
+      END SUBROUTINE optimality_score_partition_gaussian
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
