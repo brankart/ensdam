@@ -51,7 +51,7 @@ The purpose of EnsScores is to provide tools
 to compute probabilistic scores for ensemble simulations.
 The scores evaluates the reliability and/or the resolution of an ensemble simulation
 by comparison to verification data.
-For posterior ensembles (conditioned to obervations),
+For posterior ensembles (conditioned to observations),
 there is also a score to evaluate the optimality of the result,
 by testing its compatibility with observation uncertainty.
 
@@ -103,10 +103,10 @@ This is what is checked by the RCRV score \citep{CAND07},
 as computed by the {\tt\bf score\_rcrv} module of this package.
 
 The Continuous Rank Probability Score (CRPS),
-as computed by the {\tt\bf score\_crps} module of this package.
+as computed by the {\tt\bf score\_crps} module of this package,
 also provides an evaluation of reliability
 using the decomposition of the score into reliability and resolution,
-as described in \citet{HERS94}: CRPS = Reli + Resol.
+as described in \citet{HERS00}: CRPS = Reli + Resol.
 In this case, it is important to check that the reliability component
 of the CRPS is much smaller than the resolution component.
 
@@ -123,11 +123,13 @@ a small ensemble spread will provide a better resolution
 than a large ensemble spread.
 
 The Continuous Rank Probability Score (CRPS),
-as computed by the {\tt\bf score\_crps} module of this package.
+as computed by the {\tt\bf score\_crps} module of this package,
 provides an evaluation of resolution that complements
 the reliability component to explain the total CRPS score.
 The total CRPS score is a measure of the misfit between the Cumulative Distribution Functions (cdf)
 described by the ensemble (stepwise cdf) and the verification data (Heavside cdf).
+The score is thus expressed in the unit of the input variable,
+and the smaller the score, the better.
 For a perfectly reliable ensemble (Reli=0), this misfit (i.e. the total CRPS score)
 is only due to the ensemble spread.
 For an ensemble without spread, this misfit is only due to a shift
@@ -143,7 +145,7 @@ it is for instance possible to evaluate how much information
 has been gained as compared to a climatological distribution
 or as compared to a prior distribution.
 This is the purpose of the  {\tt\bf score\_entropy} module of this package,
-which implements the method described in \citep{GERM19}.
+which implements the method described in \citet{GERM19}.
 In this paper, the method was used in the context
 of an Observation System Simulation Experiment,
 to evaluate how much information was gained about specific events
@@ -193,7 +195,8 @@ and generalize the optimality check to non-Gaussian distributions.
 
 \subsection{About verification data}
 
-In the above discussion, it was assumed that the verification data are error free,
+In the above discussion about reliability and resolution,
+it was assumed that the verification data are error free,
 as can be the case in twin assimilation experiments or
 in observation system simulation experiments.
 In this case, the reliability of the ensemble
@@ -441,7 +444,11 @@ to accumulate the contribution of each of them
 (a `normalized distance' between each observation and each ensemble member)
 and then compute the overal optimality score.
 The computation of this `normalized distance' requires an evaluation
-of the observation error cdf and the inverse Gaussian cdf.
+of the observation error cdf (to compute the rank of the observation)
+and the inverse Gaussian cdf (to tranform this rank into a Gaussian number).
+In the case of Gaussian observation errors, this computation is simplified
+by computing the difference between each observation and each ensemble member,
+divided by the observation error standard deviation.
 
 \subsubsection*{Public variables}
 
@@ -461,7 +468,10 @@ of the observation error cdf and the inverse Gaussian cdf.
   \item[{\tt obs} (input)]: observation data;
   \item[{\tt partition} (input, optional)]: partition of observation data
                                   (giving the index of the subset for each element of the data);
-  \item[{\tt obs\_cdf} (input)]: callback routine providing the cdf of observation errors.
+  \item[{\tt std\_obs} or {\tt obs\_cdf} (input)]: standard deviation of observation errors
+                            (in the case of Gaussian observation errors) or
+                            callback routine providing the cdf of observation errors
+                            (in the case of non-Gaussian observation errors).
   \end{description}
 \item[optimality\_cumul:] accumulate data to prepare the final computation of the score
                     (for advanced use, if the full ensemble is only made progressively available).
@@ -489,7 +499,7 @@ Two examples are provided to illustrate these modules:
 (i)~a very simple idealized example illustrating how to call the routines,
 and how the results can depend on the number of verification data or the size of the ensemble, and
 (ii)~a more sophisticated example, which corresponds to the use of these modules
-to evaluate the MCMC sampler in \citep{BRAN19}.
+to evaluate the MCMC sampler in \citet{BRAN19}.
 
 \subsection{A simple idealized test case}
 
@@ -509,7 +519,7 @@ whether the variables are independent or not.
 One additional ensemble member is drawn from the same distribution
 to be used as the reference truth.
 This reference truth is used to generate one pseudo-observation
-for each of the variables, with an error standard deviation equal to~$\sigma=0.1$.
+for each of the variables, with an error standard deviation equal to~$\sigma=0.3$.
 A posterior ensemble is then computed by conditioning the prior ensemble
 to these pseudo-observations.
 
@@ -518,18 +528,126 @@ and optimality of the prior and posterior ensemble,
 using the reference truth as verification data for reliability and resolution.
 It is then easy to see how the statistics of the scores
 can change with $n$, $m$ and~$\sigma$ in the case of independent variables.
-On can also check how the score deteriorates
+One can also check how the score deteriorates
 when the reference truth is sampled from a distribution
 that is different from the prior ensemble, or
 when the observational update is made non-optimal
 (for instance using a wrong parameterization of observation errors).
+
+Two events that can occur in the ensemble members
+will be used to illustrate the behaviour of the entropy score:
+
+\begin{enumerate}
+\item The first event is defined from the mean square of the ensemble member: above or below~1.
+In a real system, this could be the energy in the system above or below a user-requested level.
+\item The second event is defined from the maximum absolute value of the ensemble member: above or below~3.3.
+In a real system, this could be the occurence of an extreme event above or below a user-requested level.
+\end{enumerate}
+
+\noindent
+These are two binary events which have two outcomes
+with a similar probability (close to 0.5) in the prior ensemble.
+There is thus no much prior information about them,
+and we can check how much information
+can be gained by the observations.
+
+\begin{itemize}
+\item
+With the default setting of the example code
+($m=100$, $n=1000$ and $\sigma=0.3$)
+and with an optimal observational update,
+the output of the example is the following:
+
+\begin{verbatim}
+Prior CRPS reliability and resolution:     0.00104 0.56067
+Posterior CRPS reliability and resolution: 0.00030 0.16223
+Prior RCRV bias and spread:      0.02900  0.99723
+Posterior RCRV bias and spread: -0.03375  1.00673
+Prior probability distribution (event 1):     0.480 0.520
+Prior probability distribution (event 2):     0.450 0.550
+Posterior probability distribution (event 1): 0.810 0.190
+Posterior probability distribution (event 2): 0.900 0.100
+Entropy score (posterior vs prior, event 1): 0.676
+Entropy score (posterior vs prior, event 2): 0.418
+Prior optimality score:     4.81227
+Posterior optimality score: 1.00351
+\end{verbatim}
+
+We see that reliability score is good in the prior ensemble (by construction),
+and the it does not get worse after the observational update (posterior ensemble).
+The resolution of the ensemble has been improved by the observations:
+the CRPS resolution is smaller in the posterior ensemble,
+and the entropy score also shows an improvement (score well below 1).
+The probability concentrates on the first outcome of the two events.
+The optimality score decreases to~1, which means that the ensemble members
+are moved to the right typical 'distance' from the observations.
+
+\item
+If we decrease the observation error standard deviation
+with respect to the default setting to $\sigma=0.05$,
+the output of the example is the following:
+
+\begin{verbatim}
+Prior CRPS reliability and resolution:     0.00104 0.56067
+Posterior CRPS reliability and resolution: 0.00006 0.02847
+Prior RCRV bias and spread:      0.02900  0.99723
+Posterior RCRV bias and spread: -0.04206  1.01476
+Prior probability distribution (event 1):     0.480 0.520
+Prior probability distribution (event 2):     0.450 0.550
+Posterior probability distribution (event 1): 1.000 0.000
+Posterior probability distribution (event 2): 1.000 0.000
+Entropy score (posterior vs prior, event 1): 0.000
+Entropy score (posterior vs prior, event 2): 0.000
+Prior optimality score:    28.12474
+Posterior optimality score: 1.00250
+\end{verbatim}
+
+Reliability and optimality are still good.
+Resolution has strongly improved
+by the much better information provided by the observations.
+Entropy has decreased to zero for the two events:
+all posterior members have the same outcome for each of them.
+Uncertainty about them has been removed by the observations
+(or, more precisely, the remaining uncertainty is too small
+to be resolved by a 100-member ensemble).
+
+\item
+Starting again from the default setting,
+we now modify the ensemble observational update algorithm
+by omitting the perturbations applied to the observations
+to perform the update of each ensemble member.
+
+\begin{verbatim}
+Prior CRPS reliability and resolution:     0.00104 0.56067
+Posterior CRPS reliability and resolution: 0.03838 0.15373
+Prior RCRV bias and spread:      0.02900  0.99723
+Posterior RCRV bias and spread: -0.12757  3.46117
+Prior probability distribution (event 1):     0.480 0.520
+Prior probability distribution (event 2):     0.450 0.550
+Posterior probability distribution (event 1): 1.000 0.000
+Posterior probability distribution (event 2): 1.000 0.000
+Entropy score (posterior vs prior, event 1): 0.000
+Entropy score (posterior vs prior, event 2): 0.000
+Prior optimality score:     4.81227
+Posterior optimality score: 0.40346
+\end{verbatim}
+
+In this case, the scheme is wrong, and we can see this in the scores.
+Reliability and optimality of the posterior ensemble have been lost.
+The posterior ensemble is no more compatible with the reference truth
+(e.g.~RCRV spread = $3.46 \gg 1$), and it is too close
+to the observations (optimality score = $0.4 \ll 1$).
+Resolution is apparently improved (in the CRPS and entropy scores),
+but it does not serve any purpose since reliability is lost.
+
+\end{itemize}
 
 \subsection{Evaluation of the MCMC sampler}
 
 The code for this example is {\tt\bf mcmc\_ensemble\_update}.
 It uses the score modules: {\tt\bf scor\_crps} and {\tt\bf scor\_optimality}.
 
-This code is an implementation of the work done in \citep{BRAN19}.
+This code is an implementation of the work done in \citet{BRAN19}.
 Refer to this paper to understand what is done in the code.
 
 The score modules are used to evaluate the ensemble
@@ -577,7 +695,7 @@ with ocean color data.
 \bibitem[Germineaud et al.(2019)]{GERM19}
 Germineaud, C., J.-M. Brankart, and P. Brasseur, 2019: An Ensemble-Based Probabilistic Score Approach to Compare Observation Scenarios: An Application to Biogeochemical-Argo Deployments. J. Atmos. Oceanic Technol., 36, 2307-2326.
 
-\bibitem[{Hersbach(1994)}]{HERS94}
+\bibitem[{Hersbach(2000)}]{HERS00}
 Hersbach H., 2000:
 Decomposition of the continuous ranked probability score for ensemble prediction systems.
 \textit{Wea. Forecasting}, \textbf{15}, 559--570.
