@@ -316,7 +316,7 @@ MODULE ensdam_anatra
 !CC
 !CC  Purpose : Localize value in the ordered list of quantiles;
 !CC            if the quantiles are distinct: jpsup = jpinf
-!CC                      = index of largest quantiles smallest or equal to v
+!CC                      = index of largest quantiles smaller or equal to v
 !CC            if not, jpsup = index of largest quantile equal to v,
 !CC                    jpinf = idex of smallest quantile equal to v,
 !CC
