@@ -26,6 +26,7 @@
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_ranks
       use ensdam_anaqua
+      use ensdam_anatra
       use ensdam_storng
       IMPLICIT NONE
       PRIVATE
@@ -50,7 +51,7 @@ MODULE ensdam_score_ranks
         IMPLICIT NONE
         REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
         REAL(KIND=8), DIMENSION(:), INTENT( in ) :: verif
-        REAL(KIND=8), DIMENSION(:), INTENT( out ) :: ranks
+        INTEGER, DIMENSION(:), INTENT( out ) :: ranks
 
         REAL(KIND=8), DIMENSION(:), allocatable :: ens_sort
         INTEGER, DIMENSION(:), allocatable :: ens_ranks

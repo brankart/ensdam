@@ -30,7 +30,7 @@ MODULE ensdam_anatra
       IMPLICIT NONE
       PRIVATE
 
-      PUBLIC ana_forward, ana_backward
+      PUBLIC ana_forward, ana_backward, qualoc_fwd
 
       INTERFACE ana_forward
         MODULE PROCEDURE ana_forward_ensemble, ana_forward_vector, ana_forward_variable
