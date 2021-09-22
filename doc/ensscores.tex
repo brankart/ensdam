@@ -93,7 +93,8 @@ For instance, a necessary condition of reliability is that
 verification data have the same probability to fall in every interval
 defined by the ensemble members.
 This can be checked by drawing a {\em rank histogram} of the verification data \citep{ANDE96},
-as used and described for instance in \citet{CAND15} or \citet{GARN16}.
+as used and described for instance in \citet{CAND15} or \citet{GARN16}, and
+as can be computed by the {\tt\bf score\_ranks} module of this package.
 
 To obtain a more compact score, we can center/reduce
 the verification data with the ensemble mean and ensemble standard deviation.
@@ -222,6 +223,53 @@ the list of public variables and public routines
 the MPI parallelization, and
 an estimation of the computational cost
 as a function of the size of the problem.
+
+\subsection{Module: {\tt\bf score\_ranks}}
+
+The purpose of this module is to compute the rank
+of the verification data in the ensemble simulation
+and to produce a rank histogram.
+
+\subsubsection*{Method}
+
+The algorithm loops on the verification data,
+sort the ensemble members for each of them,
+and compute the rank of each element of the verification data
+within the sorted ensemble values.
+From the vector of ranks, a rank histogram is produced.
+
+\subsubsection*{Public variables}
+
+\begin{description}
+\item[mpi\_comm\_score\_ranks:] MPI communicator to use (default=mpi\_comm\_world).
+\end{description}
+
+\subsubsection*{Public routines}
+
+\begin{description}
+\item[compute\_ranks:] compute CRPS score (with an option to partition the data
+                    and compute the score for each subset of data):
+  \begin{description}
+  \item[{\tt ens} (input)]: ensemble to evaluate (model equivalent to verification data);
+  \item[{\tt verif} (input)]: verification data;
+  \item[{\tt ranks} (output)]: ranks of the verification data within the ensemble;
+  \item[{\tt rank\_histogram} (output, optional)]: rank histogram.
+  \end{description}
+\end{description}
+
+\subsubsection*{MPI parallelization}
+
+Parallelization is obtained by making each processor call the routine
+for a different chunk of the verification data.
+The routine combines the contributions from all processors
+to compute a global rank histogram.
+
+\subsubsection*{Computational cost}
+
+The cost mainly results from the sorting of the ensemble members
+for each variable in the verification data.
+It is thus proportional to $n m \log_2 m$,
+if $m$ is the size of the ensemble and $n$, the size of the verification dataset.
 
 \subsection{Module: {\tt\bf score\_crps}}
 
