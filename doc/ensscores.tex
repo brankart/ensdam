@@ -278,7 +278,42 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{Method}
 
-The algorithm loops on the verification data,
+The total CRPS score corresponds to the misfit between two probability distributions
+of a one-dimensional random variable~$x$ is the area
+between their respective cumulative distribution functions (cdf)
+$F(x)$ and~$F_{\mbox{ref}}(x)$:
+
+\begin{equation}
+\label{eq:crps}
+\Delta = \int_{-\infty}^{\infty}
+\left| F(x) - F_{\mbox{ref}}(x) \right| \; dx
+\end{equation}
+
+\noindent
+In our case, the reference cdf~$F_{\mbox{ref}}(x)$
+is a Heaviside function increasing by~1
+at the true value of the variable,
+and the ensemble cdf~$F(x)$ is a stepwise function
+increasing by~$1/m$ at each of the ensemble values
+(where $m$ is the size of the ensemble).
+This is illustrated in Fig.~\ref{fig:crps},
+where $\Delta$ is the blue area between the two cdfs..
+The further the ensemble values from the reference,
+the larger~$\Delta$, and the unit of~$\Delta$
+is the same as the unit of~$x$.
+
+\begin{figure}[htbp]
+\centerline{
+\includegraphics[width=0.7\textwidth]{Figures/ensscores_crps.pdf}
+}
+\caption{Illustration of the CRPS score.
+The reference cdf is in red;
+The ensemble cdf (6~members) is in dark blue;
+and the CRPS score is the blue area between the two cdfs.
+\label{fig:crps}}
+\end{figure}
+
+The algorithm in the routines loops on the verification data,
 to accumulate the contribution of each of them
 (in the intermediate arrays {\tt aa} and {\tt bb}),
 and then compute the overal CRPS score,
@@ -332,7 +367,23 @@ of an ensemble simulation by comparison to verification data.
 
 \subsubsection*{Method}
 
-The algorithm loops on the verification data,
+The Reduced Centered Random Variable (RCRV) is defined from
+
+\begin{equation}
+ \label{eq:rcrv}
+  y = \frac{v-m}{\sigma}
+\end{equation}
+
+\noindent
+where $v$  is one of the verification data and
+$m$ and $\sigma$ are the mean and the standard deviation of the ensemble.
+The system is reliable, if the mean of $y$ over all realisations
+is equal to zero and its standard deviation is equal to 1.
+Thus, the reliability is decomposed into (normalized) bias $b=E[y]$
+and dispersion $d^2=E[y^2]-b^2$, which are the two quantities
+provided by this module.
+
+To compute the score, the algorithm in the routine loops on the verification data,
 to accumulate the contribution of each of them
 (to the reduced bias and reduce spread),
 and then compute the overal RCRV score
@@ -490,13 +541,21 @@ by comparison to observations.
 The algorithm loops on the observation data
 to accumulate the contribution of each of them
 (a `normalized distance' between each observation and each ensemble member)
-and then compute the overal optimality score.
+and then compute the overal optimality score,
+whose expected value must be equal to~1 for an optimal system.
+
 The computation of this `normalized distance' requires an evaluation
 of the observation error cdf (to compute the rank of the observation)
 and the inverse Gaussian cdf (to tranform this rank into a Gaussian number).
 In the case of Gaussian observation errors, this computation is simplified
 by computing the difference between each observation and each ensemble member,
 divided by the observation error standard deviation.
+
+It must be noted that this score is only a necessary condition of optimality,
+focusing on the testing of the marginal probability distributions.
+It can thus be computed whether observation errors are correlated or not.
+However, the convergence to the expected value of the score
+will depend on the number of degrees of freedom in the observations.
 
 \subsubsection*{Public variables}
 
