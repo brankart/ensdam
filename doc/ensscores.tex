@@ -49,7 +49,7 @@
 \vspace{20mm}
 The purpose of EnsScores is to provide tools
 to compute probabilistic scores for ensemble simulations.
-The scores evaluates the reliability and/or the resolution of an ensemble simulation
+The scores evaluate the reliability and/or the resolution of an ensemble simulation
 by comparison to verification data.
 For posterior ensembles (conditioned to observations),
 there is also a score to evaluate the optimality of the result,
@@ -61,7 +61,7 @@ This library includes:
 
 \begin{itemize}
 \item the computation of the Continuous Rank Probability Score (CRPS);
-\item the computation of the Reduced Centered Random variable (RCRV) score;
+\item the computation of the Reduced Centered Random Variable (RCRV) score;
 \item the computation of scores based on the relative entropy of user-defined events;
 \item the computation of an optimality score for posterior ensembles.
 \end{itemize}
@@ -297,7 +297,7 @@ and the ensemble cdf~$F(x)$ is a stepwise function
 increasing by~$1/m$ at each of the ensemble values
 (where $m$ is the size of the ensemble).
 This is illustrated in Fig.~\ref{fig:crps},
-where $\Delta$ is the blue area between the two cdfs..
+where $\Delta$ is the blue area between the two cdfs.
 The further the ensemble values from the reference,
 the larger~$\Delta$, and the unit of~$\Delta$
 is the same as the unit of~$x$.
@@ -323,7 +323,7 @@ together with the reliability and resolution components.
 
 \begin{description}
 \item[mpi\_comm\_score\_crps:] MPI communicator to use (default=mpi\_comm\_world).
-\item[crps\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
+\item[crps\_missing\_value:] missing value to use where no data is available (default=-9999.).
 \end{description}
 
 \subsubsection*{Public routines}
@@ -397,7 +397,7 @@ rather than center/reduction (using the ensemble mean and standard deviation).
 
 \begin{description}
 \item[mpi\_comm\_score\_rcrv:] MPI communicator to use (default=mpi\_comm\_world).
-\item[rcrv\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
+\item[rcrv\_missing\_value:] missing value to use where no data is available (default=-9999.).
 \item[rcrv\_with\_anamorphosis:] use anamorphosis to compute reduced variable (default=.FALSE.).
 \item[rcrv\_number\_of\_quantiles:] number of quantiles to perform anamorphosis (default=11).
 \end{description}
@@ -561,7 +561,7 @@ will depend on the number of degrees of freedom in the observations.
 
 \begin{description}
 \item[mpi\_comm\_score\_optimality:] MPI communicator to use (default=mpi\_comm\_world).
-\item[optimality\_missing\_value:] missing value to use where no valid data is available (default=-9999.).
+\item[optimality\_missing\_value:] missing value to use where no data is available (default=-9999.).
 \end{description}
 
 \subsubsection*{Public routines}
@@ -615,7 +615,7 @@ It illustrates all score modules: {\tt\bf scor\_crps}, {\tt\bf scor\_rcrv},
 {\tt\bf scor\_entropy} and {\tt\bf scor\_optimality}.
 
 In this example, a synthetic ensemble is generated
-by sampling independent Gaussian random number
+by sampling independent Gaussian random numbers
 with zero mean and unit standard deviation.
 The size of the state vector is~$n=1000$ and the ensemble size is~$m=100$.
 The use of independent variables is overly simplistic,
@@ -680,8 +680,8 @@ Prior optimality score:     4.81227
 Posterior optimality score: 1.00351
 \end{verbatim}
 
-We see that reliability score is good in the prior ensemble (by construction),
-and the it does not get worse after the observational update (posterior ensemble).
+We see that the reliability score is good in the prior ensemble (by construction),
+and that it does not get worse after the observational update (posterior ensemble).
 The resolution of the ensemble has been improved by the observations:
 the CRPS resolution is smaller in the posterior ensemble,
 and the entropy score also shows an improvement (score well below 1).
