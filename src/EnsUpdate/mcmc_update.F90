@@ -202,7 +202,7 @@ MODULE ensdam_mcmc_update
         IMPLICIT NONE
         REAL(KIND=8), DIMENSION(:,:), INTENT( inout ) :: upens
 
-        INTEGER :: jpup, allocstat
+        INTEGER :: jup, jpup, allocstat
 
         jpup = SIZE(upens,2)  ! Size of updated ensemble
 
@@ -217,12 +217,29 @@ MODULE ensdam_mcmc_update
           IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
 
           ! Initialize cost function
-          cost_jo_saved(:) = cost_jo( upens(:,1) )
-          IF (iproc.eq.0) PRINT *, 'Initial Jo:',cost_jo_saved(1)
+          IF (mcmc_zero_start) THEN
+            cost_jo_saved(:) = cost_jo( upens(:,1) )
+            IF (iproc.eq.0) PRINT *, 'Initial Jo:',cost_jo_saved(1)
+          ELSE
+            DO jup=1,jpup
+              cost_jo_saved(jup) = cost_jo( upens(:,jup) )
+              IF (iproc.eq.0) PRINT *, 'Initial Jo:',cost_jo_saved(jup)
+            ENDDO
+          ENDIF
 
         ELSE
 
-          IF (.NOT.allocated(cost_jo_saved)) STOP 'Incorrect initialization of mcmc_update'
+          ! Allocate cost function (one for each chain)
+          IF (.NOT.allocated(cost_jo_saved)) THEN
+            allocate( cost_jo_saved(jpup), stat=allocstat )
+            IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
+          ENDIF
+
+          ! Initialize cost function
+          DO jup=1,jpup
+            cost_jo_saved(jup) = cost_jo( upens(:,jup) )
+            IF (iproc.eq.0) PRINT *, 'Restart Jo:',cost_jo_saved(jup)
+          ENDDO
 
         ENDIF
 
