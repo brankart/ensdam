@@ -144,6 +144,12 @@ CONTAINS
       jpspct2d = kjpspct2d
       jpspct2s = kjpspct2s
 
+      IF (ALLOCATED(spect_freq_1d)) DEALLOCATE(spect_freq_1d)
+      IF (ALLOCATED(spect_freq_2d)) DEALLOCATE(spect_freq_2d)
+      IF (ALLOCATED(spect_pow_1d)) DEALLOCATE(spect_pow_1d)
+      IF (ALLOCATED(spect_pow_2d)) DEALLOCATE(spect_pow_2d)
+      IF (ALLOCATED(spect_pow_2s)) DEALLOCATE(spect_pow_2s)
+
       ! Allocate list of wave numbers
       IF (jpspct1d>0) ALLOCATE(spect_freq_1d(jpfreq,jpspct1d))
       IF (jpspct2d>0) ALLOCATE(spect_freq_2d(jpfreq,jpspct2d))
@@ -199,7 +205,7 @@ CONTAINS
       INTEGER, INTENT( in ) :: kjpsmp1d ! size of frequancey sample for 1d spectra
       INTEGER, INTENT( in ) :: kjpsmp2d ! size of frequancey sample for 2d spectra
       INTEGER, INTENT( in ) :: kjpsmp2s ! size of frequancey sample for 2s spectra
-      INTEGER, INTENT( in ) :: kseed    ! index of seed for RNG
+      INTEGER, INTENT( in ), OPTIONAL :: kseed    ! index of seed for RNG
       !!
       INTEGER :: jseed
       INTEGER(KIND=8) :: zseed1, zseed2, zseed3, zseed4
@@ -210,12 +216,18 @@ CONTAINS
 
       ! Allocate samples for 1d fields
       IF (jpspct1d>0) THEN
+        IF (ALLOCATED(smp_freq_1d)) DEALLOCATE(smp_freq_1d)
+        IF (ALLOCATED(smp_phas_1d)) DEALLOCATE(smp_phas_1d)
         ALLOCATE(smp_freq_1d(jpsmp1d,jpspct1d))
         ALLOCATE(smp_phas_1d(jpsmp1d,jpspct1d))
       ENDIF
 
       ! Allocate samples for 2d fields
       IF (jpspct2d>0) THEN
+        IF (ALLOCATED(smp_freq_2d)) DEALLOCATE(smp_freq_2d)
+        IF (ALLOCATED(smp_phas_2d)) DEALLOCATE(smp_phas_2d)
+        IF (ALLOCATED(smp_dir1_2d)) DEALLOCATE(smp_dir1_2d)
+        IF (ALLOCATED(smp_dir2_2d)) DEALLOCATE(smp_dir2_2d)
         ALLOCATE(smp_freq_2d(jpsmp2d,jpspct2d))
         ALLOCATE(smp_phas_2d(jpsmp2d,jpspct2d))
         ALLOCATE(smp_dir1_2d(jpsmp2d,jpspct2d))
@@ -224,16 +236,20 @@ CONTAINS
 
       ! Allocate samples for 2d fields
       IF (jpspct2s>0) THEN
+        IF (ALLOCATED(smp_freq_2s)) DEALLOCATE(smp_freq_2s)
+        IF (ALLOCATED(smp_dir_2s)) DEALLOCATE(smp_dir_2s)
         ALLOCATE(smp_freq_2s(jpsmp2s,jpspct2s))
         ALLOCATE(smp_dir_2s(jpsmp2s,-jpfreq:jpfreq,jpspct2s))
       ENDIF
 
       ! Seed random number generator
-      CALL kiss_reset( )
-      DO jseed = 1, kseed
-        zseed1 = kiss() ; zseed2 = kiss() ; zseed3 = kiss() ; zseed4 = kiss()
-      END DO
-      CALL kiss_seed( zseed1, zseed2, zseed3, zseed4 )
+      IF (PRESENT(kseed)) THEN
+        CALL kiss_reset( )
+        DO jseed = 1, kseed
+          zseed1 = kiss() ; zseed2 = kiss() ; zseed3 = kiss() ; zseed4 = kiss()
+        END DO
+        CALL kiss_seed( zseed1, zseed2, zseed3, zseed4 )
+      ENDIF
 
    END SUBROUTINE def_sample_size
 
