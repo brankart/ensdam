@@ -40,6 +40,7 @@ MODULE ensdam_mcmc_update
       INTEGER, PUBLIC, SAVE :: mcmc_member_test=1  ! Number of test to perform with the same Schur product
       LOGICAL, PUBLIC, SAVE :: mcmc_proposal=.FALSE. ! Input is a proposal distribution, not a prior ensemble
       REAL(KIND=8), PUBLIC, SAVE :: mcmc_proposal_std=1._8 ! Standard deviation of proposal distribution
+      REAL(KIND=8), PUBLIC, SAVE :: mcmc_schedule=0._8 ! MCMC schedule, can be changed in cost_jo, as a function of Jo
 
 #if defined MPI
       ! Public definitions for MPI
@@ -289,7 +290,7 @@ MODULE ensdam_mcmc_update
         ! Size of arrays
         jpi = SIZE(ens,1)  ! Size of observation vector
         jpm = SIZE(ens,2)  ! Size of ensemble
-        jps = SIZE(ens,3)  ! Number of resolutions (or filtering lngth scales)
+        jps = SIZE(ens,3)  ! Number of resolutions (or filtering length scales)
         jpup = SIZE(upens,2)  ! Size of updated ensemble
         jpfactor = SUM(multiplicity(:))
         IF (extra_variables) THEN
@@ -333,8 +334,14 @@ MODULE ensdam_mcmc_update
                 beta = mcmc_proposal_std
               ELSE
                 ! assuming that the input is a prior ensemble to update
-                beta = 1._8 / SQRT(REAL(mcmc_index,8))
-                alpha = SQRT( 1._8 - beta*beta )
+                ! 1. Default beta ** 2
+                beta = 1._8 / REAL(mcmc_index,8)
+                ! 2. Upgrade with user-defined schedule (default: mcmc_schedule=0.)
+                beta = MAX ( beta , MIN (  0.5_8 , mcmc_schedule ) )
+                ! 3. Compute alpha ** 2
+                alpha = 1._8 - beta
+                ! 4. Compute alpha and beta
+                alpha = SQRT( alpha ) ; beta = SQRT( beta )
               ENDIF
 
               ! get draw from proposal distribution
