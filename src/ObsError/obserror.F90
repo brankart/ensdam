@@ -157,8 +157,8 @@ MODULE ensdam_obserror
         CASE('lognormal')
           ! Lognormal distribution (mean->x, std->sigma)
           ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(2.) * sigma * sigma / x )
-          logmean = log( x ) - logvar * logvar / 2
+          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
+          logmean = log( x ) - logvar / 2
           ologpdf = logpdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
           ologpdf = ologpdf - log(x)
         CASE('gamma')
@@ -264,8 +264,14 @@ MODULE ensdam_obserror
         CASE('lognormal')
           ! Lognormal distribution (mean->x, std->sigma)
           ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(2.) * sigma * sigma / x )
-          logmean = log(x) - logvar * logvar / 2
+          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
+          logmean = log(x) - logvar / 2
+          ocdf = cdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
+        CASE('lognormalx')
+          ! Lognormal distribution (mean->x, std->sigma*x)
+          ! Conditions: 0 < x ; 0 < sigma
+          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
+          logmean = log(x) - logvar / 2
           ocdf = cdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
         CASE('gamma')
           ! Gamma distribution (mean->x, std->sigma*x)
@@ -435,8 +441,8 @@ MODULE ensdam_obserror
             ENDIF
             gran_saved = gran
           ENDIF
-          logvar = log ( 1. + exp(2.) * sigma * sigma / x )
-          logmean = log( x ) - logvar * logvar / 2
+          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
+          logmean = log( x ) - logvar / 2
           xpert = exp( logmean + sqrt( logvar) * gran )
         CASE('gamma')
           ! Gamma distribution (mean->x, std->sigma*x)
