@@ -155,19 +155,11 @@ MODULE ensdam_obserror
           ! Gaussian distribution (mean->obs, std->obserror)
           ologpdf = logpdf_gaussian( (y-x)/sigma )
         CASE('lognormal')
-          ! Lognormal distribution (mean->x, std->sigma)
-          ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
-          logmean = log( x ) - logvar / 2
-          ologpdf = logpdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
-          ologpdf = ologpdf - log(x)
-        CASE('lognormalx')
           ! Lognormal distribution (mean->x, std->sigma*x)
           ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
+          logvar = log ( 1. + sigma * sigma )
           logmean = log( x ) - logvar / 2
           ologpdf = logpdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
-          ologpdf = ologpdf - log(x)
         CASE('gamma')
           ! Gamma distribution (mean->x, std->sigma*x)
           ! Conditions: 0 < x ; 0 < obserror
@@ -269,15 +261,9 @@ MODULE ensdam_obserror
           ! Gaussian distribution (mean->obs, std->obserror)
           ocdf = cdf_gaussian( (y-x)/sigma )
         CASE('lognormal')
-          ! Lognormal distribution (mean->x, std->sigma)
-          ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
-          logmean = log(x) - logvar / 2
-          ocdf = cdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
-        CASE('lognormalx')
           ! Lognormal distribution (mean->x, std->sigma*x)
           ! Conditions: 0 < x ; 0 < sigma
-          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
+          logvar = log ( 1. + sigma * sigma )
           logmean = log(x) - logvar / 2
           ocdf = cdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
         CASE('gamma')
@@ -436,22 +422,6 @@ MODULE ensdam_obserror
           ENDIF
           xpert = x + sigma * gran
         CASE('lognormal')
-          ! Lognormal distribution (mean->x, std->sigma)
-          ! Conditions: 0 < x ; 0 < sigma
-          IF (use_saved_rank) THEN
-            gran = gran_saved
-          ELSE
-            IF (random_sampling) THEN
-              call kiss_gaussian(gran)
-            ELSE
-              gran = invcdf_gaussian(rank)
-            ENDIF
-            gran_saved = gran
-          ENDIF
-          logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
-          logmean = log( x ) - logvar / 2
-          xpert = exp( logmean + sqrt( logvar) * gran )
-        CASE('lognormalx')
           ! Lognormal distribution (mean->x, std->sigma*x)
           ! Conditions: 0 < x ; 0 < sigma
           IF (use_saved_rank) THEN
@@ -464,7 +434,7 @@ MODULE ensdam_obserror
             ENDIF
             gran_saved = gran
           ENDIF
-          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
+          logvar = log ( 1. + sigma * sigma )
           logmean = log( x ) - logvar / 2
           xpert = exp( logmean + sqrt( logvar) * gran )
         CASE('gamma')
