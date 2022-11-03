@@ -161,6 +161,13 @@ MODULE ensdam_obserror
           logmean = log( x ) - logvar / 2
           ologpdf = logpdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
           ologpdf = ologpdf - log(x)
+        CASE('lognormalx')
+          ! Lognormal distribution (mean->x, std->sigma*x)
+          ! Conditions: 0 < x ; 0 < sigma
+          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
+          logmean = log( x ) - logvar / 2
+          ologpdf = logpdf_gaussian( ( log(y) - logmean ) / sqrt( logvar) )
+          ologpdf = ologpdf - log(x)
         CASE('gamma')
           ! Gamma distribution (mean->x, std->sigma*x)
           ! Conditions: 0 < x ; 0 < obserror
@@ -442,6 +449,22 @@ MODULE ensdam_obserror
             gran_saved = gran
           ENDIF
           logvar = log ( 1. + exp(-2.) * sigma * sigma / x )
+          logmean = log( x ) - logvar / 2
+          xpert = exp( logmean + sqrt( logvar) * gran )
+        CASE('lognormalx')
+          ! Lognormal distribution (mean->x, std->sigma*x)
+          ! Conditions: 0 < x ; 0 < sigma
+          IF (use_saved_rank) THEN
+            gran = gran_saved
+          ELSE
+            IF (random_sampling) THEN
+              call kiss_gaussian(gran)
+            ELSE
+              gran = invcdf_gaussian(rank)
+            ENDIF
+            gran_saved = gran
+          ENDIF
+          logvar = log ( 1. + exp(-2.) * sigma * sigma * x )
           logmean = log( x ) - logvar / 2
           xpert = exp( logmean + sqrt( logvar) * gran )
         CASE('gamma')
