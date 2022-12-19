@@ -7,7 +7,7 @@ which corresponds to the example application described in the paper:
 Brankart J.-M., 2019: Implicitly localized ensemble observational update
 to cope with nonlocal/nonlinear data constraints
 in large-size inverse problems,
-submitted to Frontiers in Applied Mathematics and Statistics.</a>*
+Frontiers in Applied Mathematics and Statistics.</a>*
 
 This main example illustrates many of the EnsDAM modules.
 The other examples are mainly dedicated
