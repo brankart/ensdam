@@ -63,7 +63,7 @@ program scores_idealized_example
   observations(:) = reference_truth(:) + sigma * observations(:)
 
   ! Compute the posterior ensemble by conditioning the prior ensemble on observations
-  ! i) Generate perttubations to observations for each ensemble member
+  ! i) Generate perturbations to observations for each ensemble member
   do j=1,m
     do i=1,n
       call kiss_gaussian(posterior_ensemble(i,j))
