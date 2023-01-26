@@ -52,10 +52,10 @@ Legend:
 (u)       ensdam.ensaugm.newproduct : sample new Schur product
 (u)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
-(u)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
+(o)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
 (u)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
 (u)       ensdam.ensscores.crps_final : compute final score from accumulated data
-(u)       ensdam.ensscores.rcrv_score : compute RCRV score (with option to partition the data)
+(o)       ensdam.ensscores.rcrv_score : compute RCRV score (with option to partition the data)
 (u)       ensdam.ensscores.rcrv_cumul : accumulate data to prepare the final computation of the RCRV score
 (u)       ensdam.ensscores.optimality_score : compute optimality score (with option to partition the data)
 (u)       ensdam.ensscores.optimality_cumul : accumulate data to prepare the final computation of the RCRV score
