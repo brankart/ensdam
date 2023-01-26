@@ -6,10 +6,10 @@ Many modules have not been tested from python (see the list below).
 
 ### To generate the Python interface (with f2py) :
 
-- edit the 'make.macro' file corresponding to your compiler in the 'macro' directory.
+- edit the 'Makefile.macro' file corresponding to your compiler in the 'macro' directory.
 This is the Makefile configurable part, which specifies options to pass to f2py.
 
-- edit the Makefile to include this 'make.macro' file (first line below the title)
+- edit the Makefile to include this 'Makefile.macro' file (first line below the title)
 
 - compile with:
 

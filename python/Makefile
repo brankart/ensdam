@@ -2,7 +2,7 @@
 # ------------------------------------------------------------
 # J.-M. Brankart, January 2019
 # 
-include ../macro/make.cal1_ifort
+include Makefile.macro
 #
 SRCDIR = ../src
 BLDDIR = ../build
@@ -12,7 +12,7 @@ OBJ = anaobs.so anaqua.so anatra.so anautil.so covariance.so ensaugm.so interp.s
 #
 all: $(OBJ)
 	@echo "Building all shared libraries: $(OBJ)"
-	-mv $(OBJ) modules
+	-mv *.so modules
 #
 clean:
 	-rm -f $(OBJ)

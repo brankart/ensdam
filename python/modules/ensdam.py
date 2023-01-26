@@ -894,7 +894,7 @@ class ensstat:
         weightsum : in/output float or rank-1 array(float,'d')
         msqra : in/output float or rank-1 array('d')
         """
-        print "Warning: python interface only partially tested !!"
+        print ('Warning: python interface only partially tested !!')
         # Update module public variables
         if mpi:
             meanstd.ensdam_meanstd.mpi_comm_meanstd = mpi_comm_meanstd 
@@ -956,7 +956,7 @@ class ensstat:
         -------
         correl : rank-1 array('d') with bounds (size(ens,1))
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         # Check optional argument
         if weight == ():
             weight=numpy.ones(ensref.shape)
@@ -987,7 +987,7 @@ class ensstat:
         -------
         covariance : rank-1 array('d') with bounds (size(ens,1))
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         # Check optional argument
         if weight == ():
             weight=numpy.ones(ensref.shape)
@@ -1018,7 +1018,7 @@ class ensstat:
         -------
         representer : rank-1 array('d') with bounds (size(ens,1))
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         # Check optional argument
         if weight == ():
             weight=numpy.ones(ensref.shape)
@@ -1049,7 +1049,7 @@ class ensstat:
         weight : input float
         weightsum : input float
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         if weight == ():
             # Check type of input
             if numpy.isscalar(vct):
@@ -1500,7 +1500,7 @@ class stochtools:
         -------
         ran_tg : rank-2 array('d') with bounds (n,r)
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         api_matarm = _iarraydouble(matarm)
         api_vecbm = _iarraydouble(vecbm)
         r = matarm.shape[0] # number of dimensions
@@ -1923,7 +1923,7 @@ class stochtools:
           Return objects:
             fun_pow_spect_sph : float
         """
-        print "Warning: python interface untested !!"
+        print ("Warning: python interface untested !!")
         api_lon = _iarraydouble(lon)
         api_lat = _iarraydouble(lat)
         if lon.ndim == 1:

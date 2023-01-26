@@ -50,15 +50,15 @@ posterior_ensemble = posterior_ensemble + prior_ensemble
 
 # Compute CRPS score, using reference truth as verification data
 crps,crps_reliability,crps_resolution = crps_score(prior_ensemble,reference_truth)
-print 'Prior CRPS reliability and resolution:    ',crps_reliability,crps_resolution
+print ('Prior CRPS reliability and resolution:    ',crps_reliability,crps_resolution)
 
 crps,crps_reliability,crps_resolution = crps_score(posterior_ensemble,reference_truth)
-print 'Posterior CRPS reliability and resolution:',crps_reliability,crps_resolution
+print ('Posterior CRPS reliability and resolution:',crps_reliability,crps_resolution)
 
 # Compute RCRV score, using reference truth as verification data
 rcrv_bias,rcrv_spread = rcrv_score(prior_ensemble,reference_truth)
-print 'Prior RCRV bias and spread:    ',rcrv_bias,rcrv_spread
+print ('Prior RCRV bias and spread:    ',rcrv_bias,rcrv_spread)
 
 rcrv_bias,rcrv_spread = rcrv_score(posterior_ensemble,reference_truth)
-print 'Posterior RCRV bias and spread:',rcrv_bias,rcrv_spread
+print ('Posterior RCRV bias and spread:',rcrv_bias,rcrv_spread)
 

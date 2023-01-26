@@ -1,5 +1,5 @@
 ! ----------------------------------------------------------------------
-! Copyright: CNRS - Université de Grenoble Alpes
+! Copyright: CNRS - Universite de Grenoble Alpes
 !
 ! Contributors : Jean-Michel Brankart
 !
