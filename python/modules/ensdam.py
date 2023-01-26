@@ -434,7 +434,7 @@ class ensscores:
     """
 
     @staticmethod
-    def crps_score(ens,verif,partition):
+    def crps_score(ens,verif,partition=()):
         """
         crps,reliability,resolution = crps_score(ens,verif,partition)
 
@@ -456,6 +456,19 @@ class ensscores:
         score_crps.ensdam_score_crps.crps_missing_value = crps_missing_value
         if mpi:
             score_crps.ensdam_score_crps.mpi_comm_score_crps = mpi_comm_score_crps
+
+        # Apply requested function
+        if partition == ():
+            api_ens = _iarraydouble(ens)
+            api_verif = _iarraydouble(verif)
+            crps,reliability,resolution =  score_crps.ensdam_score_crps.crps_score_global(api_ens,api_verif)
+        else:
+            api_ens = _iarraydouble(ens)
+            api_verif = _iarraydouble(verif)
+            api_parttion = _iarraydouble(parttion)
+            crps,reliability,resolution =  score_crps.ensdam_score_crps.crps_score_partition(api_ens,api_verif,api_parttion)
+
+        return crps,reliability,resolution
 
     @staticmethod
     def crps_cumul(ens,a,aa,bb):
@@ -500,7 +513,7 @@ class ensscores:
             score_crps.ensdam_score_crps.mpi_comm_score_crps = mpi_comm_score_crps
 
     @staticmethod
-    def rcrv_score(ens,verif,partition):
+    def rcrv_score(ens,verif,partition=()):
         """
         ens_bias,ens_spread = rcrv_score_partition(ens,verif,partition)
 
@@ -523,6 +536,19 @@ class ensscores:
         score_rcrv.ensdam_score_rcrv.rcrv_missing_value = rcrv_missing_value
         if mpi:
             score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv = mpi_comm_score_rcrv
+
+        # Apply requested function
+        if partition == ():
+            api_ens = _iarraydouble(ens)
+            api_verif = _iarraydouble(verif)
+            ens_bias,ens_spread =  score_rcrv.ensdam_score_rcrv.rcrv_score_global(api_ens,api_verif)
+        else:
+            api_ens = _iarraydouble(ens)
+            api_verif = _iarraydouble(verif)
+            api_parttion = _iarraydouble(parttion)
+            ens_bias,ens_spread =  score_rcrv.ensdam_score_rcrv.rcrv_score_partition(api_ens,api_verif,api_parttion)
+
+        return ens_bias,ens_spread
 
     @staticmethod
     def rcrv_cumul(e,a,idx,mean,sqrs):
