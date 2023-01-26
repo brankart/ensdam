@@ -7,7 +7,8 @@ include ../macro/make.cal1_ifort
 SRCDIR = ../src
 BLDDIR = ../build
 #
-OBJ = anaobs.so anaqua.so anatra.so anautil.so covariance.so ensaugm.so interp.so meanstd.so obserror.so schurprod.so score_crps.so score_entropy.so score_optimality.so score_rcrv.so spharea.so sphylm.so stoanam.so stogprod.so storfg.so storng.so stotge.so stoutil.so
+#OBJ = anaobs.so anaqua.so anatra.so anautil.so covariance.so ensaugm.so interp.so meanstd.so obserror.so schurprod.so score_crps.so score_entropy.so score_optimality.so score_rcrv.so spharea.so sphylm.so stoanam.so stogprod.so storfg.so storng.so stotge.so stoutil.so
+OBJ = anaobs.so anaqua.so anatra.so anautil.so covariance.so ensaugm.so interp.so meanstd.so obserror.so schurprod.so score_crps.so score_entropy.so score_rcrv.so spharea.so sphylm.so stoanam.so stogprod.so storng.so stotge.so stoutil.so
 #
 all: $(OBJ)
 	@echo "Building all shared libraries: $(OBJ)"
@@ -42,9 +43,9 @@ score_crps.so: $(SIGDIR)/score_crps.pyf $(SRCDIR)/EnsScores/score_crps.F90 $(BLD
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_crps.pyf $(SRCDIR)/EnsScores/score_crps.F90 $(BLDDIR)/anaqua.o
 score_entropy.so: $(SIGDIR)/score_entropy.pyf $(SRCDIR)/EnsScores/score_entropy.F90
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_entropy.pyf $(SRCDIR)/EnsScores/score_entropy.F90
-score_optimality.so: $(SIGDIR)/score_optimality.pyf $(SRCDIR)/EnsScores/score_optimality.F90 $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o
-	-cp $(WRAPDIR)/score_optimality-f2pywrappers2.f90 build/src.linux-x86_64-2.7/$(SIGDIR)
-	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_optimality.pyf $(SRCDIR)/EnsScores/score_optimality.F90 $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o
+#score_optimality.so: $(SIGDIR)/score_optimality.pyf $(SRCDIR)/EnsScores/score_optimality.F90 $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o
+	#-cp $(WRAPDIR)/score_optimality-f2pywrappers2.f90 build/src.linux-x86_64-2.7/$(SIGDIR)
+	#$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_optimality.pyf $(SRCDIR)/EnsScores/score_optimality.F90 $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o
 score_rcrv.so: $(SIGDIR)/score_rcrv.pyf $(SRCDIR)/EnsScores/score_rcrv.F90 $(BLDDIR)/anaqua.o $(BLDDIR)/anatra.o $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o $(BLDDIR)/storng.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_rcrv.pyf $(SRCDIR)/EnsScores/score_rcrv.F90 $(BLDDIR)/anaqua.o $(BLDDIR)/anatra.o $(BLDDIR)/meanstd.o $(BLDDIR)/stoutil.o $(BLDDIR)/storng.o
 spharea.so: $(SIGDIR)/spharea.pyf $(SRCDIR)/TranSpHO/spharea.f90
@@ -55,9 +56,9 @@ stoanam.so: $(SIGDIR)/stoanam.pyf $(SRCDIR)/StochTools/stoanam.f90 $(BLDDIR)/sto
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/stoanam.pyf $(SRCDIR)/StochTools/stoanam.f90 $(BLDDIR)/stogprod.o $(BLDDIR)/stoutil.o $(BLDDIR)/constant.o $(BLDDIR)/qxgs.o
 stogprod.so: $(SIGDIR)/stogprod.pyf $(SRCDIR)/StochTools/stogprod.f90 $(BLDDIR)/constant.o $(BLDDIR)/qxgs.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/stogprod.pyf $(SRCDIR)/StochTools/stogprod.f90 $(BLDDIR)/constant.o $(BLDDIR)/qxgs.o
-storfg.so: $(SIGDIR)/storfg.pyf $(SRCDIR)/StochTools/storfg.F90 $(BLDDIR)/storng.o $(BLDDIR)/sphylm.o
-	-cp $(WRAPDIR)/storfg-f2pywrappers2.f90 build/src.linux-x86_64-2.7/$(SIGDIR)
-	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/storfg.pyf $(SRCDIR)/StochTools/storfg.F90 $(BLDDIR)/storng.o $(BLDDIR)/sphylm.o
+#storfg.so: $(SIGDIR)/storfg.pyf $(SRCDIR)/StochTools/storfg.F90 $(BLDDIR)/storng.o $(BLDDIR)/sphylm.o
+	#-cp $(WRAPDIR)/storfg-f2pywrappers2.f90 build/src.linux-x86_64-2.7/$(SIGDIR)
+	#$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/storfg.pyf $(SRCDIR)/StochTools/storfg.F90 $(BLDDIR)/storng.o $(BLDDIR)/sphylm.o
 storng.so: $(SIGDIR)/storng.pyf $(SRCDIR)/StochTools/storng.f90
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/storng.pyf $(SRCDIR)/StochTools/storng.f90
 stotge.so: $(SIGDIR)/stotge.pyf $(SRCDIR)/StochTools/stotge.f90 $(BLDDIR)/storng.o

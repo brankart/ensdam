@@ -42,13 +42,13 @@ import meanstd
 import schurprod
 import score_crps
 import score_entropy
-import score_optimality
+#import score_optimality
 import score_rcrv
 import spharea
 import sphylm
 import stoanam
 import stogprod
-import storfg
+#import storfg
 import storng
 import stotge
 import stoutil
@@ -66,7 +66,7 @@ if mpi:
     mpi_comm_score_entropy = score_entropy.ensdam_score_entropy.mpi_comm_score_entropy
     mpi_comm_score_rcrv = score_rcrv.ensdam_score_rcrv.mpi_comm_score_rcrv
     mpi_comm_sphylm = sphylm.ensdam_sphylm.mpi_comm_sphylm
-    mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
+    #mpi_comm_storfg = storfg.ensdam_storfg.mpi_comm_storfg
 
 # Get default public variables from the FORTRAN modules
 # From anautil
@@ -98,7 +98,7 @@ regr_rho = sphylm.ensdam_sphylm.regr_rho
 regr_maxbloc = sphylm.ensdam_sphylm.regr_maxbloc
 external_vector_decomposition = sphylm.ensdam_sphylm.external_vector_decomposition
 # From storfg:
-storfg_ylm_resolution = storfg.ensdam_storfg.storfg_ylm_resolution
+#storfg_ylm_resolution = storfg.ensdam_storfg.storfg_ylm_resolution
 # From stoutil:
 nominal_accuracy = stoutil.ensdam_stoutil.nominal_accuracy
 accuracy = stoutil.ensdam_stoutil.accuracy
