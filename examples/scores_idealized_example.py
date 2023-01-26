@@ -31,7 +31,7 @@ for i in np.ndindex(observations.shape):
 observations = reference_truth + sigma * observations
 
 # Compute the posterior ensemble by conditioning the prior ensemble on observations
-# i) Generate perttubations to observations for each ensemble member
+# i) Generate perturbations to observations for each ensemble member
 posterior_ensemble = np.empty([n,m])
 for i, j in np.ndindex(prior_ensemble.shape):
   posterior_ensemble[i,j] = observations[i] + sigma * gran()
