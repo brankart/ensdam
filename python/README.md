@@ -57,13 +57,13 @@ Legend:
 (u)       ensdam.ensscores.crps_final : compute final score from accumulated data
 (o)       ensdam.ensscores.rcrv_score : compute RCRV score (with option to partition the data)
 (u)       ensdam.ensscores.rcrv_cumul : accumulate data to prepare the final computation of the RCRV score
-(u)       ensdam.ensscores.optimality_score : compute optimality score (with option to partition the data)
-(u)       ensdam.ensscores.optimality_cumul : accumulate data to prepare the final computation of the RCRV score
-(u)       ensdam.ensscores.events_score : compute ensemble entropy score for the required events
-(u)       ensdam.ensscores.events_relative_entropy : compute relative entropy between ensemble distribution and reference distribution
-(u)       ensdam.ensscores.events_cross_entropy : compute cross entropy between ensemble distribution and reference distribution
-(u)       ensdam.ensscores.events_entropy : compute entropy of ensemble distribution for the required events
-(u)       ensdam.ensscores.events_probability : compute events marginal probability distributions from the ensemble
+(b)       ensdam.ensscores.optimality_score : compute optimality score (with option to partition the data)
+(b)       ensdam.ensscores.optimality_cumul : accumulate data to prepare the final computation of the RCRV score
+(b)       ensdam.ensscores.events_score : compute ensemble entropy score for the required events
+(b)       ensdam.ensscores.events_relative_entropy : compute relative entropy between ensemble distribution and reference distribution
+(b)       ensdam.ensscores.events_cross_entropy : compute cross entropy between ensemble distribution and reference distribution
+(b)       ensdam.ensscores.events_entropy : compute entropy of ensemble distribution for the required events
+(b)       ensdam.ensscores.events_probability : compute events marginal probability distributions from the ensemble
     ensdam.ensstat : ensemble statistics
 (p)       ensdam.ensstat.ensemble_meanstd : compute mean and standard deviation from input ensemble
 (p)       ensdam.ensstat.update_meanstd : update mean and standard deviation with one additional input member
