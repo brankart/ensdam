@@ -7,9 +7,11 @@ gran = ensdam.stochtools.kiss_gaussian
 ens_meanstd = ensdam.ensstat.ensemble_meanstd
 crps_score = ensdam.ensscores.crps_score
 rcrv_score = ensdam.ensscores.rcrv_score
+compute_ranks = ensdam.ensscores.compute_ranks
+ens_quantiles = ensdam.ensanam.ens_quantiles
 
 # Parameters of the example
-m = 100      # Size of the ensemble
+m = 20      # Size of the ensemble
 n = 1000     # Size of the state vector
 sigma = 0.3  # Observation error standard deviation
 
@@ -61,4 +63,11 @@ print ('Prior RCRV bias and spread:    ',rcrv_bias,rcrv_spread)
 
 rcrv_bias,rcrv_spread = rcrv_score(posterior_ensemble,reference_truth)
 print ('Posterior RCRV bias and spread:',rcrv_bias,rcrv_spread)
+
+# Compute rank histogram
+ranks,rank_histogram = compute_ranks(prior_ensemble,reference_truth)
+print ('Prior rank histogram:',rank_histogram)
+
+ranks,rank_histogram = compute_ranks(posterior_ensemble,reference_truth)
+print ('Posterior rank histogram:',rank_histogram)
 

@@ -31,7 +31,7 @@ sys.path.append("./lib")
 
 # Import EnsDAM modules (prepared by f2py)
 import anaobs
-import anaqua
+#import anaqua
 import anatra
 import anautil
 import covariance
@@ -40,6 +40,7 @@ import interp
 import obserror
 import meanstd
 import schurprod
+import score_ranks
 import score_crps
 import score_entropy
 #import score_optimality
@@ -167,7 +168,7 @@ class ensanam:
             if enswei == ():
                 enswei=numpy.ones([m])
             if ensweiloc == ():
-                enswei=numpy.ones([n,m])
+                ensweiloc=numpy.ones([n,m])
             api_ens = _iarraydouble(ens)
             api_quadef = _iarraydouble(quadef)
             api_enswei = _iarraydouble(enswei)
@@ -428,10 +429,35 @@ class ensscores:
     mpi_comm_score_entropy,score_entropy_base
 
     Available functions:
-    crps_score(), crps_cumul(),crps_final(), rcrv_score(),rcrv_cumul(),
+    compute_ranks(),crps_score(),crps_cumul(),crps_final(), rcrv_score(),rcrv_cumul(),
     optimality_score(),optimality_cumul(),events_score(),events_relative_entropy(),
     events_cross_entropy(),events_entropy(),events_probability()
     """
+
+    @staticmethod
+    def compute_ranks(ens,verif):
+        """
+        ranks,rank_histogram = compute_ranks(ens,verif)
+
+        Compute ranks and rank histogram
+
+        Parameters
+        ----------
+        ens : input rank-2 array('d') with bounds (f2py_ens_d0,f2py_ens_d1)
+        verif : input rank-1 array('d') with bounds (size(ens,1))
+
+        Returns
+        -------
+        ranks : rank-1 array('d') with bounds (f2py_crps_d0)
+        rank_histogram : rank-1 array('d')
+        """
+
+        # Apply requested function
+        api_ens = _iarraydouble(ens)
+        api_verif = _iarraydouble(verif)
+        ranks,rank_histogram = score_ranks.ensdam_score_ranks.compute_ranks(api_ens,api_verif)
+
+        return ranks,rank_histogram
 
     @staticmethod
     def crps_score(ens,verif,partition=()):
@@ -1287,9 +1313,10 @@ class obserror:
         -------
         obserror_sample : float
         """
+        if reuse_last_rank==():
+            reuse_last_rank = False
+
         if numpy.isscalar(x):
-            if reuse_last_rank==():
-                reuse_last_rank = False
             sample = obserror.endam_obserror.obserror_sample_variable(x,sigma,rank,reuse_last_rank)
         elif y.ndim == 1:
             api_x = _iarraydouble(x)

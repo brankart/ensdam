@@ -21,8 +21,9 @@ clean:
 #
 anaobs.so: $(SIGDIR)/anaobs.pyf $(SRCDIR)/EnsAnam/anaobs.f90 $(BLDDIR)/anaqua.o $(BLDDIR)/anatra.o $(BLDDIR)/obserror.o $(BLDDIR)/storng.o $(BLDDIR)/stoutil.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/anaobs.pyf $(SRCDIR)/EnsAnam/anaobs.f90 $(BLDDIR)/anaqua.o $(BLDDIR)/anatra.o $(BLDDIR)/obserror.o $(BLDDIR)/storng.o $(BLDDIR)/stoutil.o
-anaqua.so: $(SIGDIR)/anaqua.pyf $(SRCDIR)/EnsAnam/anaqua.f90
-	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/anaqua.pyf $(SRCDIR)/EnsAnam/anaqua.f90
+#anaqua.so: $(SIGDIR)/anaqua.pyf $(SRCDIR)/EnsAnam/anaqua.f90
+	#-cp $(WRAPDIR)/anaqua-f2pywrappers2.f90 build/src.linux-x86_64-3.10/$(SIGDIR)
+	#$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/anaqua.pyf $(SRCDIR)/EnsAnam/anaqua.f90
 anatra.so: $(SIGDIR)/anatra.pyf $(SRCDIR)/EnsAnam/anatra.f90 $(BLDDIR)/storng.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/anatra.pyf $(SRCDIR)/EnsAnam/anatra.f90 $(BLDDIR)/storng.o
 anautil.so: $(SIGDIR)/anautil.pyf $(SRCDIR)/EnsAnam/anautil.f90 $(BLDDIR)/stoutil.o
@@ -39,6 +40,8 @@ obserror.so: $(SIGDIR)/obserror.pyf $(SRCDIR)/ObsError/obserror.F90 $(BLDDIR)/st
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/obserror.pyf $(SRCDIR)/ObsError/obserror.F90 $(BLDDIR)/storng.o $(BLDDIR)/stoutil.o
 schurprod.so: $(SIGDIR)/schurprod.pyf $(SRCDIR)/EnsAugm/schurprod.f90 $(BLDDIR)/stoanam.o $(BLDDIR)/stoutil.o $(BLDDIR)/stogprod.o $(BLDDIR)/constant.o $(BLDDIR)/qxgs.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/schurprod.pyf $(SRCDIR)/EnsAugm/schurprod.f90 $(BLDDIR)/stoanam.o $(BLDDIR)/stoutil.o $(BLDDIR)/stogprod.o $(BLDDIR)/constant.o $(BLDDIR)/qxgs.o
+score_ranks.so: $(SIGDIR)/score_ranks.pyf $(SRCDIR)/EnsScores/score_ranks.F90 $(BLDDIR)/anaqua.o $(BLDDIR)/storng.o
+	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_ranks.pyf $(SRCDIR)/EnsScores/score_ranks.F90 $(BLDDIR)/anaqua.o $(BLDDIR)/storng.o
 score_crps.so: $(SIGDIR)/score_crps.pyf $(SRCDIR)/EnsScores/score_crps.F90 $(BLDDIR)/anaqua.o
 	$(F2PY) $(F2PYFLAGS) --build-dir build --f90flags="$(FPPFLAGS) $(FFLAGS)" -c $(SIGDIR)/score_crps.pyf $(SRCDIR)/EnsScores/score_crps.F90 $(BLDDIR)/anaqua.o
 score_entropy.so: $(SIGDIR)/score_entropy.pyf $(SRCDIR)/EnsScores/score_entropy.F90

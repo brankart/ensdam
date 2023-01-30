@@ -52,6 +52,7 @@ Legend:
 (u)       ensdam.ensaugm.newproduct : sample new Schur product
 (u)       ensdam.ensaugm.getproduct : get specified Schur product
     ensdam.ensscores : ensemble scores
+(o)       ensdam.ensscores.compute_ranks : compute ranks of verification data and rank histogram
 (o)       ensdam.ensscores.crps_score : compute CRPS score (with option to partition the data)
 (u)       ensdam.ensscores.crps_cumul : accumulate data to prepare the final computation of the CRPS score
 (u)       ensdam.ensscores.crps_final : compute final score from accumulated data
