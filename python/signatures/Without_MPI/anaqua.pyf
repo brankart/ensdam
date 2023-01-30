@@ -5,12 +5,6 @@ python module anaqua ! in
     interface  ! in :anaqua
         module ensdam_anaqua ! in :anaqua:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anaqua.f90
             subroutine ens_quantiles_vector(qua,ens,quadef,enswei,ensweiloc) ! in :anaqua:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anaqua.f90:ensdam_anaqua
-                !real(kind=8) dimension(:,:),intent(out) :: qua
-                !real(kind=8) dimension(size(qua,1),:),intent(in) :: ens
-                !real(kind=8) dimension(size(qua,2)),intent(in) :: quadef
-                !real(kind=8), optional,dimension(size(ens,2)),intent(in) :: enswei
-                !real(kind=8), optional,dimension(size(qua,1),size(ens,2)),intent(in) :: ensweiloc
-
                  real(kind=8) dimension(:,:), intent(in) :: ens
                  real(kind=8) dimension(:), intent(in) :: quadef
                  real(kind=8), optional,dimension(size(ens,2)),intent(in) :: enswei
@@ -18,17 +12,10 @@ python module anaqua ! in
                  real(kind=8) dimension(size(ens,1),size(quadef,1)),intent(out) :: qua
             end subroutine ens_quantiles_vector
             subroutine ens_quantiles_variable(qua,ens,quadef,enswei) ! in :anaqua:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anaqua.f90:ensdam_anaqua
-                real(kind=8) dimension(:),intent(out) :: qua
                 real(kind=8) dimension(:),intent(in) :: ens
-                real(kind=8) dimension(size(qua,1)),intent(in) :: quadef
+                real(kind=8) dimension(:),intent(in) :: quadef
                 real(kind=8), optional,dimension(size(ens,1)),intent(in) :: enswei
-
-                !real(kind=8), dimension(:),intent(in) :: ens
-                !real(kind=8), dimension(:),intent(in) :: quadef
-                !real(kind=8), dimension(:),intent(out) :: qua
-                !real(kind=8), optional,dimension(:),intent(in) :: enswei
-                !real(kind=8), dimension(size(quadef,1)),intent(out) :: qua
-                !real(kind=8), optional,dimension(size(ens,1)),intent(in) :: enswei
+                real(kind=8), dimension(size(quadef,1)),intent(out) :: qua
             end subroutine ens_quantiles_variable
             subroutine heapsort(a) ! in :anaqua:/linkhome/rech/egi/regi700/src/EnsDAM/src/EnsAnam/anaqua.f90:ensdam_anaqua
                 real(kind=8) dimension(0:),intent(inout) :: a
