@@ -217,7 +217,7 @@ MODULE ensdam_anaobs
         END SELECT
 
         ! Sample perturbed observation
-        obs_pert = obserror_sample( obs, obserror )
+        CALL obserror_sample( obs, obserror, obs_pert )
 
         END SUBROUTINE obserror_perturbation_sym
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
