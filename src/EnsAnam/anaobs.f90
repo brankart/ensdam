@@ -186,7 +186,7 @@ MODULE ensdam_anaobs
 
         ! Apply observation error with the same rank
         ! to all members of the ensemble
-        ens_pert(:) = obserror_sample( ens(:), obserror, uniform_rank=.TRUE. )
+        CALL obserror_sample( ens(:), obserror, ens_pert(:), uniform_rank=.TRUE. )
 
         END SUBROUTINE obserror_perturbation
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
