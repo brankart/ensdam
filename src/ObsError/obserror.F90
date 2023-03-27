@@ -184,7 +184,7 @@ MODULE ensdam_obserror
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_cdf_vector( y, x, sigma )
+      SUBROUTINE obserror_cdf_vector( y, x, sigma, cdf )
 !----------------------------------------------------------------------
 ! ** Purpose : compute cumulate distribution function for observation errors
 ! 
@@ -195,23 +195,24 @@ MODULE ensdam_obserror
 !----------------------------------------------------------------------
       IMPLICIT NONE
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: y, x, sigma
-      REAL(KIND=8), DIMENSION(:), POINTER :: obserror_cdf_vector
+      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: cdf
 
       INTEGER :: jpi, ji
 
       jpi = SIZE(y,1)
       IF (SIZE(x,1).NE.jpi) STOP 'Inconsistent size in obserror'
       IF (SIZE(sigma,1).NE.jpi) STOP 'Inconsistent size in obserror'
+      IF (SIZE(cdf,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       DO ji=1,jpi
-        obserror_cdf_vector(ji) = obserror_cdf_variable( y(ji), x(ji), sigma(ji) )
+        call obserror_cdf_variable( y(ji), x(ji), sigma(ji), cdf(ji) )
       ENDDO
 
-      END FUNCTION obserror_cdf_vector
+      END SUBROUTINE obserror_cdf_vector
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_cdf_vector_homogeneous( y, x, sigma )
+      SUBROUTINE obserror_cdf_vector_homogeneous( y, x, sigma, cdf )
 !----------------------------------------------------------------------
 ! ** Purpose : compute cumulate distribution function for observation errors
 ! 
@@ -223,22 +224,23 @@ MODULE ensdam_obserror
       IMPLICIT NONE
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: y, x
       REAL(KIND=8), INTENT( in ) :: sigma
-      REAL(KIND=8), DIMENSION(:), POINTER :: obserror_cdf_vector_homogeneous
+      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: cdf
 
       INTEGER :: jpi, ji
 
       jpi = SIZE(y,1)
       IF (SIZE(x,1).NE.jpi) STOP 'Inconsistent size in obserror'
+      IF (SIZE(cdf,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       DO ji=1,jpi
-        obserror_cdf_vector_homogeneous(ji) = obserror_cdf_variable( y(ji), x(ji), sigma )
+        call obserror_cdf_variable( y(ji), x(ji), sigma, cdf(ji) )
       ENDDO
 
-      END FUNCTION obserror_cdf_vector_homogeneous
+      END SUBROUTINE obserror_cdf_vector_homogeneous
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_cdf_variable( y, x, sigma )
+      SUBROUTINE obserror_cdf_variable( y, x, sigma, cdf )
 !----------------------------------------------------------------------
 ! ** Purpose : compute cumulate distribution function for observation errors
 ! 
@@ -249,7 +251,7 @@ MODULE ensdam_obserror
 !----------------------------------------------------------------------
       IMPLICIT NONE
       REAL(KIND=8), INTENT( in ) :: y, x, sigma
-      REAL(KIND=8) :: obserror_cdf_variable
+      REAL(KIND=8), INTENT( out ) :: cdf
 
       REAL(KIND=8) :: ocdf
       REAL(KIND=8) :: logmean, logvar
@@ -284,13 +286,13 @@ MODULE ensdam_obserror
            STOP 'Bad observation error distribution in obserror'
       END SELECT
 
-      obserror_cdf_variable = ocdf
+      cdf = ocdf
 
-      END FUNCTION obserror_cdf_variable
+      END SUBROUTINE obserror_cdf_variable
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_sample_vector( x, sigma, rank )
+      SUBROUTINE obserror_sample_vector( x, sigma, sample, rank )
 !----------------------------------------------------------------------
 ! ** Purpose : sample probability distribution of observation errors
 ! 
@@ -301,8 +303,8 @@ MODULE ensdam_obserror
 !----------------------------------------------------------------------
       IMPLICIT NONE
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: x, sigma
+      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: sample
       REAL(KIND=8), DIMENSION(:), INTENT( in ), optional :: rank
-      REAL(KIND=8), DIMENSION(:), POINTER :: obserror_sample_vector
 
       INTEGER :: jpi, ji
       LOGICAL :: random_sampling
@@ -311,25 +313,26 @@ MODULE ensdam_obserror
 
       jpi = SIZE(x,1)
       IF (SIZE(sigma,1).NE.jpi) STOP 'Inconsistent size in obserror'
+      IF (SIZE(sample,1).NE.jpi) STOP 'Inconsistent size in obserror'
       IF (.NOT.random_sampling) THEN
         IF (SIZE(rank,1).NE.jpi) STOP 'Inconsistent size in obserror'
       ENDIF
 
       IF (random_sampling) THEN
         DO ji=1,jpi
-          obserror_sample_vector(ji) = obserror_sample_variable( x(ji), sigma(ji) )
+          call obserror_sample_variable( x(ji), sigma(ji), sample(ji) )
         ENDDO
       ELSE
         DO ji=1,jpi
-          obserror_sample_vector(ji) = obserror_sample_variable( x(ji), sigma(ji), rank(ji) )
+          call obserror_sample_variable( x(ji), sigma(ji), sample(ji), rank(ji) )
         ENDDO
       ENDIF
 
-      END FUNCTION obserror_sample_vector
+      END SUBROUTINE obserror_sample_vector
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_sample_vector_homogeneous( x, sigma, rank, uniform_rank )
+      SUBROUTINE obserror_sample_vector_homogeneous( x, sigma, sample, rank, uniform_rank )
 !----------------------------------------------------------------------
 ! ** Purpose : sample probability distribution of observation errors
 ! 
@@ -344,10 +347,12 @@ MODULE ensdam_obserror
       REAL(KIND=8), INTENT( in ) :: sigma
       REAL(KIND=8), INTENT( in ), optional :: rank
       LOGICAL, INTENT( in ), optional :: uniform_rank
-      REAL(KIND=8), DIMENSION(SIZE(x,1)) :: obserror_sample_vector_homogeneous
+      REAL(KIND=8), DIMENSION(:), INTENT( out ) :: sample
 
       INTEGER :: jpi, ji
       LOGICAL :: random_sampling, use_saved_rank
+
+      IF (SIZE(sample,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       random_sampling = .NOT. present(rank)
       use_saved_rank = .FALSE.
@@ -359,27 +364,27 @@ MODULE ensdam_obserror
 
       IF (random_sampling) THEN
         IF (use_saved_rank) THEN
-          obserror_sample_vector_homogeneous(1) = obserror_sample_variable( x(1), sigma )
+          call obserror_sample_variable( x(1), sigma, sample(1) )
           DO ji=2,jpi
-            obserror_sample_vector_homogeneous(ji) = obserror_sample_variable( x(ji), sigma, reuse_last_rank=.TRUE. )
+            call obserror_sample_variable( x(ji), sigma, sample(ji), reuse_last_rank=.TRUE. )
           ENDDO
         ELSE
           DO ji=1,jpi
-            obserror_sample_vector_homogeneous(ji) = obserror_sample_variable( x(ji), sigma )
+            call obserror_sample_variable( x(ji), sigma, sample(ji) )
           ENDDO
         ENDIF
       ELSE
-        obserror_sample_vector_homogeneous(1) = obserror_sample_variable( x(1), sigma, rank )
+        call obserror_sample_variable( x(1), sigma, sample(1), rank )
         DO ji=1,jpi
-          obserror_sample_vector_homogeneous(ji) = obserror_sample_variable( x(ji), sigma, reuse_last_rank=.TRUE. )
+          call obserror_sample_variable( x(ji), sigma, sample(ji), reuse_last_rank=.TRUE. )
         ENDDO
       ENDIF
 
-      END FUNCTION obserror_sample_vector_homogeneous
+      END SUBROUTINE obserror_sample_vector_homogeneous
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-      FUNCTION obserror_sample_variable( x, sigma, rank, reuse_last_rank )
+      SUBROUTINE obserror_sample_variable( x, sigma, sample, rank, reuse_last_rank )
 !----------------------------------------------------------------------
 ! ** Purpose : sample probability distribution of observation errors
 ! 
@@ -393,7 +398,7 @@ MODULE ensdam_obserror
       REAL(KIND=8), INTENT( in ) :: x, sigma
       REAL(KIND=8), INTENT( in ), optional :: rank
       LOGICAL, INTENT( in ), optional :: reuse_last_rank
-      REAL(KIND=8) :: obserror_sample_variable
+      REAL(KIND=8) :: sample
 
       REAL(KIND=8) :: uran, gran, bran, xpert
       REAL(KIND=8) :: logmean, logvar
@@ -470,9 +475,9 @@ MODULE ensdam_obserror
            STOP 'Bad observation error distribution in obserror'
       END SELECT
 
-      obserror_sample_variable = xpert
+      sample = xpert
 
-      END FUNCTION obserror_sample_variable
+      END SUBROUTINE obserror_sample_variable
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
