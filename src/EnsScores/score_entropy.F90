@@ -173,7 +173,7 @@ MODULE ensdam_score_entropy
 
         cross_entropy = 0. ; entropy = 0.
         DO jo=1,jpo
-          WHERE(pens(:,jo).GT.0.) entropy(:)       = entropy(:)       - pens(:,jo) * LOG(pens(:,jo))
+          WHERE(pens(:,jo).GT.0.) entropy(:) = entropy(:) - pens(:,jo) * LOG(pens(:,jo))
           cross_entropy(:) = cross_entropy(:) - pens(:,jo) * LOG(pref(:,jo))
         ENDDO
 

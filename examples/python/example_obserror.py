@@ -23,12 +23,6 @@ import numpy as np
 # - The random number generator used by this module is in the module: stochtools,
 #   it can be seeded using functions provided there, this example uses the default seed.
 
-# Print documentation
-print(edam.obserror.__doc__)
-print(edam.obserror.logpdf.__doc__)
-print(edam.obserror.cdf.__doc__)
-print(edam.obserror.sample.__doc__)
-
 # 1. Example with a normal distribution
 print('-------------------------------------')
 print('1. Example with a normal distribution')

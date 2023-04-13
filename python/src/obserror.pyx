@@ -4,14 +4,21 @@
 ensdam.obserror: Operations related to observation error
 ========================================================
 
-Module attributes:
-    obserror.obstype : Type of observation error
-                       (normal, lognormal, gamma, beta)
-
 Available functions:
     obserror.logpdf : Compute the logarithm of the observation error pdf
     obserror.cdf : Compute the observation error cdf
     obserror.sample : Sample the observation error probability distribution
+
+Module parameters:
+    obserror.obstype : Type of observation error
+                       (normal, lognormal, gamma, beta)
+
+Notes:
+ - When applied to observation vectors, observation errors are assumed independent,
+   only marginal distributions for each component are used.
+   In logpdf, the contributions of the vector components are summed.
+ - The random number generator used by this module is in the module: stochtools,
+   it can be seeded using functions provided there.
 
 """
 
@@ -73,7 +80,7 @@ def logpdf(y, x, sigma):
     """logpdf = logpdf(y,x,sigma)
 
        Compute the logarithm of the observation error pdf
-       Supported distributions (obstype module attribute): normal, lognormal, gamma, beta
+       Supported distributions (obstype module parameter): normal, lognormal, gamma, beta
 
        Inputs
        ------
@@ -136,7 +143,7 @@ def cdf(y, x, sigma):
     """cdf = cdf(y,x,sigma)
 
        Compute the observation error cdf
-       Supported distributions (obstype module attribute): normal, lognormal, gamma, beta
+       Supported distributions (obstype module parameter): normal, lognormal, gamma, beta
 
        Inputs
        ------
@@ -199,7 +206,7 @@ def sample(x, sigma, reuse_last_rank=False):
     """sample = sample(x,sigma)
 
        Sample the observation error probability distribution
-       Supported distributions (obstype module attribute): normal, lognormal, gamma, beta
+       Supported distributions (obstype module parameter): normal, lognormal, gamma, beta
 
        Inputs
        ----------

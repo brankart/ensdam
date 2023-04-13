@@ -98,6 +98,10 @@ MODULE ensdam_score_rcrv
 
       IF (nbr.GT.1) ens_spread = SQRT( ens_spread / (nbr-1) )
 
+      IF (allocated(quadef)) deallocate(quadef)
+      IF (allocated(quaref)) deallocate(quaref)
+      IF (allocated(qua)) deallocate(qua)
+
       END SUBROUTINE rcrv_score_global
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
@@ -231,8 +235,7 @@ MODULE ensdam_score_rcrv
         CALL ens_quantiles( qua, e, quadef )
         ! transform verfication data
         CALL ana_forward( y, qua, quaref )
-        ! deallocate arrays
-        deallocate(quadef,qua)
+        ! deallocate(quadef,quaref,qua)
       ELSE
         ! compute ensemble mean (xmk) and ensemble std (xsk)
         xmk=SUM(e(:))/n
