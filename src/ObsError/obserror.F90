@@ -352,6 +352,7 @@ MODULE ensdam_obserror
       INTEGER :: jpi, ji
       LOGICAL :: random_sampling, use_saved_rank
 
+      jpi = SIZE(x,1)
       IF (SIZE(sample,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       random_sampling = .NOT. present(rank)

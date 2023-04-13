@@ -39,6 +39,7 @@ MODULE ensdam_score_optimality
 
       ! Public definitions needed by python/julia APIs
       PUBLIC optimality_score_global, optimality_score_partition
+      PUBLIC optimality_score_global_gaussian, optimality_score_partition_gaussian
 
       ! Definition for MPI
 #if defined MPI
