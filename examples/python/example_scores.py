@@ -134,7 +134,6 @@ print('  Type of observation error:',edam.scores.obstype)
 # Compute optimality score
 print('4.a Without partition of the data')
 optimality_score = edam.scores.optimality(improved_ensemble,reference_truth,sigma)
-#optimality_score = edam.scores.optimality(improved_ensemble,reference_truth,sigma)
 print ('  Optimality score:',optimality_score)
 
 std_obs = np.zeros(n)+sigma

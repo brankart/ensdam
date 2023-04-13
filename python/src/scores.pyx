@@ -85,7 +85,7 @@ cdef double cdf_callback(double* o, double* y, int* obs_idx) with gil:
     return output
 
 cdef void events_callback(int nstate, int nevents, double* member, int* outcome) with gil:
-    member_ = numpy.asarray(<double[:nstate-1:1]> member)
+    member_ = numpy.asarray(<double[:nstate:1]> member)
     result = glob_events_outcome(member_)
     for i in range(nevents):
        outcome[i] = result[i]
