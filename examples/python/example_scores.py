@@ -184,7 +184,7 @@ entropy_score =  edam.scores.entropy(improved_ensemble,pref,binary_event_outcome
 print ('  Entropy score for improved ensemble (event 1):',entropy_score[0])
 print ('  Entropy score for improved ensemble (event 2):',entropy_score[1])
 
-print('5.a Compute other entropy components')
+print('5.b Compute other entropy components')
 score_only=False
 entropy_score,relative_entropy,cross_entropy,entropy =  edam.scores.entropy(ensemble,pref,binary_event_outcomes,score_only=score_only)
 print ('  Entropy score for non-informative ensemble (event 1):',entropy_score[0])
