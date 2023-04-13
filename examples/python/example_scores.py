@@ -24,8 +24,8 @@ import numpy as np
 #   and compute the score separately for each element of the partition.
 
 # Parameters of the example
-n = 1000     # number of variables
-m = 20       # size of the ensemble
+n = 1000    # number of variables
+m = 50      # size of the ensemble
 
 mu = 0.0     # Ensemble mean
 sigma = 1.0  # Ensemble standard deviation
@@ -102,9 +102,9 @@ print ('  RCRV spread (component 0): ',rcrv_spread[0])
 print ('  RCRV bias (component 1):       ',rcrv_bias[1])
 print ('  RCRV spread (component 1): ',rcrv_spread[1])
 
-print('3.c With anamorphosis')
+print('3.c With anamorphosis (useful for non-Gaussian ensembles)')
 edam.scores.rcrv_with_anamorphosis=True
-edam.scores.rcrv_number_of_quantiles=21
+edam.scores.rcrv_number_of_quantiles=41
 rcrv_bias,rcrv_spread = edam.scores.rcrv(ensemble,reference_truth,partition=partition)
 print ('  RCRV bias (component 0):       ',rcrv_bias[0])
 print ('  RCRV spread (component 0): ',rcrv_spread[0])
@@ -155,8 +155,8 @@ def binary_event_outcomes(member):
 
   outcome = np.zeros(2,dtype=np.intc)
 
-  # Event 1: is the mean square of the ensemble member larger than 1 ?
-  if np.sum(np.square(member))/member.size < 1. :
+  # Event 1: is the mean square of the first 100 variables of the ensemble member larger than 1 ?
+  if np.sum(np.square(member))/np.size(member) < 1. :
     outcome[0] = 1
   else:
     outcome[0] = 2
