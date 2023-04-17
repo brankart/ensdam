@@ -108,7 +108,7 @@ MODULE ensdam_stoutil
           dg = pdf_gaussian(y)
           dy = g/dg
           y = y-dy
-          IF (ABS(dy)/y.LT.accuracy) EXIT
+          IF (ABS(dy/y).LT.accuracy) EXIT
           IF (iter.EQ.maxiter) print *, 'Warning: no convergence in invcdf_gaussian',rank,y
         ENDDO
       ENDIF

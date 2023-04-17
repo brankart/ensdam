@@ -208,12 +208,13 @@ MODULE ensdam_score_rcrv
       INTEGER :: n, i, jq, jpq, allocstat
       REAL(KIND=8) :: xmk, xsk, y
 
-      REAL(KIND=8) :: eps=0.001
+      REAL(KIND=8) :: eps
 
       n = size(e)  ! ensemble size
 
       IF (rcrv_with_anamorphosis) THEN
         jpq = rcrv_number_of_quantiles
+        eps = 1. / real(2.*(n+1))
         IF (.NOT.allocated(quadef)) THEN
           ! Allocate quantiles arrays if needed
           allocate(quadef(jpq),stat=allocstat)
@@ -226,7 +227,6 @@ MODULE ensdam_score_rcrv
           DO jq=1,jpq
             quadef(jq) = real(jq-1,8)/(jpq-1)
             quaref(jq) = eps + quadef(jq) * ( 1. - 2. * eps )
-            !quaref(jq) = ( 1. + quadef(jq) * (n-1) ) / (n+1)
             quaref(jq) = invcdf_gaussian(quaref(jq))
           ENDDO
         ENDIF

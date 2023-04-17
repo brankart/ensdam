@@ -104,7 +104,7 @@ print ('  RCRV spread (component 1): ',rcrv_spread[1])
 
 print('3.c With anamorphosis (useful for non-Gaussian ensembles)')
 edam.scores.rcrv_with_anamorphosis=True
-edam.scores.rcrv_number_of_quantiles=41
+edam.scores.rcrv_number_of_quantiles=21
 rcrv_bias,rcrv_spread = edam.scores.rcrv(ensemble,reference_truth,partition=partition)
 print ('  RCRV bias (component 0):       ',rcrv_bias[0])
 print ('  RCRV spread (component 0): ',rcrv_spread[0])

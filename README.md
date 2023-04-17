@@ -7,46 +7,30 @@ EnsDAM is distributed under the terms of the CeCILL free software license agreem
 See LICENSE.txt for more information. 
 
 EnsDAM code is written in Fortran.
-Interfaces to python and julia are in development.
+Interface to python is in development.
 
-### Installation of EnsDAM
+### Installation of the EnsDAM python module
 
-You need a FORTRAN-90 compiler and the NetCDF library (with f90 support) installed.
+Requirements: cmake, Fortran compiler, python
 
-To compile the library and the examples :
+Run the script: compile.bash
 
-- create a 'make.(MY_MACHINE)' file corresponding to your compiler in the 'macro' directory.
-  This is the Makefile configurable part, which specifies
-  your compiler options and where to find the NetCDF library.
+Run the examples in the 'example/python' directory.
 
-```bash
-cd build
-ln -sf ../macro/make.(MY_MACHINE) Makefile.macro
-```
+The pyensdam module currently includes:
+pyensdam.scores and pyensdam.obserror.
 
-- compile (library and examples) with:
+### Installation of the EnsDAM Fortran library only
 
-```bash
-cd build
-make
-make examples
-```
+To compile the Fortran library only and the Fortran examples,
+go to the 'tools' directory and follow the compilation guidelines.
 
-- if everything goes well, the EnsDAM library 'libensdam.a'
-  has been created in the 'lib' directory, the module files (.mod)
-  have been created in the 'include' directory' and the example
-  exexutables (.x) have been created in the 'examples' directory.
+If everything goes well, the EnsDAM library 'libensdam.a'
+has been created in the 'lib' directory, the module files (.mod)
+have been created in the 'include' directory' and the example
+exexutables (.x) have been created in the 'examples/fortran' directory.
 
- To check the installation :
-
- - run the examples in the 'example' directory:
-
-```bash
-cd examples
-./random_field_on_the_sphere.x
-./low_pass_filter_on_the_sphere.x
-./observation_regression_on_the_sphere.x
-```
+Run the examples in the 'example/fortran' directory.
 
 ### List of available EnsDAM modules
 

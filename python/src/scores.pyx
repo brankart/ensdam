@@ -410,7 +410,7 @@ def entropy(ens,pref,events_outcome,score_only=True):
        Inputs
        ------
        ens [rank-2 double array] : ensemble simulation (nens,nvar)
-       pref [rank-2 double array] : reference probability distribution (nevents,noutcomes)
+       pref [rank-2 double array] : reference probability distribution (noutcomes,nevents)
        events_outcome [rank-1 intc array] : callback function
 
        Returns
@@ -450,28 +450,28 @@ def entropy(ens,pref,events_outcome,score_only=True):
 # Interfaces to corresponding FORTRAN functions
 def events_score(double[:,::1] ens not None, double[:,::1] pref not None):
 
-    score = numpy.zeros((<int>pref.shape[0]), dtype=numpy.double)
+    score = numpy.zeros((<int>pref.shape[1]), dtype=numpy.double)
     cdef double[::1] score_ = score
 
-    c_events_score(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[0], <int>pref.shape[1], &score_[0], &ens[0,0], &pref[0,0])
+    c_events_score(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[1], <int>pref.shape[0], &score_[0], &ens[0,0], &pref[0,0])
     return score
 
 def events_relative_entropy(double[:,::1] ens not None, double[:,::1] pref not None):
 
-    relative_entropy = numpy.zeros((<int>pref.shape[0]), dtype=numpy.double)
+    relative_entropy = numpy.zeros((<int>pref.shape[1]), dtype=numpy.double)
     cdef double[::1] relative_entropy_ = relative_entropy
 
-    c_events_relative_entropy(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[0], <int>pref.shape[1], &relative_entropy_[0], &ens[0,0], &pref[0,0])
+    c_events_relative_entropy(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[1], <int>pref.shape[0], &relative_entropy_[0], &ens[0,0], &pref[0,0])
     return relative_entropy
 
 def events_cross_entropy(double[:,::1] ens not None, double[:,::1] pref not None):
 
-    cross_entropy = numpy.zeros((<int>pref.shape[0]), dtype=numpy.double)
-    entropy = numpy.zeros((<int>pref.shape[0]), dtype=numpy.double)
+    cross_entropy = numpy.zeros((<int>pref.shape[1]), dtype=numpy.double)
+    entropy = numpy.zeros((<int>pref.shape[1]), dtype=numpy.double)
     cdef double[::1] cross_entropy_ = cross_entropy
     cdef double[::1] entropy_ = entropy
 
-    c_events_cross_entropy(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[0], <int>pref.shape[1], &cross_entropy_[0], &entropy_[0], &ens[0,0], &pref[0,0])
+    c_events_cross_entropy(<int>ens.shape[1], <int>ens.shape[0], <int>pref.shape[1], <int>pref.shape[0], &cross_entropy_[0], &entropy_[0], &ens[0,0], &pref[0,0])
     return cross_entropy, entropy
 
 def events_entropy(double[:,::1] ens not None, nevents not None, noutcomes not None):
@@ -484,7 +484,7 @@ def events_entropy(double[:,::1] ens not None, nevents not None, noutcomes not N
 
 def events_probability(double[:,::1] ens not None, nevents not None, noutcomes not None):
 
-    pens = numpy.zeros((nevents,noutcomes), dtype=numpy.double)
+    pens = numpy.zeros((noutcomes,nevents), dtype=numpy.double)
     cdef double[:,::1] pens_ = pens
 
     c_events_probability(<int>ens.shape[1], <int>ens.shape[0], <int>nevents, <int>noutcomes, &pens_[0,0], &ens[0,0])
