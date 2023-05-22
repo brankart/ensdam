@@ -1,6 +1,6 @@
 module stochtools
 
-use iso_c_binding, only: c_int, c_double, c_int32_t
+use iso_c_binding, only: c_int, c_long, c_double, c_int32_t, c_funptr, c_char, c_null_char
 
 use ensdam_storng
 use ensdam_stotge
@@ -38,9 +38,16 @@ end function
 
 ! From storng
 
+subroutine c_kiss(iran) bind(c)
+  implicit none
+  integer(c_long), intent(out) :: iran
+
+  iran = kiss()
+end subroutine
+
 subroutine c_kiss_seed(ix, iy, iz, iw) bind(c)
   implicit none
-  integer(c_int), intent(in), value :: ix, iy, iz, iw
+  integer(c_long), intent(in), value :: ix, iy, iz, iw
 
   call kiss_seed(ix, iy, iz, iw)
 end subroutine
@@ -51,6 +58,10 @@ end subroutine
 
 subroutine c_kiss_load() bind(c)
   call kiss_load()
+end subroutine
+
+subroutine c_kiss_reset() bind(c)
+  call kiss_reset()
 end subroutine
 
 subroutine c_kiss_check(len_check_type,check_type) bind(c)
@@ -95,7 +106,7 @@ end subroutine
 
 subroutine c_kiss_sample(a,n,k) bind(c)
   implicit none
-  real(c_double), intent(inout) :: a(n)
+  integer(c_int), intent(inout) :: a(n)
   integer(c_int), intent(in), value :: n
   integer(c_int), intent(in), value :: k
 
@@ -261,12 +272,12 @@ subroutine c_pdf_gamma(a,x,fun) bind(c)
   fun = pdf_gamma(a,x)
 end subroutine
 
-subroutine c_logpdf_gamma(a,x,fun) bind(c)
+subroutine c_logpdf_gamma(k,theta,x,fun) bind(c)
   implicit none
-  real(c_double), intent(in) :: a,x
+  real(c_double), intent(in) :: k,theta,x
   real(c_double), intent(out) :: fun
 
-  fun = logpdf_gamma(a,x)
+  fun = logpdf_gamma(k,theta,x)
 end subroutine
 
 subroutine c_invcdf_gamma(a,rank,fun) bind(c)
