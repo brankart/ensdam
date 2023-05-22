@@ -12,7 +12,7 @@ contains
 
 ! From anaqua
 
-subroutine c_ens_quantiles_vector(nvar,nens,nqua,qua,ens,quadef,enswei,ensweiloc,argcase)
+subroutine c_ens_quantiles_vector(nvar,nens,nqua,qua,ens,quadef,enswei,ensweiloc,argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nens
@@ -35,7 +35,7 @@ subroutine c_ens_quantiles_vector(nvar,nens,nqua,qua,ens,quadef,enswei,ensweiloc
 
 end subroutine
 
-subroutine c_ens_quantiles_variable(nens,nqua,qua,ens,quadef,enswei,argcase)
+subroutine c_ens_quantiles_variable(nens,nqua,qua,ens,quadef,enswei,argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nens
   integer(c_int), intent(in), value :: nqua
@@ -56,7 +56,7 @@ end subroutine
 
 ! From anatra
 
-subroutine c_ana_forward_ensemble(nvar,nens,nqua,ens,qua,quaref,rank,argcase)
+subroutine c_ana_forward_ensemble(nvar,nens,nqua,ens,qua,quaref,rank,argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nens
@@ -76,7 +76,7 @@ subroutine c_ana_forward_ensemble(nvar,nens,nqua,ens,qua,quaref,rank,argcase)
 
 end subroutine
 
-subroutine c_ana_forward_vector(nvar,nqua,vct,qua,quaref,rank,argcase)
+subroutine c_ana_forward_vector(nvar,nqua,vct,qua,quaref,rank,argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nqua
@@ -95,7 +95,7 @@ subroutine c_ana_forward_vector(nvar,nqua,vct,qua,quaref,rank,argcase)
 
 end subroutine
 
-subroutine c_ana_forward_variable(nqua,var,qua,quaref,rank,argcase)
+subroutine c_ana_forward_variable(nqua,var,qua,quaref,rank,argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nqua
   real(c_double), intent(inout) :: var
@@ -113,7 +113,7 @@ subroutine c_ana_forward_variable(nqua,var,qua,quaref,rank,argcase)
 
 end subroutine
 
-subroutine c_ana_backward_ensemble(nvar,nens,nqua,ens,qua,quaref)
+subroutine c_ana_backward_ensemble(nvar,nens,nqua,ens,qua,quaref) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nens
@@ -125,7 +125,7 @@ subroutine c_ana_backward_ensemble(nvar,nens,nqua,ens,qua,quaref)
   call ana_backward_ensemble(ens,qua,quaref)
 end subroutine
 
-subroutine c_ana_backward_vector(nvar,nqua,vct,qua,quaref)
+subroutine c_ana_backward_vector(nvar,nqua,vct,qua,quaref) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nqua
@@ -136,7 +136,7 @@ subroutine c_ana_backward_vector(nvar,nqua,vct,qua,quaref)
   call ana_backward_vector(vct,qua,quaref)
 end subroutine
 
-subroutine c_ana_backward_variable(nqua,var,qua,quaref)
+subroutine c_ana_backward_variable(nqua,var,qua,quaref) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nqua
   real(c_double), intent(inout) :: var
@@ -148,7 +148,7 @@ end subroutine
 
 ! From anaobs
 
-subroutine c_ana_obs(nobs,nens,nqua,nsmp,anaobs,obsens,obs,obserror,quadef,quaref)
+subroutine c_ana_obs(nobs,nens,nqua,nsmp,anaobs,obsens,obs,obserror,quadef,quaref) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nobs
   integer(c_int), intent(in), value :: nens
@@ -164,7 +164,7 @@ subroutine c_ana_obs(nobs,nens,nqua,nsmp,anaobs,obsens,obs,obserror,quadef,quare
   call ana_obs(anaobs,obsens,obs,obserror,quadef,quaref)
 end subroutine
 
-subroutine c_ana_obs_sym(nobs,nqua,nsmp,anaobs,obs,obserror,obsqua,quaref)
+subroutine c_ana_obs_sym(nobs,nqua,nsmp,anaobs,obs,obserror,obsqua,quaref) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nobs
   integer(c_int), intent(in), value :: nqua
