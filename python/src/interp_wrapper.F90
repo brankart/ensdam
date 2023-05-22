@@ -8,7 +8,7 @@ implicit none
 
 contains
 
-subroutine c_grid2D_init(ni,nj,xgrid,ygrid,gtype)
+subroutine c_grid2D_init(ni,nj,xgrid,ygrid,gtype) bind(c)
   implicit none
   integer(c_int), intent(in), value :: ni, nj
   real(c_double), intent(in) :: xgrid(ni,nj)
