@@ -295,7 +295,11 @@ MODULE ensdam_stotge
 
       CALL kiss_uniform(uran)
 
-      teran=a-LOG(uran)/a
+      IF (a.NE.0.) THEN
+        teran=a-LOG(uran)/a
+      ELSE
+        teran=-LOG(uran)
+      ENDIF
 
       END SUBROUTINE
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

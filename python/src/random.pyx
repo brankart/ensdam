@@ -38,7 +38,7 @@ import numpy
 from libc.stdint cimport int8_t, int16_t, int32_t, int64_t
 
 # Definition of external C-callable routines
-cdef extern void c_kiss(long iran) nogil
+cdef extern void c_kiss(long* iran) nogil
 cdef extern void c_kiss_seed(long ix,long iy,long iz,long iw) nogil
 cdef extern void c_kiss_save() nogil
 cdef extern void c_kiss_load() nogil
@@ -48,7 +48,7 @@ cdef extern void c_kiss_uniform(double* uran) nogil
 cdef extern void c_kiss_gaussian(double* gran) nogil
 cdef extern void c_kiss_gamma(double* gamr,double* k) nogil
 cdef extern void c_kiss_beta(double* betar,double* a,double* b) nogil
-cdef extern void c_kiss_sample(int* a,int n,int* k) nogil
+cdef extern void c_kiss_sample(int* a,int n,int k) nogil
 cdef extern void c_ran_te(double* teran,double* a) nogil
 cdef extern void c_ran_tg(int nsmpl,double* tgsmpl,double* aa,double* bb) nogil
 cdef extern void c_ranv_tg(int nvar,int ncstr,int nsmpl,double* tgvsmpl,double* matArm,double* vecbm) nogil
@@ -92,19 +92,20 @@ def seed(seed_idx not None):
 
     c_kiss_reset()
 
-    for i in range(1,seed_idx):
-       c_kiss(seed1)
-       c_kiss(seed2)
-       c_kiss(seed3)
-       c_kiss(seed4)
+    for i in range(0,seed_idx):
+       c_kiss(&seed1)
+       c_kiss(&seed2)
+       c_kiss(&seed3)
+       c_kiss(&seed4)
 
-    c_kiss_seed(seed1,seed2,seed3,seed4)
+    if seed_idx>0:
+       c_kiss_seed(seed1,seed2,seed3,seed4)
 
 # Public function to save seed in restart file
 def seed_save():
     """seed_save()
 
-       Save current state of random number generator in restart file
+       Save current state of random number generator in restart file (.kiss_restart)
     """
     c_kiss_save()
 
@@ -112,7 +113,7 @@ def seed_save():
 def seed_load():
     """seed_load()
 
-       Load seed from restart file
+       Load seed from restart file (.kiss_restart)
     """
     c_kiss_load()
 
@@ -134,8 +135,8 @@ def check(check_type not None):
     c_kiss_check(&len_check_type, c_check_type)
 
 # Public function to perform random swap of input array
-def swap(int[::1] a not None,k):
-    """swap()
+def swap(int[::1] a,k=None):
+    """swap(a,[k])
 
        Random array swapping
 
@@ -152,77 +153,242 @@ def swap(int[::1] a not None,k):
     else:
       k_ = k
     
-    c_kiss_sample(&a[0],<int>a.shape[0],&k_)
+    c_kiss_sample(&a[0],<int>a.shape[0],k_)
 
 # Public function to draw random numbers with uniform distribution
-def uniform(zran):
-    """uniform(zran)
+def uniform(shape=None):
+    """zran=uniform([shape])
 
        Draw random numbers with uniform distribution
 
-       Input/Output
-       ------------
-       zran[double] : scalar/array to fill with uniform random numbers
+       Input
+       -----
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
 
     """
     cdef double zran_
 
-    if numpy.isscalar(zran):
-      zran_ = zran 
+    if shape==None:
       c_kiss_uniform(&zran_)
+      return zran_
     else:
-      for zran1 in zran:
-        zran_ = zran1
-        c_kiss_uniform(&zran_)
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_kiss_uniform(&zran_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with normal distribution
-def normal():
-    """normal()
+def normal(shape=None):
+    """zran=normal([shape])
 
        Draw random numbers with normal distribution
+
+       Input
+       -----
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+
+    if shape==None:
+      c_kiss_gaussian(&zran_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_kiss_gaussian(&zran_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with exponential distribution
-def exp():
-    """exp()
+def exp(shape=None):
+    """zran=exp([shape])
 
        Draw random numbers with exponential distribution
+
+       Input
+       -----
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+    cdef double a_ = 0.
+
+    if shape==None:
+      c_ran_te(&zran_,&a_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_ran_te(&zran_,&a_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with gamma distribution
-def gamma():
-    """gamma()
+def gamma(k,shape=None):
+    """zran=gamma(k,[shape])
 
        Draw random numbers with gamma distribution
+
+       Input
+       -----
+       k [double]: parameter of gamma distribution
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+    cdef double k_ = k
+
+    if shape==None:
+      c_kiss_gamma(&zran_,&k_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_kiss_gamma(&zran_,&k_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with beta distribution
-def beta():
-    """beta()
+def beta(a,b,shape=None):
+    """zran=beta(a,b,[shape])
 
        Draw random numbers with beta distribution
+
+       Input
+       -----
+       a [double]: parameter of beta distribution
+       b [double]: parameter of beta distribution
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+    cdef double a_ = a
+    cdef double b_ = b
+
+    if shape==None:
+      c_kiss_beta(&zran_,&a_,&b_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_kiss_beta(&zran_,&a_,&b_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with truncated exponential distribution
-def truncated_exp():
-    """truncated_exp()
+def truncated_exp(a,shape=None):
+    """zran=truncated_exp(a,[shape])
 
        Draw random numbers with truncated exponential distribution
+
+       Input
+       -----
+       a [double]: minimum of truncated exponential distribution
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+    cdef double a_ = a
+
+    if shape==None:
+      c_ran_te(&zran_,&a_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_ran_te(&zran_,&a_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random numbers with truncated normal distribution
-def truncated_normal():
-    """truncated_normal()
+def truncated_normal(a,b,shape=None):
+    """zran=truncated_normal([shape])
 
        Draw random numbers with truncated normal distribution
+
+       Input
+       -----
+       a,b [double]: bounds of truncated normal distribution
+       shape: shape of numpy array to produce (None-> double scalar)
+
+       Output
+       ------
+       zran [double]: scalar or array with independent random numbers
+
     """
+    cdef double zran_
+    cdef double a_ = a
+    cdef double b_ = b
+    cdef int n = 1
+
+    if shape==None:
+      c_ran_tg(n,&zran_,&a_,&b_)
+      return zran_
+    else:
+      zran = numpy.zeros(shape,dtype=numpy.double)
+      with numpy.nditer(zran,op_flags=['readwrite']) as it:
+        for x in it:
+          c_ran_tg(n,&zran_,&a_,&b_)
+          x[...] = zran_
+      return zran
 
 # Public function to draw random vectors with truncated normal distribution
-def truncated_normal_vec():
-    """truncated_normal_vec()
+def truncated_normal_vec(nsmp,double[:,::1] A,double[::1] b):
+    """sample = truncated_normal_vec(nsmp,A,b)
 
-       Draw random numbers with truncated normal distribution
+       Draw random vectors x with truncated normal distribution
+       with N(0,I) refrerence Gaussian and contsraint Ax <= b
+
+       Input
+       -----
+       nsmp [integer]: size of the sample to produce
+       A [double]: matrix defining the constraint (ncstr,nvar)
+       b [double]: vector defining the constraint (ncstr)
+
+       Output
+       ------
+       sample [double]: sample of random vectors (nvar,nsmp)
+
     """
+    sample = numpy.zeros((A.shape[1],nsmp), dtype=numpy.double)
+    cdef double[:,::1] sample_ = sample
+    cdef int nsmp_ = nsmp
+
+    c_ranv_tg(<int>A.shape[1], <int>A.shape[0], nsmp_, &sample_[0,0], &A[0,0], &b[0])
+
+    return sample
 
 # Public function to initialize the sampling of 1D random fields
 def field1d_init():

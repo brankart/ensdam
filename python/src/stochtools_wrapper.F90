@@ -1,6 +1,6 @@
 module stochtools
 
-use iso_c_binding, only: c_int, c_long, c_double, c_int32_t, c_funptr, c_char, c_null_char
+use iso_c_binding, only: c_int, c_long, c_double, c_int32_t, c_funptr, c_char, c_null_char, c_f_procpointer
 
 use ensdam_storng
 use ensdam_stotge
