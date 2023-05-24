@@ -22,6 +22,7 @@ Available functions:
     random.field2d_init: Initialization for the sampling of 2D random fields
     random.field1d_sample: Sample 1D random fields with given spectrum
     random.field2d_sample: Sample 2D random fields with given spectrum
+    random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
 
 Module parameters:
 
@@ -54,12 +55,13 @@ cdef extern void c_ran_tg(int nsmpl,double* tgsmpl,double* aa,double* bb) nogil
 cdef extern void c_ranv_tg(int nvar,int ncstr,int nsmpl,double* tgvsmpl,double* matArm,double* vecbm) nogil
 cdef extern void c_def_spect_init(int nfreq,int nspct1d,int nspct2d,int nspct2s) nogil
 cdef extern void c_def_spect_power(int spct_type,int spct_idx,int nspct,double* spct_freq,double* spct_power) nogil
-cdef extern void c_def_sample_size(int nsmp1d,int nsmp2d,int nsmp2s,int nseed) nogil
+cdef extern void c_def_sample_size(int nsmp1d,int nsmp2d,int nsmp2s) nogil
 cdef extern void c_sample_freq_1d(int spct_idx) nogil
 cdef extern void c_sample_freq_2d(int spct_idx) nogil
-cdef extern void c_gen_field_1d(int spct_idx,int nx,ranfield,x) nogil
-cdef extern void c_gen_field_2d(int spct_idx,int nx,int ny,ranfield,x,y) nogil
-cdef extern void c_gen_field_2s(int ngrid,ranfield,lon,lat,int lmin,int lmax) nogil
+cdef extern void c_gen_field_1d(int spct_idx,int nx,double* ranfield,double* x) nogil
+cdef extern void c_gen_field_2d(int spct_idx,int nx,int ny,double* ranfield,double* x,double* y) nogil
+cdef extern void c_gen_field_2s(int ngrid,double* ranfield,double* lon,double* lat,int lmin,int lmax) nogil
+cdef extern void c_associate_pow_spectrum_callback(void* pow_spectrum_callback_) nogil
 
 # Utility to convert python string into C string
 cdef pystring2cstring(str pystring):
@@ -68,7 +70,7 @@ cdef pystring2cstring(str pystring):
     return cstring
 
 # Define callback routines needed in C-callable wrapper
-cdef double pow_spectrum_callback(int* l,int* m):
+cdef double pow_spectrum_callback(int* l,int* m) with gil:
     cdef int l_ = numpy.asarray(<int[:1:1]> l) 
     cdef int m_ = numpy.asarray(<int[:1:1]> m) 
     cdef double output
@@ -391,30 +393,121 @@ def truncated_normal_vec(nsmp,double[:,::1] A,double[::1] b):
     return sample
 
 # Public function to initialize the sampling of 1D random fields
-def field1d_init():
-    """field1d_init()
+def field1d_init(double[::1] spct_freq, double[::1] spct_power):
+    """field1d_init(spct_freq,spct_power)
 
        Initialize the sampling of 1D random fields
+
+       Input
+       -----
+       spct_freq [double array]: list of frequencies
+       spct_power [double array]: spectrum power at each frewuency
+
     """
+    cdef int nspct1d=1,nspct2d=0,nspct2s=0,spct_type=1,spct_idx=1
+
+    c_def_spect_init(<int>spct_freq.shape[0],nspct1d,nspct2d,nspct2s)
+    c_def_spect_power(spct_type,spct_idx,<int>spct_freq.shape[0],&spct_freq[0],&spct_power[0])
 
 # Public function to initialize the sampling of 2D random fields
-def field2d_init():
-    """field2d_init()
+def field2d_init(double[::1] spct_freq, double[::1] spct_power):
+    """field2d_init(spct_freq,spct_power)
 
        Initialize the sampling of 2D random fields
+
+       Input
+       -----
+       spct_freq [double array]: list of frequencies
+       spct_power [double array]: spectrum power at each frewuency
+
     """
+    cdef int nspct1d=0,nspct2d=1,nspct2s=0,spct_type=2,spct_idx=1
+
+    c_def_spect_init(<int>spct_freq.shape[0],nspct1d,nspct2d,nspct2s)
+    c_def_spect_power(spct_type,spct_idx,<int>spct_freq.shape[0],&spct_freq[0],&spct_power[0])
 
 # Public function to sample 1D random fields with given spectrum
-def field1d_sample():
-    """field1d_sample()
+def field1d_sample(double[::1] x,nharm):
+    """field = field1d_sample(x,nharm)
 
        Sample 1D random fields with given spectrum
+
+       Input
+       -----
+       x [double array]: grid of the output random field (1D)
+       nharm [integer]: number of harmonics to sample from the spectrum and superpose
+
+       Output
+       ------
+       field [double array]: random field with required spectrum (1D)
+
     """
+    cdef int nsmp2d=0,nsmp2s=0,spct_idx=1
+    field = numpy.zeros((<int>x.shape[0]), dtype=numpy.double)
+    cdef double[::1] field_ = field
+
+    c_def_sample_size(<int>nharm,nsmp2d,nsmp2s)
+    c_sample_freq_1d(spct_idx)
+    c_gen_field_1d(spct_idx,<int>x.shape[0],&field_[0],&x[0])
+
+    return field
 
 # Public function to sample 2D random fields with given spectrum
-def field2d_sample():
-    """field2d_sample()
+def field2d_sample(double[:,::1] x, double[:,::1] y,nharm):
+    """field = field2d_sample(x,y,nharm)
 
        Sample 2D random fields with given spectrum
+
+       Input
+       -----
+       x [double array]: x coordinate of the output random field (2D)
+       y [double array]: y coordinate of the output random field (2D)
+       nharm [integer]: number of harmonics to sample from the spectrum and superpose
+
+       Output
+       ------
+       field [double array]: random field with required spectrum (2D)
+
     """
+    cdef int nsmp1d=0,nsmp2s=0,spct_idx=1
+    field = numpy.zeros((<int>x.shape[0],<int>x.shape[1]), dtype=numpy.double)
+    cdef double[:,::1] field_ = field
+
+    c_def_sample_size(nsmp1d,<int>nharm,nsmp2s)
+    c_sample_freq_2d(spct_idx)
+    c_gen_field_2d(spct_idx,<int>x.shape[0],<int>x.shape[1],&field_[0,0],&x[0,0],&y[0,0])
+
+    return field
+
+# Public function to sample 2D random fields with given spectrum on the sphere
+def field2s_sample(double[::1] lon, double[::1] lat,pow_spectrum,lmin,lmax):
+    """field = field2s_sample(lon,lat,pow_spectrum,lmin,lmax)
+
+       Sample 2D random fields with given spectrum on the sphere
+
+       Input
+       -----
+       lon [double array]: longitudes of the output random field (1D)
+       lat [double array]: latitudes of the output random field (1D)
+       pow_spectrum [callback routine]: power spectrum in the basis of the spherical harmonics
+       lmin [integer] : minimum degree of the spherical harmonics
+       lmax [integer] : maximum degree of the spherical harmonics
+
+       Output
+       ------
+       field [double array]: random field with required spectrum (1D)
+
+    """
+    field = numpy.zeros((<int>lon.shape[0]), dtype=numpy.double)
+    cdef double[::1] field_ = field
+
+    # Associate callback routines in C-callable wrapper
+    c_associate_pow_spectrum_callback(&pow_spectrum_callback)
+    # Associate callback function to global name
+    global glob_pow_spectrum
+    glob_pow_spectrum = pow_spectrum
+
+    c_gen_field_2s(<int>lon.shape[0],&field_[0],&lon[0],&lat[0],<int>lmin,<int>lmax)
+
+    return field
 

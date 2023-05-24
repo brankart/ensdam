@@ -22,6 +22,7 @@ import numpy as np
 # - random.field2d_init: Initialization for the sampling of 2D random fields
 # - random.field1d_sample: Sample 1D random fields with given spectrum
 # - random.field2d_sample: Sample 2D random fields with given spectrum
+# - random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
 
 # The module contains the parameters:
 # - 
@@ -48,4 +49,5 @@ print(edam.random.field1d_init.__doc__)
 print(edam.random.field2d_init.__doc__)
 print(edam.random.field1d_sample.__doc__)
 print(edam.random.field2d_sample.__doc__)
+print(edam.random.field2s_sample.__doc__)
 

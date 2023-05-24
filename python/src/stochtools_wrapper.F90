@@ -167,31 +167,30 @@ subroutine c_def_spect_power(spct_type,spct_idx,nspct,spct_freq,spct_power) bind
   call def_spect_power(spct_type,spct_idx,spct_freq,spct_power)
 end subroutine
 
-subroutine c_def_sample_size(nsmp1d,nsmp2d,nsmp2s,nseed) bind(c)
+subroutine c_def_sample_size(nsmp1d,nsmp2d,nsmp2s) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nsmp1d
   integer(c_int), intent(in), value :: nsmp2d
   integer(c_int), intent(in), value :: nsmp2s
-  integer(c_int), intent(in), value :: nseed
 
-  call def_sample_size(nsmp1d,nsmp2d,nsmp2s,nseed)
+  call def_sample_size(nsmp1d,nsmp2d,nsmp2s)
 end subroutine
 
-subroutine c_sample_freq_1d(spct_idx)
+subroutine c_sample_freq_1d(spct_idx) bind(c)
   implicit none
   integer(c_int), intent(in), value :: spct_idx
 
   call sample_freq_1d(spct_idx)
 end subroutine
 
-subroutine c_sample_freq_2d(spct_idx)
+subroutine c_sample_freq_2d(spct_idx) bind(c)
   implicit none
   integer(c_int), intent(in), value :: spct_idx
 
   call sample_freq_2d(spct_idx)
 end subroutine
 
-subroutine c_gen_field_1d(spct_idx,nx,ranfield,x)
+subroutine c_gen_field_1d(spct_idx,nx,ranfield,x) bind(c)
   implicit none
   integer(c_int), intent(in), value :: spct_idx
   integer(c_int), intent(in), value :: nx
@@ -201,7 +200,7 @@ subroutine c_gen_field_1d(spct_idx,nx,ranfield,x)
   call gen_field_1d(spct_idx,ranfield,x)
 end subroutine
 
-subroutine c_gen_field_2d(spct_idx,nx,ny,ranfield,x,y)
+subroutine c_gen_field_2d(spct_idx,nx,ny,ranfield,x,y) bind(c)
   implicit none
   integer(c_int), intent(in), value :: spct_idx
   integer(c_int), intent(in), value :: nx, ny
@@ -211,15 +210,20 @@ subroutine c_gen_field_2d(spct_idx,nx,ny,ranfield,x,y)
   call gen_field_2d(spct_idx,ranfield,x,y)
 end subroutine
 
-subroutine c_gen_field_2s(ngrid,ranfield,lon,lat,lmin,lmax)
+subroutine c_gen_field_2s(ngrid,ranfield,lon,lat,lmin,lmax) bind(c)
   implicit none
   integer(c_int), intent(in), value :: ngrid
   real(c_double), intent(out) :: ranfield(ngrid)
   real(c_double), intent(in) :: lon(ngrid)
   real(c_double), intent(in) :: lat(ngrid)
-  integer(c_int), intent(in), value :: lmin, lmax
+  integer(c_int), intent(in) :: lmin, lmax
 
-  call gen_field_2s_new(ranfield,lon,lat,f_pow_spectrum,lmin,lmax)
+   if (associated(pow_spectrum)) then
+      call gen_field_2s_new(ranfield,lon,lat,f_pow_spectrum,lmin,lmax)
+   else
+      stop 'callback function pow_spectrum not associated in stochtools'
+   endif
+
 end subroutine
 
 ! From stoutil
