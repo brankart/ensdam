@@ -60,7 +60,7 @@ cdef extern void c_sample_freq_1d(int spct_idx) nogil
 cdef extern void c_sample_freq_2d(int spct_idx) nogil
 cdef extern void c_gen_field_1d(int spct_idx,int nx,double* ranfield,double* x) nogil
 cdef extern void c_gen_field_2d(int spct_idx,int nx,int ny,double* ranfield,double* x,double* y) nogil
-cdef extern void c_gen_field_2s(int ngrid,double* ranfield,double* lon,double* lat,int lmin,int lmax) nogil
+cdef extern void c_gen_field_2s(int ngrid,double* ranfield,double* lon,double* lat,int* lmin,int* lmax) nogil
 cdef extern void c_associate_pow_spectrum_callback(void* pow_spectrum_callback_) nogil
 
 # Utility to convert python string into C string
@@ -94,7 +94,7 @@ def seed(seed_idx not None):
 
     c_kiss_reset()
 
-    for i in range(0,seed_idx):
+    for i in range(0,seed_idx+1):
        c_kiss(&seed1)
        c_kiss(&seed2)
        c_kiss(&seed3)
@@ -500,6 +500,8 @@ def field2s_sample(double[::1] lon, double[::1] lat,pow_spectrum,lmin,lmax):
     """
     field = numpy.zeros((<int>lon.shape[0]), dtype=numpy.double)
     cdef double[::1] field_ = field
+    cdef int lmin_ = lmin
+    cdef int lmax_ = lmax
 
     # Associate callback routines in C-callable wrapper
     c_associate_pow_spectrum_callback(&pow_spectrum_callback)
@@ -507,7 +509,7 @@ def field2s_sample(double[::1] lon, double[::1] lat,pow_spectrum,lmin,lmax):
     global glob_pow_spectrum
     glob_pow_spectrum = pow_spectrum
 
-    c_gen_field_2s(<int>lon.shape[0],&field_[0],&lon[0],&lat[0],<int>lmin,<int>lmax)
+    c_gen_field_2s(<int>lon.shape[0],&field_[0],&lon[0],&lat[0],&lmin_,&lmax_)
 
     return field
 

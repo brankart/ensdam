@@ -218,11 +218,11 @@ subroutine c_gen_field_2s(ngrid,ranfield,lon,lat,lmin,lmax) bind(c)
   real(c_double), intent(in) :: lat(ngrid)
   integer(c_int), intent(in) :: lmin, lmax
 
-   if (associated(pow_spectrum)) then
-      call gen_field_2s_new(ranfield,lon,lat,f_pow_spectrum,lmin,lmax)
-   else
-      stop 'callback function pow_spectrum not associated in stochtools'
-   endif
+  if (associated(pow_spectrum)) then
+     call gen_field_2s_new(ranfield,lon,lat,f_pow_spectrum,lmin,lmax)
+  else
+     stop 'callback function pow_spectrum not associated in stochtools'
+  endif
 
 end subroutine
 
