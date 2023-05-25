@@ -31,13 +31,13 @@ print('--------------------------------')
 print('Seed the random number generator')
 print('--------------------------------')
 
-# Use default seed
-edam.random.seed(0)
-
 # Perform short check of the random number generator (silent, but stop if failed)
 edam.random.check('short')
 # Perform long check of the random number generator (with message, and stop if failed)
 edam.random.check('long')  # comment out to save time
+
+# Use default seed
+edam.random.seed(0)
 
 # Save current state in restart file
 edam.random.seed_save()
