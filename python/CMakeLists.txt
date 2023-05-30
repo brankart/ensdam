@@ -11,6 +11,7 @@ add_custom_command(OUTPUT wheel.stamp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:scores>" pyensdam/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:obserror>" pyensdam/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:random>" pyensdam/
+                   COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:probability>" pyensdam/
                    COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/setup.py" bdist_wheel
                    VERBATIM)
 add_custom_target(wheel ALL DEPENDS wheel.stamp)

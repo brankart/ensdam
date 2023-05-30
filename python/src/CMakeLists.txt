@@ -44,6 +44,13 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/random.c
 Python3_add_library(random MODULE random.c)
 target_link_libraries(random PRIVATE censdam Python3::NumPy)
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/probability.c
+    COMMAND cython probability.pyx
+    MAIN_DEPENDENCY probability.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+Python3_add_library(probability MODULE probability.c)
+target_link_libraries(probability PRIVATE censdam Python3::NumPy)
 
 #kbadd_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/stat.c
 #KB    COMMAND cython stat.pyx

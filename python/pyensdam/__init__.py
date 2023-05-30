@@ -12,6 +12,6 @@ from . import scores
 #from . import interptools
 from . import obserror
 from . import random
-#from . import probability
+from . import probability
 #from . import transspho
 
