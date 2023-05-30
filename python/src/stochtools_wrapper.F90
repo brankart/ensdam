@@ -257,7 +257,7 @@ subroutine c_invcdf_gaussian(rank,fun) bind(c)
   real(c_double), intent(in) :: rank
   real(c_double), intent(out) :: fun
 
-  fun = cdf_gaussian(rank)
+  fun = invcdf_gaussian(rank)
 end subroutine
 
 subroutine c_cdf_gamma(a,x,fun) bind(c)

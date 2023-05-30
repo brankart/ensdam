@@ -183,14 +183,14 @@ MODULE ensdam_stoutil
       REAL(KIND=8), INTENT(in) :: a,rank
       REAL(KIND=8) :: invcdf_gamma
 
-      if(a.le.1.) stop 'bad arguments in invpdf_gamma'
+      if(a.le.0.) stop 'bad arguments in invcdf_gamma'
 
       y=a
       DO iter=1,maxiter
         g = cdf_gamma(a,y) - rank
         dg = pdf_gamma(a,y)
         dy = g/dg
-        y = y-dy
+        y = MAX(y-dy,accuracy)
         IF (ABS(dy)/y.LT.accuracy) EXIT 
         IF (iter.EQ.maxiter) print *, 'Warning: no convergence in invcdf_gamma',rank,y,dg
       ENDDO

@@ -14,8 +14,8 @@ Module parameters:
     probability.type: type of probability distribution (normal, gamma, beta)
     probability.k: shape parameter of the gamma distribution
     probability.theta: scale parameter of the gamma distribution
-    probability.a: parameter of the beta distribution
-    probability.b: parameter of the beta distribution
+    probability.a: parameter alpha of the beta distribution
+    probability.b: parameter beta of the beta distribution
 
 """
 
