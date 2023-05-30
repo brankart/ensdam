@@ -94,14 +94,14 @@ def seed(seed_idx not None):
 
     c_kiss_reset()
 
-    for i in range(0,seed_idx+1):
-       c_kiss(&seed1)
-       c_kiss(&seed2)
-       c_kiss(&seed3)
-       c_kiss(&seed4)
-
     if seed_idx>0:
-       c_kiss_seed(seed1,seed2,seed3,seed4)
+      for i in range(0,seed_idx+1):
+        c_kiss(&seed1)
+        c_kiss(&seed2)
+        c_kiss(&seed3)
+        c_kiss(&seed4)
+
+      c_kiss_seed(seed1,seed2,seed3,seed4)
 
 # Public function to save seed in restart file
 def seed_save():
