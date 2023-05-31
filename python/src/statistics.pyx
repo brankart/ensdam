@@ -149,6 +149,27 @@ def correlation(ens,ensref,weight=None)
         correlation [rank-1 double array] : correlation (nvar)
 
     """
+    if weight == None:
+      correlation = correlation_noweight(ens,ensref)
+    else:
+      correlation = correlation_weight(ens,ensref,weight)
+
+    return correlation
+
+# Interfaces to corresponding FORTRAN functions
+def correlation_noweight(double[:,::1] ens not None, double[::1] ensref not None)
+    cdef int argcase = 0
+    correlation = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] correlation_ = correlation
+    c_ensemble_correlation(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&ens[0,0],&argcase)
+    return correlation
+
+def correlation_weight(double[:,::1] ens not None, double[::1] ensref not None, double[:,::1] weight not None)
+    cdef int argcase = 1
+    correlation = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] correlation_ = correlation
+    c_ensemble_correlation(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&weight[0,0],&argcase)
+    return correlation
 
 # Public function to compute ensemble covariance
 def covariance(ens,ensref,weight=None)
@@ -168,6 +189,27 @@ def covariance(ens,ensref,weight=None)
         covariance [rank-1 double array] : covariance (nvar)
 
     """
+    if weight == None:
+      covariance = covariance_noweight(ens,ensref)
+    else:
+      covariance = covariance_weight(ens,ensref,weight)
+
+    return covariance
+
+# Interfaces to corresponding FORTRAN functions
+def covariance_noweight(double[:,::1] ens not None, double[::1] ensref not None)
+    cdef int argcase = 0
+    covariance = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] covariance_ = covariance
+    c_ensemble_covariance(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&ens[0,0],&argcase)
+    return covariance
+
+def covariance_weight(double[:,::1] ens not None, double[::1] ensref not None, double[:,::1] weight not None)
+    cdef int argcase = 1
+    covariance = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] covariance_ = covariance
+    c_ensemble_covariance(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&weight[0,0],&argcase)
+    return covariance
 
 # Public function to compute ensemble representer
 def representer(ens,ensref,weight=None)
@@ -187,4 +229,24 @@ def representer(ens,ensref,weight=None)
         representer [rank-1 double array] : representer (nvar)
 
     """
+    if weight == None:
+      representerrepresenter = representer_noweight(ens,ensref)
+    else:
+      representer = representer_weight(ens,ensref,weight)
 
+    return representer
+
+# Interfaces to corresponding FORTRAN functions
+def representer_noweight(double[:,::1] ens not None, double[::1] ensref not None)
+    cdef int argcase = 0
+    representer = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] representer_ = representer
+    c_ensemble_representer(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&ens[0,0],&argcase)
+    return representer
+
+def representer_weight(double[:,::1] ens not None, double[::1] ensref not None, double[:,::1] weight not None)
+    cdef int argcase = 1
+    representer = numpy.zeros((ens.shape[1]), dtype=numpy.double)
+    cdef double[::1] representer_ = representer
+    c_ensemble_representer(<int>ens.shape[1],<int>ens.shape[0],&ens[0,0],&ensref[0],&weight[0,0],&argcase)
+    return representer
