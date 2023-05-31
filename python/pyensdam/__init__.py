@@ -4,12 +4,12 @@ A simple, minimal example of building a Python C module using CMake.
 
 __version__ = '0.1.2'
 
-#from . import anam
-#from . import augm
+#from . import anamorphosis
+#from . import augment
 from . import scores
-#from . import stat
+from . import statistics
 #from . import update
-#from . import interptools
+#from . import interpolation
 from . import obserror
 from . import random
 from . import probability

@@ -23,11 +23,11 @@ subroutine c_ensemble_meanstd_vector(nstate, nens, ens, mean, std, weight, argca
   case(0)
     call ensemble_meanstd_vector(ens,mean)
   case(1)
-    call ensemble_meanstd_vector(ens,mean,std)
+    call ensemble_meanstd_vector(ens,mean,std=std)
   case(2)
-    call ensemble_meanstd_vector(ens,mean,weight)
+    call ensemble_meanstd_vector(ens,mean,weight=weight)
   case(3)
-    call ensemble_meanstd_vector(ens,mean,std,weight)
+    call ensemble_meanstd_vector(ens,mean,std=std,weight=weight)
   end select
 
 end subroutine
@@ -45,11 +45,11 @@ subroutine c_ensemble_meanstd_variable(nens, ens, mean, std, weight, argcase) bi
   case(0)
     call ensemble_meanstd_variable(ens,mean)
   case(1)
-    call ensemble_meanstd_variable(ens,mean,std)
+    call ensemble_meanstd_variable(ens,mean,std=std)
   case(2)
-    call ensemble_meanstd_variable(ens,mean,weight)
+    call ensemble_meanstd_variable(ens,mean,weight=weight)
   case(3)
-    call ensemble_meanstd_variable(ens,mean,std,weight)
+    call ensemble_meanstd_variable(ens,mean,std=std,weight=weight)
   end select
 
 end subroutine
@@ -68,12 +68,12 @@ subroutine c_ensemble_correlation(nstate, nens, ens, ensref, correl, weight, arg
   case(0)
     call ensemble_correlation(ens, ensref, correl)
   case(1)
-    call ensemble_correlation(ens, ensref, correl, weight)
+    call ensemble_correlation(ens, ensref, correl, weight=weight)
   end select
 
 end subroutine
 
-subroutine c_ensemble_representer(nstate, nens, ens, ensref, correl, weight, argcase) bind(c)
+subroutine c_ensemble_representer(nstate, nens, ens, ensref, representer, weight, argcase) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nstate
   integer(c_int), intent(in), value :: nens
@@ -87,7 +87,7 @@ subroutine c_ensemble_representer(nstate, nens, ens, ensref, correl, weight, arg
   case(0)
     call ensemble_representer(ens, ensref, representer)
   case(1)
-    call ensemble_representer(ens, ensref, representer, weight)
+    call ensemble_representer(ens, ensref, representer, weight=weight)
   end select
 
 end subroutine
@@ -106,7 +106,7 @@ subroutine c_ensemble_covariance(nstate, nens, ens, ensref, cov, weight, argcase
   case(0)
     call ensemble_covariance(ens, ensref, cov)
   case(1)
-    call ensemble_covariance(ens, ensref, cov, weight)
+    call ensemble_covariance(ens, ensref, cov, weight=weight)
   end select
 
 end subroutine
