@@ -28,7 +28,7 @@ cdef extern void c_ensemble_representer(int nstate,int nens, double* ens, double
 cdef extern void c_ensemble_covariance(int nstate,int nens, double* ens, double* ensref, double* covariance, double* weight, int* argcase)
 
 # Public function to compute ensemble mean and standard deviation
-def meanstd(ens,weight=None,std=True):
+def meanstd(ens,weight=False,std=True):
     """ meand,[std] = meanstd(ens,[weight],std=True)
 
         Compute ensemble mean and standard deviation
@@ -46,29 +46,29 @@ def meanstd(ens,weight=None,std=True):
 
     """
     if std == True:
-      if weight == None:
-        if ens.ndim == 1:
-          mean,std = meanstd_variable(ens)
-        else:
-          mean,std = meanstd_vector(ens)
-      else:
-        if ens.ndim == 1:
+      if ens.ndim == 1:
+        if not numpy.isscalar(weight):
           mean,std = meanstd_variable_weight(ens,weight)
         else:
+          mean,std = meanstd_variable(ens)
+      else:
+        if not numpy.isscalar(weight):
           mean,std = meanstd_vector_weight(ens,weight)
+        else:
+          mean,std = meanstd_vector(ens)
 
       return mean,std
     else:
-      if weight == None:
-        if ens.ndim == 1:
-          mean = mean_variable(ens)
-        else:
-          mean = mean_vector(ens)
-      else:
-        if ens.ndim == 1:
+      if ens.ndim == 1:
+        if not numpy.isscalar(weight):
           mean = mean_variable_weight(ens,weight)
         else:
+          mean = mean_variable(ens)
+      else:
+        if not numpy.isscalar(weight):
           mean = mean_vector_weight(ens,weight)
+        else:
+          mean = mean_vector(ens)
 
       return mean
 
