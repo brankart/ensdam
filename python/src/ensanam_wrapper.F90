@@ -21,7 +21,7 @@ subroutine c_ens_quantiles_vector(nvar,nens,nqua,qua,ens,quadef,enswei,ensweiloc
   real(c_double), intent(in) :: ens(nvar,nens)
   real(c_double), intent(in) :: quadef(nqua)
   real(c_double), intent(in) :: enswei(nens)
-  integer(c_double), intent(in) :: ensweiloc(nvar,nens)
+  real(c_double), intent(in) :: ensweiloc(nvar,nens)
   integer(c_int), intent(in) :: argcase
 
   select case(argcase)

@@ -100,8 +100,8 @@ print('-----------------------------------')
 print('3. Example with a beta distribution')
 print('-----------------------------------')
 edam.probability.type = 'beta'
-edam.probability.k = 2.
-edam.probability.theta = 2.
+edam.probability.a = 2.
+edam.probability.B = 2.
 print('Type of observation error:',edam.probability.type)
 
 # 3.a Scalar input
