@@ -17,9 +17,6 @@ from netCDF4 import Dataset
 # - anamorphosis.quaref : quantiles of the target probability distribution to use (if target == 'custom'))
 # - anamorphosis.obstype: probability distribution of observations (default=normal, gamma, beta)
 
-# Notes:
-# -
-
 print('-----------------------------------------------')
 print('1. Preliminary step: generate original ensemble')
 print('-----------------------------------------------')
@@ -66,7 +63,7 @@ nc_field1d = Dataset('anamorphosis_example.nc', 'w', format='NETCDF4')
 nc_field1d.createDimension('x', nx)
 nc_field1d.createDimension('nens', nens)
 nc_field1d_x = nc_field1d.createVariable('x', 'f4', ('x'))
-nc_field1d_field = nc_field1d.createVariable('original_ensemble', 'f4', ('nens','x'))
+nc_field1d_field = nc_field1d.createVariable('ori_ens', 'f4', ('nens','x'))
 nc_field1d_x[:] = x
 nc_field1d_field[:,:] = ens
 
@@ -83,9 +80,17 @@ qua = edam.anamorphosis.quantiles(ens,quadef)
 # By default, this also prepares the quantiles of the target distribution (anamorphosis.quaref).
 # If customized by the user (anamorphosis.target='custom'), quaref must have the same dimension as quadef.
 
+# Options to compute quantiles with different weights on ensemble members
+# 1) With global weights:
+# weight = np.ones((ens.shape[0]), dtype=np.double)
+# qua = edam.anamorphosis.quantiles(ens,quadef,weight=weight)
+# 2) With local weights:
+# locweight = np.ones_like(ens)
+# qua = edam.anamorphosis.quantiles(ens,quadef,local_weight=locweight)
+
 print('  Ensemble quantiles stored in file anamorphosis_example.nc')
 nc_field1d.createDimension('nqua', nqua)
-nc_field1d_quantiles = nc_field1d.createVariable('ensemble_quantiles', 'f4', ('nqua','x'))
+nc_field1d_quantiles = nc_field1d.createVariable('ens_qua', 'f4', ('nqua','x'))
 nc_field1d_quantiles[:,:] = qua
 
 print('--------------------------------------------------------')
@@ -95,7 +100,7 @@ print('--------------------------------------------------------')
 edam.anamorphosis.forward(ens,qua)
 
 print('  Transformed ensemble stored in file anamorphosis_example.nc')
-nc_field1d_transformed = nc_field1d.createVariable('transformed_ensemble', 'f4', ('nens','x'))
+nc_field1d_transformed = nc_field1d.createVariable('ana_ens', 'f4', ('nens','x'))
 nc_field1d_transformed[:,:] = ens
 
 print('------------------------------------------------------------')
@@ -105,7 +110,76 @@ print('------------------------------------------------------------')
 edam.anamorphosis.backward(ens,qua)
 
 print('  Restored ensemble stored in file anamorphosis_example.nc')
-nc_field1d_restored = nc_field1d.createVariable('restored_ensemble', 'f4', ('nens','x'))
+nc_field1d_restored = nc_field1d.createVariable('back_ens', 'f4', ('nens','x'))
 nc_field1d_restored[:,:] = ens
 
+print('----------------------------------------------')
+print('5. Perform forward anamorphosis of observation')
+print('----------------------------------------------')
+
+# Generate new random member, used to simulate observations
+member_1d = edam.random.field1d_sample(x,nharm)
+edam.probability.type = 'normal'
+cdf = edam.probability.cdf(member_1d)
+edam.probability.type = 'beta'
+edam.probability.a = 2.
+edam.probability.b = 2.
+member_1d = edam.probability.invcdf(cdf)
+
+# Write reference in file
+nc_field1d_obs = nc_field1d.createVariable('reference', 'f4', ('x'))
+nc_field1d_obs[:] = member_1d
+
+# Simulate observation error, using this member as reference
+edam.obserror.obstype = 'beta'
+obs_std = 0.2 * np.ones_like(member_1d)
+obs = edam.obserror.sample(member_1d,obs_std)
+
+# Write observation in file
+nc_field1d_obs = nc_field1d.createVariable('observation', 'f4', ('x'))
+nc_field1d_obs[:] = obs
+
+# Transform observation
+edam.anamorphosis.obstype = 'beta'
+nsmp = 10 # Sample size for transformed observation
+anaobs = edam.anamorphosis.forward_obs(nsmp,obs,obs_std,ens,quadef)
+
+print('  Transformed observation stored in file anamorphosis_example.nc')
+nc_field1d.createDimension('nsmp', nsmp)
+nc_field1d_anaobs = nc_field1d.createVariable('ana_obs', 'f4', ('nsmp','x'))
+nc_field1d_anaobs[:,:] = anaobs
+
+# Backward transformation of observations
+edam.anamorphosis.backward(anaobs,qua)
+nc_field1d_anaobs = nc_field1d.createVariable('back_obs', 'f4', ('nsmp','x'))
+nc_field1d_anaobs[:,:] = anaobs
+
+print('----------------------------------------------------------------')
+print('6. Perform forward anamorphosis of observation (symmetric error)')
+print('----------------------------------------------------------------')
+
+# Simulate observation error, using this member as reference
+edam.obserror.obstype = 'normal'
+obs_std = 0.1 * np.ones_like(member_1d)
+obs = edam.obserror.sample(member_1d,obs_std)
+
+# Write observation in file
+nc_field1d_obs = nc_field1d.createVariable('obs_sym', 'f4', ('x'))
+nc_field1d_obs[:] = obs
+
+# Transform observation, assuming observation error is normal
+edam.anamorphosis.obstype = 'normal'
+nsmp = 10 # Sample size for transformed observation
+anaobs = edam.anamorphosis.forward_obs_sym(nsmp,obs,obs_std,qua)
+
+print('  Transformed observation (sym) stored in file anamorphosis_example.nc')
+nc_field1d_anaobs2 = nc_field1d.createVariable('ana_obs_sym', 'f4', ('nsmp','x'))
+nc_field1d_anaobs2[:,:] = anaobs
+
+# Backward transformation of observations
+edam.anamorphosis.backward(anaobs,qua)
+nc_field1d_anaobs = nc_field1d.createVariable('back_obs_sym', 'f4', ('nsmp','x'))
+nc_field1d_anaobs[:,:] = anaobs
+
+# Close NetCDF file
 nc_field1d.close()
