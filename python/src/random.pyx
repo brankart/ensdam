@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.random: generate random numbers and fields
-=================================================
+pyensdam.random: generate random numbers and fields
+===================================================
 
 Available functions:
     random.seed: Seed random number generator

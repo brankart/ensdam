@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.obserror: Operations related to observation error
-========================================================
+pyensdam.obserror: Operations related to observation error
+==========================================================
 
 Available functions:
     obserror.logpdf : Compute the logarithm of the observation error pdf

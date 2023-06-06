@@ -64,7 +64,7 @@ def locate1D(double[::1] grid not None,x):
     return location, weight
 
 # Public function to apply interpolation on 1D input field
-def interp1D(field,location,weight):
+def interp1D(double[::1] field,location,weight):
     """field_interpolated = interp1D(field,location,weight)
 
        Apply interpolation on input field
@@ -80,6 +80,9 @@ def interp1D(field,location,weight):
        field_interpolated [double array] : interpolation weight to use (same shape as location)
 
     """
+    cdef int loc0,loc1
+    cdef double w1, w2, result
+
     for i in range(numpy.prod(location.shape)):
       indices = numpy.unravel_index(i,location.shape)
 
@@ -91,9 +94,29 @@ def interp1D(field,location,weight):
       if location[indices] == -1 :
         field_interpolated[indices] = None
       else:
-        field_interpolated[indices] = w1 * field[loc0] + w2 * field[loc1]
+        result = w1 * field[loc0] + w2 * field[loc1]
+        field_interpolated[indices] = result
 
     return field_interpolated
+
+# Public function to define 2D grid
+def define2Dgrid(double[:,::1] xgrid,double[:,::1] ygrid,grid_type='cartesian'):
+    """define2Dgrid(xgrid,ygrid,[grid_type])
+
+       Define 2D grid
+
+       Inputs
+       ------
+       xgrid  [rank-2 double array] : definition of the x-coordinates
+       ygrid  [rank-2 double array] : definition of the x-coordinates
+       grid_type: typr of coordinates (default='cartesian', spherical)
+
+    """
+    cdef int gtype = 0
+    if grid_type == 'spherical' :
+      gtype = 1
+
+    c_grid2D_init(<int>xgrid.shape[1],<int>xgrid.shape[0],&xgrid[0,0],&ygrid[0,0],&gtype_)
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate2D(x,y):
@@ -137,7 +160,7 @@ def locate2D(x,y):
     return location, weight
 
 # Public function to apply interpolation on 2D input field
-def interp2D(field,location,weight):
+def interp2D(double[:,::1] field,location,weight):
     """field_interpolated = interp2D(field,location,weight)
 
        Apply interpolation on input field
@@ -153,6 +176,9 @@ def interp2D(field,location,weight):
        field_interpolated [double array] : interpolation weight to use (same shape as location)
 
     """
+    cdef int locx0,locx1,locy0,locy1
+    cdef double w1, w2, w3, w4, result
+
     for i in range(numpy.prod(location.shape)):
       indices = numpy.unravel_index(i,location.shape)
 
@@ -168,10 +194,9 @@ def interp2D(field,location,weight):
       if location[indices,0] == -1 :
         field_interpolated[indices] = None
       else:
-        field_interpolated[indices] = w1 * field[locx0,locy0] + \
-                                      w2 * field[locx0,locy1] + \
-                                      w3 * field[locx1,locy0] + \
-                                      w4 * field[locx1,locy1]
+        result = w1 * field[locx0,locy0] + w3 * field[locx0,locy1] + \
+                 w2 * field[locx1,locy0] + w4 * field[locx1,locy1]
+        field_interpolated[indices] = result
 
     return field_interpolated
 

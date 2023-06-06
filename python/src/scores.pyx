@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.scores: Ensemble probablistic scores
-===========================================
+pyensdam.scores: Ensemble probablistic scores
+=============================================
 
 Available functions:
     scores.rank_histogram: Compute rank histogram

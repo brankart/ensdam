@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.probability: probability distribution
-============================================
+pyensdam.probability: probability distribution
+==============================================
 
 Available functions:
     probability.pdf: compute the probability density function

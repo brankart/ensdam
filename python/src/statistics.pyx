@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.statistics: ensemble statistics
-======================================
+pyensdam.statistics: ensemble statistics
+========================================
 
 Available functions:
     statistics.meanstd : compute ensemble mean and standard deviation

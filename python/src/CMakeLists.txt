@@ -8,7 +8,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #set(Python3_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
-add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 )
+add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 )
 #add_library(censdam ensscore_wrapper.F90 pyensdam_wrapper.F90)
 target_link_libraries(censdam ensdam_static)
 
@@ -59,6 +59,14 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/statistics.c
 )
 Python3_add_library(statistics MODULE statistics.c)
 target_link_libraries(statistics PRIVATE censdam Python3::NumPy)
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/anamorphosis.c
+    COMMAND cython anamorphosis.pyx
+    MAIN_DEPENDENCY anamorphosis.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+Python3_add_library(anamorphosis MODULE anamorphosis.c)
+target_link_libraries(anamorphosis PRIVATE censdam Python3::NumPy)
 
 #kbadd_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/stat.c
 #KB    COMMAND cython stat.pyx

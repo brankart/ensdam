@@ -32,15 +32,15 @@ import pyensdam.probability as probability
 from libc.stdint cimport int8_t, int16_t, int32_t, int64_t
 
 # Definition of external C-callable routines
-cdef extern void c_ens_quantiles_vector(int nvar,int nens,int nqua,double* qua,double* ens,double* quadef,double* enswei,double* ensweiloc,int* argcase)
-cdef extern void c_ens_quantiles_variable(int nens,int nqua,double* qua,double* ens,double* quadef,double* enswei,int* argcase)
-cdef extern void c_ana_forward_ensemble(int nvar,int nens,int nqua,double* ens,double* qua,double* quaref,double* rank,int* argcase)
-cdef extern void c_ana_forward_vector(int nvar,int nqua,double* vct,double* qua,double* quaref,double* rank,int* argcase)
-cdef extern void c_ana_forward_variable(int nqua,double* var,double* qua,double* quaref,double* rank,int* argcase)
-cdef extern void c_ana_backward_ensemble(int nvar,int nens,int nqua,double* ens,double* qua,double* quaref)
-cdef extern void c_ana_backward_vector(int nvar,int nqua,double* vct,double* qua,double* quaref)
-cdef extern void c_ana_backward_variable(int nqua,double* var,double* qua,double* quaref)
-cdef extern void c_ana_obs(int nobs,int nens,int nqua,int nsmp,double* anaobs,double* obsens,double* obs,double* obs_std,double* quadef,double* quaref)
+cdef extern void c_ens_quantiles_vector(int nvar,int nens,int nqua,double* qua,double* ens,double* quadef,double* enswei,double* ensweiloc,int* argcase) nogil
+cdef extern void c_ens_quantiles_variable(int nens,int nqua,double* qua,double* ens,double* quadef,double* enswei,int* argcase) nogil
+cdef extern void c_ana_forward_ensemble(int nvar,int nens,int nqua,double* ens,double* qua,double* quaref,double* rank,int* argcase) nogil
+cdef extern void c_ana_forward_vector(int nvar,int nqua,double* vct,double* qua,double* quaref,double* rank,int* argcase) nogil
+cdef extern void c_ana_forward_variable(int nqua,double* var,double* qua,double* quaref,double* rank,int* argcase) nogil
+cdef extern void c_ana_backward_ensemble(int nvar,int nens,int nqua,double* ens,double* qua,double* quaref) nogil
+cdef extern void c_ana_backward_vector(int nvar,int nqua,double* vct,double* qua,double* quaref) nogil
+cdef extern void c_ana_backward_variable(int nqua,double* var,double* qua,double* quaref) nogil
+cdef extern void c_ana_obs(int nobs,int nens,int nqua,int nsmp,double* anaobs,double* obsens,double* obs,double* obs_std,double* quadef,double* quaref) nogil
 cdef extern void c_ana_obs_sym(int nobs,int nqua,int nsmp,double* anaobs,double* obs,double* obs_std,double* obsqua,double* quaref)
 
 cdef extern void c_get_obstype(char *var) nogil
