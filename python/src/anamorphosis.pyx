@@ -1,8 +1,8 @@
 # cython: language_level=3
 # cython: profile=True
 """
-ensdam.anamorphosis: ensemble anamorphosis
-==========================================
+pyensdam.anamorphosis: ensemble anamorphosis
+============================================
 
 Available functions:
     anamorphosis.quantiles : compute ensemble quantiles
@@ -12,7 +12,8 @@ Available functions:
     anamorphosis.forward_obs_sym : forward anamorphosis transformation of observations (symmetric)
 
 Module parameters:
-    anamorphosis.target : target probability distribution to use (default=normal, uniform, gamma, beta)
+    anamorphosis.target : target probability distribution to use (default=normal, uniform, gamma, beta, custom)
+    anamorphosis.quaref : quantiles of the target probability distribution to use (if target == 'custom'))
     anamorphosis.obstype : probability distribution of observations (default=normal, gamma, beta)
 
 """
@@ -26,6 +27,9 @@ cimport numpy
 import numpy
 
 import pyensdam.obserror as obserror
+import pyensdam.probability as probability
+
+from libc.stdint cimport int8_t, int16_t, int32_t, int64_t
 
 # Definition of external C-callable routines
 cdef extern void c_ens_quantiles_vector(int nvar,int nens,int nqua,double* qua,double* ens,double* quadef,double* enswei,double* ensweiloc,int* argcase)
@@ -39,11 +43,37 @@ cdef extern void c_ana_backward_variable(int nqua,double* var,double* qua,double
 cdef extern void c_ana_obs(int nobs,int nens,int nqua,int nsmp,double* anaobs,double* obsens,double* obs,double* obs_std,double* quadef,double* quaref)
 cdef extern void c_ana_obs_sym(int nobs,int nqua,int nsmp,double* anaobs,double* obs,double* obs_std,double* obsqua,double* quaref)
 
-# Get default values of module attributes from other pyensdam modules
-obstype=obserror.obstype
+cdef extern void c_get_obstype(char *var) nogil
+cdef extern void c_set_obstype(int32_t *len1, char *var) nogil
+
+# Utility to convert python string into C string
+cdef pystring2cstring(str pystring):
+  # add a null c char, and convert to bytes
+  cdef bytes cstring = (pystring+'\0').encode('utf-8')
+  return cstring
+
+# Interface global variables of Fortran module into attributes of this module
+cdef class __module_variable:
+
+  # Observation type (normal, lognormal, gamma or beta)
+  property obstype:
+    def __get__(self):
+      cdef char var[80+1]
+      c_get_obstype(var)
+      return var.decode('utf-8')
+    def __set__(self, str var):
+      cdef int32_t len1 = len(var)
+      cdef bytes var_b = pystring2cstring(var)
+      cdef char *var_c = var_b
+      c_set_obstype(&len1, var_c)
+
+attr = __module_variable()
+
+# Get default values of module attributes from Fortran modules
+obstype = attr.obstype
 # Set default values of additional attributes
 target='normal'   # type of target distribution
-quaref=None       # quantiles of the target distribution
+quaref=False       # quantiles of the target distribution
 
 # Public function to compute ensemble quantiles
 def quantiles(ens,quadef,weight=False,local_weight=False):
@@ -63,6 +93,8 @@ def quantiles(ens,quadef,weight=False,local_weight=False):
        qua [rank-1 or rank-2 double array] : ensemble quantiles (nqua) or (nqua,nvar)
 
     """
+    cdef double eps
+
     if ens.ndim == 1:
       if not numpy.isscalar(weight):
         qua = quantiles_variable_weight(ens,quadef,weight)
@@ -75,6 +107,17 @@ def quantiles(ens,quadef,weight=False,local_weight=False):
         qua = quantiles_vector_weight(ens,quadef,weight)
       else:
         qua = quantiles_vector(ens,quadef)
+
+    # Define quantiles of the target distribution to prepare for anamorphosis (unless target is set to 'custom')
+    global target
+    global quaref
+    if not target == 'custom' :
+      probability.type = target
+      eps = 1. / (2*(ens.shape[0]+1))
+      quadef = eps + quadef * ( 1 - 2 * eps )
+      quaref = probability.invcdf(quadef)
+
+    return qua
 
 # Interfaces to corresponding FORTRAN functions
 def quantiles_variable(double[::1] ens,double[::1] quadef):
@@ -93,21 +136,22 @@ def quantiles_variable_weight(double[::1] ens,double[::1] quadef,double[::1] wei
 
 def quantiles_vector(double[:,::1] ens,double[::1] quadef):
     cdef int argcase = 0
-    qua  = numpy.zeros((ens.shape[1],quadef.shape[0]), dtype=numpy.double)
+    #qua  = numpy.zeros((ens.shape[1],quadef.shape[0]), dtype=numpy.double)
+    qua  = numpy.zeros((quadef.shape[0],ens.shape[1]), dtype=numpy.double)
     cdef double[:,::1] qua_ = qua
     c_ens_quantiles_vector(<int>ens.shape[1],<int>ens.shape[0],<int>quadef.shape[0],&qua_[0,0],&ens[0,0],&quadef[0],&ens[0,0],&ens[0,0],&argcase)
     return qua
 
 def quantiles_vector_weight(double[:,::1] ens,double[::1] quadef,double[::1] weight):
     cdef int argcase = 1
-    qua  = numpy.zeros((ens.shape[1],quadef.shape[0]), dtype=numpy.double)
+    qua  = numpy.zeros((quadef.shape[0],ens.shape[1]), dtype=numpy.double)
     cdef double[:,::1] qua_ = qua
     c_ens_quantiles_vector(<int>ens.shape[1],<int>ens.shape[0],<int>quadef.shape[0],&qua_[0,0],&ens[0,0],&quadef[0],&weight[0],&ens[0,0],&argcase)
     return qua
 
 def quantiles_vector_locweight(double[:,::1] ens,double[::1] quadef,double[:,::1] locweight):
     cdef int argcase = 2
-    qua  = numpy.zeros((ens.shape[1],quadef.shape[0]), dtype=numpy.double)
+    qua  = numpy.zeros((quadef.shape[0],ens.shape[1]), dtype=numpy.double)
     cdef double[:,::1] qua_ = qua
     c_ens_quantiles_vector(<int>ens.shape[1],<int>ens.shape[0],<int>quadef.shape[0],&qua_[0,0],&ens[0,0],&quadef[0],&ens[0,0],&locweight[0,0],&argcase)
     return qua
@@ -250,6 +294,9 @@ def forward_obs(nsmp,double[::1] obs,double[::1] obs_std,double[:,::1] obsens,do
        anaobs [rank-2 double array] : sample of transformed observations (nsmp,nobs)
 
     """
+    global obstype
+    attr.obstype = obstype
+
     cdef int nsmp_ = nsmp
     anaobs = numpy.zeros((nsmp,obs.shape[0]), dtype=numpy.double)
     cdef double[:,::1] anaobs_ = anaobs
@@ -276,6 +323,9 @@ def forward_obs_sym(nsmp,double[::1] obs,double[::1] obs_std,double[:,::1] obsqu
        anaobs [rank-2 double array] : sample of transformed observations (nsmp,nobs)
 
     """
+    global obstype
+    attr.obstype = obstype
+
     cdef int nsmp_ = nsmp
     anaobs = numpy.zeros((nsmp,obs.shape[0]), dtype=numpy.double)
     cdef double[:,::1] anaobs_ = anaobs
