@@ -5,10 +5,11 @@ pyensdam.interpolation: interpolation tools
 ===========================================
 
 Available functions:
-
-
-Module parameters:
-
+    interpolation.locate1D : locate positions in 1D grid and compute interpolation weights
+    interpolation.interp1D : apply interpolation on 1D input field
+    interpolation.define2D : define 2D grid
+    interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
+    interpolation.interp2D : apply interpolation on 2D input field
 
 """
 
@@ -67,7 +68,7 @@ def locate1D(double[::1] grid not None,x):
 def interp1D(double[::1] field,location,weight):
     """field_interpolated = interp1D(field,location,weight)
 
-       Apply interpolation on input field
+       Apply interpolation on 1D input field
 
        Inputs
        ------
@@ -101,8 +102,8 @@ def interp1D(double[::1] field,location,weight):
     return field_interpolated
 
 # Public function to define 2D grid
-def define2Dgrid(double[:,::1] xgrid,double[:,::1] ygrid,grid_type='cartesian'):
-    """define2Dgrid(xgrid,ygrid,[grid_type])
+def define2D(double[:,::1] xgrid,double[:,::1] ygrid,grid_type='cartesian'):
+    """define2D(xgrid,ygrid,[grid_type])
 
        Define 2D grid
 
@@ -166,7 +167,7 @@ def locate2D(x,y):
 def interp2D(double[:,::1] field,location,weight):
     """field_interpolated = interp2D(field,location,weight)
 
-       Apply interpolation on input field
+       Apply interpolation on 2D input field
 
        Inputs
        ------
