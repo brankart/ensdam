@@ -44,8 +44,8 @@ def locate1D(double[::1] grid not None,x):
        weight [double array] : interpolation weight to use (same shape as x)
 
     """
-    location = numpy.zeros(x.shape), dtype=numpy.intc)
-    weight = numpy.zeros(x.shape), dtype=numpy.double)
+    location = numpy.zeros(x.shape, dtype=numpy.intc)
+    weight = numpy.zeros(x.shape, dtype=numpy.double)
     cdef int location_, located_
     cdef double x_, weight_
     for i in range(numpy.prod(x.shape)):
@@ -82,6 +82,7 @@ def interp1D(double[::1] field,location,weight):
     """
     cdef int loc0,loc1
     cdef double w1, w2, result
+    field_interpolated = numpy.zeros_like(weight)
 
     for i in range(numpy.prod(location.shape)):
       indices = numpy.unravel_index(i,location.shape)
@@ -89,7 +90,7 @@ def interp1D(double[::1] field,location,weight):
       loc0 = location[indices]-1
       loc1 = location[indices]
       w1 = weight[indices]
-      w2 = 1 - weight1
+      w2 = 1 - w1
 
       if location[indices] == -1 :
         field_interpolated[indices] = None
@@ -116,7 +117,7 @@ def define2Dgrid(double[:,::1] xgrid,double[:,::1] ygrid,grid_type='cartesian'):
     if grid_type == 'spherical' :
       gtype = 1
 
-    c_grid2D_init(<int>xgrid.shape[1],<int>xgrid.shape[0],&xgrid[0,0],&ygrid[0,0],&gtype_)
+    c_grid2D_init(<int>xgrid.shape[1],<int>xgrid.shape[0],&xgrid[0,0],&ygrid[0,0],&gtype)
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate2D(x,y):
@@ -137,10 +138,12 @@ def locate2D(x,y):
                                (same shape as x and y, for a '2 by 2' matrix)
 
     """
-    location = numpy.zeros((x.shape,2)), dtype=numpy.intc)
-    weight = numpy.zeros((x.shape,2,2)), dtype=numpy.double)
+    location = numpy.zeros((x.shape,2), dtype=numpy.intc)
+    weight = numpy.zeros((x.shape,2,2), dtype=numpy.double)
     cdef int locx_, locy_, located_
-    cdef double[2,2] weight_
+    cdef double x_, y_
+    cell_weight = numpy.zeros((2,2), dtype=numpy.double)
+    cdef double[:,::1] cell_weight_ = cell_weight
     for i in range(numpy.prod(x.shape)):
       indices = numpy.unravel_index(i,x.shape)
 
@@ -150,8 +153,8 @@ def locate2D(x,y):
       location[indices,0] = locx_
       location[indices,1] = locy_
       if located_ == 1:
-        c_grid2D_interp(&x_,&y_,&locx_,&locy_,&weight_)
-        weight[indices,:,:] = weight_[:,:]
+        c_grid2D_interp(&x_,&y_,&locx_,&locy_,&cell_weight_[0,0])
+        weight[indices,:,:] = cell_weight[:,:]
       else:
         location[indices,0] = -1
         location[indices,1] = -1
@@ -178,6 +181,7 @@ def interp2D(double[:,::1] field,location,weight):
     """
     cdef int locx0,locx1,locy0,locy1
     cdef double w1, w2, w3, w4, result
+    field_interpolated = numpy.zeros_like(weight)
 
     for i in range(numpy.prod(location.shape)):
       indices = numpy.unravel_index(i,location.shape)

@@ -44,11 +44,11 @@ end subroutine
 subroutine c_grid2D_locate(x,y,ix,iy,located) bind(c)
   implicit none
   real(c_double), intent(in) :: x, y
-  integer(c_int), intent(out) :: ix, ix
+  integer(c_int), intent(out) :: ix, iy
   integer(c_int), intent(out) :: located
   logical :: f_located
 
-  f_located = grid2D_locate(x,iy,ix,iy)
+  f_located = grid2D_locate(x,y,ix,iy)
 
   located = 0
   if (f_located) located = 1
@@ -62,15 +62,15 @@ subroutine c_grid1D_interp(ngrid,grid,x,ix,w) bind(c)
   integer(c_int), intent(out) :: ix
   real(c_double), intent(out) :: w
 
-  call c_grid1D_interp(grid,x,ix,w)
+  call grid1D_interp(grid,x,ix,w)
 end subroutine
 
 subroutine c_grid2D_interp(x,y,ix,iy,w) bind(c)
   real(c_double), intent(in) :: x, y
-  integer(c_int), intent(in) :: ix, ix
+  integer(c_int), intent(in) :: ix, iy
   real(c_double), intent(out) :: w(2,2)
 
-  call c_grid2D_interp(x,y,ix,iy,w)
+  call grid2D_interp(x,y,ix,iy,w)
 end subroutine
 
 end module
