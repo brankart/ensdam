@@ -32,7 +32,7 @@ spct_power = np.ones(10)
 # Initialization of the sampler
 edam.random.field1d_init(spct_freq,spct_power)
 
-# Definition of the output grid (here global on the sphere)
+# Definition of the output grid
 x0 = 0. ; dx = 0.5 ; nx = 101
 x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
 

@@ -121,7 +121,7 @@ spct_power = np.ones(10)
 # Initialization of the sampler
 edam.random.field1d_init(spct_freq,spct_power)
 
-# Definition of the output grid (here global on the sphere)
+# Definition of the output grid
 x0 = 0. ; dx = 0.5 ; nx = 100
 x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
 
@@ -148,7 +148,7 @@ print('-----------------------------------------------------------------')
 # Initialization of the sampler (with same power spectrum as before)
 edam.random.field2d_init(spct_freq,spct_power)
 
-# Definition of the output grid (here global on the sphere)
+# Definition of the output grid
 xx, yy = np.meshgrid(x, x)
 
 # Generate random field
