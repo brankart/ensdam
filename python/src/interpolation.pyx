@@ -139,8 +139,10 @@ def locate2D(x,y):
                                (same shape as x and y, for a '2 by 2' matrix)
 
     """
-    location = numpy.zeros((x.shape,2), dtype=numpy.intc)
-    weight = numpy.zeros((x.shape,2,2), dtype=numpy.double)
+    newshape = numpy.append(x.shape,2)
+    location = numpy.zeros(newshape, dtype=numpy.intc)
+    newshape = numpy.append(newshape,2)
+    weight = numpy.zeros(newshape, dtype=numpy.double)
     cdef int locx_, locy_, located_
     cdef double x_, y_
     cell_weight = numpy.zeros((2,2), dtype=numpy.double)
@@ -151,8 +153,9 @@ def locate2D(x,y):
       x_ = x[indices]
       y_ = y[indices]
       c_grid2d_locate(&x_,&y_,&locx_,&locy_,&located_)
-      location[indices,0] = locx_
-      location[indices,1] = locy_
+      print('indices:',indices,location.shape[0],location.shape[1],location.shape[2])
+      location[indices,:] = [locx_,locy_]
+      print('located,ix,iy:',located_,locx_, locy_)
       if located_ == 1:
         c_grid2d_interp(&x_,&y_,&locx_,&locy_,&cell_weight_[0,0])
         weight[indices,:,:] = cell_weight[:,:]
