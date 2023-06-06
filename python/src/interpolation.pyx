@@ -22,11 +22,11 @@ cimport numpy
 import numpy
 
 # Definition of external C-callable routines
-cdef extern void c_grid2D_init(int ni,int nj,double* xgrid, double* ygrid,int* gtype) nogil
-cdef extern void c_grid1D_locate(int ngrid,double* grid,double* x,int* ix,int* located) nogil
-cdef extern void c_grid2D_locate(double* x,double* y,int* ix,int* iy,int* located) nogil
-cdef extern void c_grid1D_interp(int ngrid,double* grid,double* x,int* ix,double* w) nogil
-cdef extern void c_grid2D_interp(double* x,double* y,int* ix,int* iy,double* w) nogil
+cdef extern void c_grid2d_init(int ni,int nj,double* xgrid, double* ygrid,int* gtype) nogil
+cdef extern void c_grid1d_locate(int ngrid,double* grid,double* x,int* ix,int* located) nogil
+cdef extern void c_grid2d_locate(double* x,double* y,int* ix,int* iy,int* located) nogil
+cdef extern void c_grid1d_interp(int ngrid,double* grid,double* x,int* ix,double* w) nogil
+cdef extern void c_grid2d_interp(double* x,double* y,int* ix,int* iy,double* w) nogil
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate1D(double[::1] grid not None,x):
@@ -53,10 +53,10 @@ def locate1D(double[::1] grid not None,x):
       indices = numpy.unravel_index(i,x.shape)
 
       x_ = x[indices]
-      c_grid1D_locate(<int>grid.shape[0],&grid[0],&x_,&location_,&located_)
+      c_grid1d_locate(<int>grid.shape[0],&grid[0],&x_,&location_,&located_)
       location[indices] = location_
       if located_ == 1:
-        c_grid1D_interp(<int>grid.shape[0],&grid[0],&x_,&location_,&weight_)
+        c_grid1d_interp(<int>grid.shape[0],&grid[0],&x_,&location_,&weight_)
         weight[indices] = weight_
       else:
         location[indices] = -1
@@ -118,7 +118,7 @@ def define2D(double[:,::1] xgrid,double[:,::1] ygrid,grid_type='cartesian'):
     if grid_type == 'spherical' :
       gtype = 1
 
-    c_grid2D_init(<int>xgrid.shape[1],<int>xgrid.shape[0],&xgrid[0,0],&ygrid[0,0],&gtype)
+    c_grid2d_init(<int>xgrid.shape[1],<int>xgrid.shape[0],&xgrid[0,0],&ygrid[0,0],&gtype)
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate2D(x,y):
@@ -150,11 +150,11 @@ def locate2D(x,y):
 
       x_ = x[indices]
       y_ = y[indices]
-      c_grid2D_locate(&x_,&y_,&locx_,&locy_,&located_)
+      c_grid2d_locate(&x_,&y_,&locx_,&locy_,&located_)
       location[indices,0] = locx_
       location[indices,1] = locy_
       if located_ == 1:
-        c_grid2D_interp(&x_,&y_,&locx_,&locy_,&cell_weight_[0,0])
+        c_grid2d_interp(&x_,&y_,&locx_,&locy_,&cell_weight_[0,0])
         weight[indices,:,:] = cell_weight[:,:]
       else:
         location[indices,0] = -1

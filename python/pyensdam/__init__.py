@@ -9,7 +9,7 @@ from . import anamorphosis
 from . import scores
 from . import statistics
 #from . import update
-#from . import interpolation
+from . import interpolation
 from . import obserror
 from . import random
 from . import probability

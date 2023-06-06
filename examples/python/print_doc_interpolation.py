@@ -1,5 +1,4 @@
 import pyensdam as edam
-import numpy as np
 
 # Example illustrating the module: interpolation
 # ==============================================
