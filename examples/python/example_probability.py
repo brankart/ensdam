@@ -44,7 +44,7 @@ print ('  invcdf :',invcdf)
 # 1.b Vector input
 print('1.b Vector input')
 x0 = 0. ; dx = 0.5 ; nx = 5
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 print('  x=',x)
 
 pdf = edam.probability.pdf(x)
@@ -83,7 +83,7 @@ print ('  invcdf :',invcdf)
 # 2.b Vector input
 print('2.b Vector input')
 x0 = 0.1 ; dx = 0.5 ; nx = 5
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 print('  x=',x)
 
 pdf = edam.probability.pdf(x)
@@ -121,7 +121,7 @@ print ('  invcdf :',invcdf)
 # 3.b Vector input
 print('3.b Vector input')
 x0 = 0.1 ; dx = 0.2 ; nx = 5
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 print('  x=',x)
 
 pdf = edam.probability.pdf(x)

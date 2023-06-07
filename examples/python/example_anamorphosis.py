@@ -26,7 +26,7 @@ print('-----------------------------------------------')
 
 # Definition of the spectrum (discretization of a continuous spectrum)
 f0 = 0.1 ; df = 0.1 ; nf = 10
-spct_freq = np.arange(f0, f0 + nf * df, df, dtype=np.float64)
+spct_freq = np.arange(f0, f0 + nf * df, df, dtype=np.double)
 spct_power = np.ones(10)
 
 # Initialization of the sampler
@@ -34,7 +34,7 @@ edam.random.field1d_init(spct_freq,spct_power)
 
 # Definition of the output grid
 x0 = 0. ; dx = 0.5 ; nx = 101
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 
 # Generate random ensemble as an example
 nens = 100      # ensemble size
@@ -73,7 +73,7 @@ print('-------------------------------------------------')
 
 # Definition of the quantiles
 qua0 = 0. ; dqua = 0.05 ; nqua = 21
-quadef = np.arange(qua0, qua0 + nqua * dqua, dqua, dtype=np.float64)
+quadef = np.arange(qua0, qua0 + nqua * dqua, dqua, dtype=np.double)
 
 # Compute the quantiles of the original ensemble
 qua = edam.anamorphosis.quantiles(ens,quadef)

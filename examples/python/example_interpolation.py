@@ -19,7 +19,7 @@ print('----------------------')
 
 # Definition of the original 1D grid
 x0 = 0. ; dx = 1. ; nx = grid_size
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 
 print('Original grid: x=',x)
 
@@ -31,7 +31,7 @@ print('Original field: f=',f)
 
 # Definition of the target grid
 x0 = 0.2 ; dx = 1 ; nx = grid_size - 1
-xnew = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+xnew = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 
 print('Target grid: xnew=',xnew)
 

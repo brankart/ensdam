@@ -115,7 +115,7 @@ print('-----------------------------------------------------')
 
 # Definition of the spectrum (discretization of a continuous spectrum)
 f0 = 0.1 ; df = 0.1 ; nf = 10
-spct_freq = np.arange(f0, f0 + nf * df, df, dtype=np.float64)
+spct_freq = np.arange(f0, f0 + nf * df, df, dtype=np.double)
 spct_power = np.ones(10)
 
 # Initialization of the sampler
@@ -123,7 +123,7 @@ edam.random.field1d_init(spct_freq,spct_power)
 
 # Definition of the output grid
 x0 = 0. ; dx = 0.5 ; nx = 100
-x = np.arange(x0, x0 + nx * dx, dx, dtype=np.float64)
+x = np.arange(x0, x0 + nx * dx, dx, dtype=np.double)
 
 # Generate random field
 nharm = 100 # number of harmonics to superpose (sampled from the continuous spectrum)
