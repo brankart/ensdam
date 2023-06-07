@@ -139,10 +139,12 @@ def locate2D(x,y):
                                (same shape as x and y, for a '2 by 2' matrix)
 
     """
-    newshape = numpy.append(x.shape,2)
-    location = numpy.zeros(newshape, dtype=numpy.intc)
-    newshape = numpy.append(newshape,2)
-    weight = numpy.zeros(newshape, dtype=numpy.double)
+    locx = numpy.zeros(x.shape, dtype=numpy.intc)
+    locy = numpy.zeros(x.shape, dtype=numpy.intc)
+    w00 = numpy.zeros_like(x)
+    w01 = numpy.zeros_like(x)
+    w10 = numpy.zeros_like(x)
+    w11 = numpy.zeros_like(x)
     cdef int locx_, locy_, located_
     cdef double x_, y_
     cell_weight = numpy.zeros((2,2), dtype=numpy.double)
@@ -153,18 +155,19 @@ def locate2D(x,y):
       x_ = x[indices]
       y_ = y[indices]
       c_grid2d_locate(&x_,&y_,&locx_,&locy_,&located_)
-      print('indices:',indices,location.shape[0],location.shape[1],location.shape[2])
-      location[indices,:] = [locx_,locy_]
-      print('located,ix,iy:',located_,locx_, locy_)
+      locx[indices] = locx_
+      locy[indices] = locy_
       if located_ == 1:
         c_grid2d_interp(&x_,&y_,&locx_,&locy_,&cell_weight_[0,0])
-        weight[indices,:,:] = cell_weight[:,:]
+        w00[indices] = cell_weight[0,0]
+        w01[indices] = cell_weight[1,0]
+        w10[indices] = cell_weight[0,1]
+        w11[indices] = cell_weight[1,1]
       else:
-        location[indices,0] = -1
-        location[indices,1] = -1
-        weight[indices,:,:] = None
+        locx[indices] = -1
+        locy[indices] = -1
 
-    return location, weight
+    return [locx,locy], [w00,w01,w10,w11]
 
 # Public function to apply interpolation on 2D input field
 def interp2D(double[:,::1] field,location,weight):
@@ -185,25 +188,25 @@ def interp2D(double[:,::1] field,location,weight):
     """
     cdef int locx0,locx1,locy0,locy1
     cdef double w1, w2, w3, w4, result
-    field_interpolated = numpy.zeros_like(weight)
+    field_interpolated = numpy.zeros_like(weight[0])
 
-    for i in range(numpy.prod(location.shape)):
-      indices = numpy.unravel_index(i,location.shape)
+    for i in range(numpy.prod(location[0].shape)):
+      indices = numpy.unravel_index(i,location[0].shape)
 
-      locx0 = location[indices,0]-1
-      locx1 = location[indices,0]
-      locy0 = location[indices,1]-1
-      locy1 = location[indices,1]
-      w1 = weight[indices,0,0]
-      w2 = weight[indices,0,1]
-      w3 = weight[indices,1,0]
-      w4 = weight[indices,1,1]
-
-      if location[indices,0] == -1 :
+      if location[0][indices] == -1 :
         field_interpolated[indices] = None
       else:
-        result = w1 * field[locx0,locy0] + w3 * field[locx0,locy1] + \
-                 w2 * field[locx1,locy0] + w4 * field[locx1,locy1]
+        locx0 = location[0][indices]-1
+        locx1 = location[0][indices]
+        locy0 = location[1][indices]-1
+        locy1 = location[1][indices]
+        w00 = weight[0][indices]
+        w01 = weight[1][indices]
+        w10 = weight[2][indices]
+        w11 = weight[3][indices]
+
+        result = w00 * field[locx0,locy0] + w01 * field[locx0,locy1] + \
+                 w10 * field[locx1,locy0] + w11 * field[locx1,locy1]
         field_interpolated[indices] = result
 
     return field_interpolated
