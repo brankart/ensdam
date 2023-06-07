@@ -28,7 +28,7 @@ cdef extern void c_set_augment_chain_index(int* var) nogil
 # Interface global variables of Fortran module into attributes of this module
 cdef class __module_variable:
   # Current chain index
-  property chain_index
+  property chain_index:
     def __get__(self):
       cdef int var
       c_get_augment_chain_index(&var)

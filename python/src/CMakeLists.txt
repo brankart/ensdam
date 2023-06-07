@@ -8,17 +8,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #set(Python3_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
-add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 )
-#add_library(censdam ensscore_wrapper.F90 pyensdam_wrapper.F90)
+add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 ensaugm_wrapper.F90 )
 target_link_libraries(censdam ensdam_static)
-
-#KBadd_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/anam.c
-#KB  COMMAND cython anam.pyx
-#KB  MAIN_DEPENDENCY anam.pyx
-#KB  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#KB)
-#KBPython3_add_library(anam MODULE anam.c)
-#KBtarget_link_libraries(anam PRIVATE censdam Python3::NumPy)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/scores.c
     COMMAND cython scores.pyx
@@ -76,10 +67,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/interpolation.c
 Python3_add_library(interpolation MODULE interpolation.c)
 target_link_libraries(interpolation PRIVATE censdam Python3::NumPy)
 
-#kbadd_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/stat.c
-#KB    COMMAND cython stat.pyx
-#KB    MAIN_DEPENDENCY stat.pyx
-#KB    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#KB)
-#KBPython3_add_library(stat MODULE stat.c)
-#KBtarget_link_libraries(stat PRIVATE censdam Python3::NumPy)
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/augment.c
+    COMMAND cython augment.pyx
+    MAIN_DEPENDENCY augment.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+Python3_add_library(augment MODULE augment.c)
+target_link_libraries(augment PRIVATE censdam Python3::NumPy)
+

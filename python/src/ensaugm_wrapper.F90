@@ -9,12 +9,12 @@ implicit none
 contains
 
 ! Routines to exchange global variables from Fortran module
-subroutine c_get_chain_index(var) bind(c)
+subroutine c_get_augment_chain_index(var) bind(c)
    integer(c_int), intent(out) :: var
    var = ensaugm_chain_index
 end subroutine
 
-subroutine c_set_chain_index(var) bind(c)
+subroutine c_set_augment_chain_index(var) bind(c)
    integer(c_int), intent(out) :: var
    ensaugm_chain_index = var
 end subroutine

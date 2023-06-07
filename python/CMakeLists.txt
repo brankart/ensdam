@@ -15,6 +15,7 @@ add_custom_command(OUTPUT wheel.stamp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:statistics>" pyensdam/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:anamorphosis>" pyensdam/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:interpolation>" pyensdam/
+                   COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:augment>" pyensdam/
                    COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/setup.py" bdist_wheel
                    VERBATIM)
 add_custom_target(wheel ALL DEPENDS wheel.stamp)
