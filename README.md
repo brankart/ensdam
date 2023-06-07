@@ -13,7 +13,7 @@ Interface to python is in development.
 
 Requirements: cmake, Fortran compiler, python
 
-Run the script: compile.bash
+Edit and run the script: compile.bash
 
 Run the examples in the 'example/python' directory.
 
