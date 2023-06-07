@@ -62,7 +62,7 @@ def sample_mcmc(double[:,:,::1] ens not None,int[::1] multiplicity not None,naug
     attr.chain_index = chain_index
 
     cdef int maxchain_ = maxchain
-    augens = numpy.zeros(naug,(<int>ens.shape[2]), dtype=numpy.double)
+    augens = numpy.zeros((naug,<int>ens.shape[2]), dtype=numpy.double)
     cdef double[:,::1] augens_ = augens
 
     c_sample_augmented_ensemble(<int>ens.shape[2],<int>ens.shape[1],<int>ens.shape[0],<int>augens.shape[0],\
