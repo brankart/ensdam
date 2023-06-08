@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
-project(pyensdam LANGUAGES C Fortran)
+
+set(project_name "pyensdam")
+
+if(USE_MPI)
+  set(project_name "${project_name}_mpi")
+endif()
+
+project(${project_name} LANGUAGES C Fortran)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
