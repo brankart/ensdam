@@ -5,19 +5,19 @@ pyensdam.scores: Ensemble probablistic scores
 =============================================
 
 Available functions:
-    scores.rank_histogram: Compute rank histogram
-    scores.crps : Compute CRPS score (total, reliability, resolution)
-    scores.rcrv : Compute RCRV score (bias, spread)
-    scores.optimality : Compute OPTIMALITY score
-    scores.entropy : Compute ENTROPY score (with option to compute entropy components)
+ -  scores.rank_histogram: Compute rank histogram
+ -  scores.crps : Compute CRPS score (total, reliability, resolution)
+ -  scores.rcrv : Compute RCRV score (bias, spread)
+ -  scores.optimality : Compute OPTIMALITY score
+ -  scores.entropy : Compute ENTROPY score (with option to compute entropy components)
 
 Module parameters:
-    scores.crps_missing_value: Missing value for CRPS score
-    scores.rcrv_missing_value : missing value for RCRV score
-    scores.rcrv_with_anamorphosis : apply anamorphosis rather than center-reduction in RCRV score
-    scores.rcrv_number_of_quantiles : number of quantiles used in the anamorphosis transformation
-    scores.optimality_missing_value : missing value for OPTIMALITY score
-    scores.entropy_base : basis for the logarithm in entropy computations
+ -  scores.crps_missing_value: Missing value for CRPS score
+ -  scores.rcrv_missing_value : missing value for RCRV score
+ -  scores.rcrv_with_anamorphosis : apply anamorphosis rather than center-reduction in RCRV score
+ -  scores.rcrv_number_of_quantiles : number of quantiles used in the anamorphosis transformation
+ -  scores.optimality_missing_value : missing value for OPTIMALITY score
+ -  scores.entropy_base : basis for the logarithm in entropy computations
 
 Notes:
  - CRPS, RCRV and OPTIMALITY scores have the option to partition the input data

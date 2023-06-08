@@ -5,24 +5,24 @@ pyensdam.random: generate random numbers and fields
 ===================================================
 
 Available functions:
-    random.seed: Seed random number generator
-    random.seed_save: Save seed in restart file
-    random.seed_load: Load seed from restart file
-    random.check: Check random number generator
-    random.swap: Random array swapping
-    random.uniform: Draw random numbers with uniform distribution
-    random.normal: Draw random numbers with normal distribution
-    random.exp: Draw random numbers with exponential distribution
-    random.gamma: Draw random numbers with gamma distribution
-    random.beta: Draw random numbers with beta distribution
-    random.truncated_exp: Draw random numbers with truncated exponential distribution
-    random.truncated_normal: Draw random numbers with truncated normal distribution
-    random.truncated_normal_vec: Draw random vectors with truncated normal distribution
-    random.field1d_init: Initialization for the sampling of 1D random fields
-    random.field2d_init: Initialization for the sampling of 2D random fields
-    random.field1d_sample: Sample 1D random fields with given spectrum
-    random.field2d_sample: Sample 2D random fields with given spectrum
-    random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
+ -  random.seed: Seed random number generator
+ -  random.seed_save: Save seed in restart file
+ -  random.seed_load: Load seed from restart file
+ -  random.check: Check random number generator
+ -  random.swap: Random array swapping
+ -  random.uniform: Draw random numbers with uniform distribution
+ -  random.normal: Draw random numbers with normal distribution
+ -  random.exp: Draw random numbers with exponential distribution
+ -  random.gamma: Draw random numbers with gamma distribution
+ -  random.beta: Draw random numbers with beta distribution
+ -  random.truncated_exp: Draw random numbers with truncated exponential distribution
+ -  random.truncated_normal: Draw random numbers with truncated normal distribution
+ -  random.truncated_normal_vec: Draw random vectors with truncated normal distribution
+ -  random.field1d_init: Initialization for the sampling of 1D random fields
+ -  random.field2d_init: Initialization for the sampling of 2D random fields
+ -  random.field1d_sample: Sample 1D random fields with given spectrum
+ -  random.field2d_sample: Sample 2D random fields with given spectrum
+ -  random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
 
 Module parameters:
 

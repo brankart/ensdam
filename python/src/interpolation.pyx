@@ -5,11 +5,11 @@ pyensdam.interpolation: interpolation tools
 ===========================================
 
 Available functions:
-    interpolation.locate1D : locate positions in 1D grid and compute interpolation weights
-    interpolation.interp1D : apply interpolation on 1D input field
-    interpolation.define2D : define 2D grid
-    interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
-    interpolation.interp2D : apply interpolation on 2D input field
+ -  interpolation.locate1D : locate positions in 1D grid and compute interpolation weights
+ -  interpolation.interp1D : apply interpolation on 1D input field
+ -  interpolation.define2D : define 2D grid
+ -  interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
+ -  interpolation.interp2D : apply interpolation on 2D input field
 
 """
 

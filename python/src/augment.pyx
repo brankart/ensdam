@@ -5,7 +5,7 @@ pyensdam.augment: ensemble augmentation
 =======================================
 
 Available functions:
-    augment.sample_mcmc : resample input ensemble with MCMC sampler,
+ -  augment.sample_mcmc : resample input ensemble with MCMC sampler,
                           using covariance localization
 
 """

@@ -5,12 +5,12 @@ pyensdam.obserror: Operations related to observation error
 ==========================================================
 
 Available functions:
-    obserror.logpdf : Compute the logarithm of the observation error pdf
-    obserror.cdf : Compute the observation error cdf
-    obserror.sample : Sample the observation error probability distribution
+ -  obserror.logpdf : Compute the logarithm of the observation error pdf
+ -  obserror.cdf : Compute the observation error cdf
+ -  obserror.sample : Sample the observation error probability distribution
 
 Module parameters:
-    obserror.obstype : Type of observation error
+ -  obserror.obstype : Type of observation error
                        (normal, lognormal, gamma, beta)
 
 Notes:

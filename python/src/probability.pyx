@@ -5,17 +5,17 @@ pyensdam.probability: probability distribution
 ==============================================
 
 Available functions:
-    probability.pdf: compute the probability density function
-    probability.logpdf: compute the logartihm of the probability density function
-    probability.cdf: compute the cumulative distribution function
-    probability.invcdf: compute the iinverse cumulative distribution function
+ -  probability.pdf: compute the probability density function
+ -  probability.logpdf: compute the logartihm of the probability density function
+ -  probability.cdf: compute the cumulative distribution function
+ -  probability.invcdf: compute the iinverse cumulative distribution function
 
 Module parameters:
-    probability.type: type of probability distribution (normal, gamma, beta)
-    probability.k: shape parameter of the gamma distribution
-    probability.theta: scale parameter of the gamma distribution
-    probability.a: parameter alpha of the beta distribution
-    probability.b: parameter beta of the beta distribution
+ -  probability.type: type of probability distribution (normal, gamma, beta)
+ -  probability.k: shape parameter of the gamma distribution
+ -  probability.theta: scale parameter of the gamma distribution
+ -  probability.a: parameter alpha of the beta distribution
+ -  probability.b: parameter beta of the beta distribution
 
 """
 

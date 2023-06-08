@@ -5,10 +5,10 @@ pyensdam.statistics: ensemble statistics
 ========================================
 
 Available functions:
-    statistics.meanstd : compute ensemble mean and standard deviation
-    statistics.correlation : compute ensemble correlation
-    statistics.covariance : compute ensemble covariance
-    statistics.representer : compute ensemble representer
+ -  statistics.meanstd : compute ensemble mean and standard deviation
+ -  statistics.correlation : compute ensemble correlation
+ -  statistics.covariance : compute ensemble covariance
+ -  statistics.representer : compute ensemble representer
 
 """
 
