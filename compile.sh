@@ -5,9 +5,17 @@
 
 # To know the default compilation settings: cmake -LAH
 # Edit the flags to mmodify the default
-flags="-DPython3_EXECUTABLE=/gpfslocalsup/pub/anaconda-py3/2021.05/envs/python-3.10.4/bin/python3"
-flags="$flags -DCMAKE_Fortran_COMPILER=mpiifort"
-flags="$flags -DCMAKE_Fortran_FLAGS=-DMPI"
+
+flags = ""
+
+# Uncomment to explicitly specify the python3 exectuable
+# flags="$flags -DPython3_EXECUTABLE=/gpfslocalsup/pub/anaconda-py3/2021.05/envs/python-3.10.4/bin/python3"
+
+# Uncomment to explicitly specify the Fortran compiler
+# flags="$flags -DCMAKE_Fortran_COMPILER=mpiifort"
+
+# Uncomment to use MPI
+# flags="$flags -DCMAKE_Fortran_FLAGS=-DMPI"
 
 cmake $flags -B build -S .
 
