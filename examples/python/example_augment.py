@@ -29,8 +29,10 @@ def pow_spectrum(l,m):
   return power
 
 # Definition of the output grid (here global on the sphere)
-lon0 = 0. ; dlon = 1 ; nlon=360
-lat0 = -90. ; dlat = 1 ; nlat=181
+# We use a limited grid here so that the example is fast enough on one isngle processor
+# See the same example with MPI, for an example with a global grid
+lon0 = 0. ; dlon = 1 ; nlon=90
+lat0 = -45. ; dlat = 1 ; nlat=91
 lon = np.arange(lon0, lon0 + nlon * dlon, dlon, dtype=np.double)
 lat = np.arange(lat0, lat0 + nlat * dlat, dlat, dtype=np.double)
 lon2d, lat2d = np.meshgrid(lon, lat)
@@ -44,7 +46,7 @@ print('-----------------------------------------------')
 # See example_random.py for more details
 
 # Ensemble size
-m=5
+m=50
 
 # Generate random ensemble as an example
 lmin=0 ; lmax=30 ; lc=6
@@ -82,10 +84,15 @@ for i in range(m):
     ens.resize((ens.shape[0] + 1, ens.shape[1]))
     ens[-1] = member_1d
 
+# Renormalize the large-scale patterns to unit std (to describe a localizing correlation matrix)
+mean, std = edam.statistics.meanstd(ens)
+for i in range(m):
+  ens[i,:] = ( ens[i,:] - mean[:] ) / std[:]
+
 # Include larg-scale patterns in multiscale ensemble
 ensmulti.resize((ensmulti.shape[0] + 1, ensmulti.shape[1], ensmulti.shape[2]))
 ensmulti[-1] = ens
-#del ens
+del ens
 
 # Output multiscale ensemble in NetCDF file
 print('  First member of multiscale ensemble stored in file: augment_example.nc')
@@ -110,11 +117,13 @@ print('3. Generate new members with the MCMC sampler')
 print('---------------------------------------------')
 
 naug = 1 # number of augmented members requested
-maxchain = 3 # number of iteration in the MCMC sampler
+maxchain = 1000 # number of iteration in the MCMC sampler
 multiplicity = np.array([1, 4],np.intc) # mutliplicity of each scale in the Schur products
 augens = edam.augment.sample_mcmc(ensmulti,multiplicity,naug,maxchain)
 
 # Output augmented ensemble in NetCDF file
+# Looking at the new member, we can see that the local correlation structure
+# is preserved, as in the original ensemble, bu the global correlation structure is lost
 print('  First member of augmented ensemble stored in file: augment_example.nc')
 nc_ens_aug = nc_ens.createVariable('aug', augens.dtype, ('lat','lon'))
 field2s = np.reshape(augens[0,:], lon2d.shape)

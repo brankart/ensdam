@@ -29,7 +29,7 @@ cdef extern void c_ensemble_covariance(int nstate,int nens, double* ens, double*
 
 # Public function to compute ensemble mean and standard deviation
 def meanstd(ens,weight=False,std=True):
-    """ meand,[std] = meanstd(ens,[weight],std=True)
+    """ mean,[std] = meanstd(ens,[weight],std=True)
 
         Compute ensemble mean and standard deviation
 
