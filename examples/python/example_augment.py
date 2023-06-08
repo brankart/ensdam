@@ -28,7 +28,7 @@ def pow_spectrum(l,m):
 
   return power
 
-# Definition of the output grid (here global on the sphere)
+# Definition of the output grid on the sphere
 # We use a limited grid here so that the example is fast enough on one isngle processor
 # See the same example with MPI, for an example with a global grid
 lon0 = 0. ; dlon = 1 ; nlon=90

@@ -15,7 +15,7 @@ subroutine c_get_augment_chain_index(var) bind(c)
 end subroutine
 
 subroutine c_set_augment_chain_index(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    ensaugm_chain_index = var
 end subroutine
 
