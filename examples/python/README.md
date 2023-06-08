@@ -3,11 +3,11 @@ pyensdam.anamorphosis: ensemble anamorphosis
 ============================================
 
 Available functions:
-    anamorphosis.quantiles : compute ensemble quantiles
-    anamorphosis.forward : forward anamorphosis transformation
-    anamorphosis.backward : backward anamorphosis transformation
-    anamorphosis.forward_obs : forward anamorphosis transformation of observations
-    anamorphosis.forward_obs_sym : forward anamorphosis transformation of observations (symmetric)
+ -  anamorphosis.quantiles : compute ensemble quantiles
+ -  anamorphosis.forward : forward anamorphosis transformation
+ -  anamorphosis.backward : backward anamorphosis transformation
+ -  anamorphosis.forward_obs : forward anamorphosis transformation of observations
+ -  anamorphosis.forward_obs_sym : forward anamorphosis transformation of observations (symmetric)
 
 Module parameters:
     anamorphosis.target : target probability distribution to use (default=normal, uniform, gamma, beta, custom)
