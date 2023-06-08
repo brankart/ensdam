@@ -3,16 +3,16 @@ pyensdam.anamorphosis: ensemble anamorphosis
 ============================================
 
 Available functions:
-    anamorphosis.quantiles : compute ensemble quantiles
-    anamorphosis.forward : forward anamorphosis transformation
-    anamorphosis.backward : backward anamorphosis transformation
-    anamorphosis.forward_obs : forward anamorphosis transformation of observations
-    anamorphosis.forward_obs_sym : forward anamorphosis transformation of observations (symmetric)
+ -  anamorphosis.quantiles : compute ensemble quantiles
+ -  anamorphosis.forward : forward anamorphosis transformation
+ -  anamorphosis.backward : backward anamorphosis transformation
+ -  anamorphosis.forward_obs : forward anamorphosis transformation of observations
+ -  anamorphosis.forward_obs_sym : forward anamorphosis transformation of observations (symmetric)
 
 Module parameters:
-    anamorphosis.target : target probability distribution to use (default=normal, uniform, gamma, beta, custom)
-    anamorphosis.quaref : quantiles of the target probability distribution to use (if target == 'custom'))
-    anamorphosis.obstype : probability distribution of observations (default=normal, gamma, beta)
+ -  anamorphosis.target : target probability distribution to use (default=normal, uniform, gamma, beta, custom)
+ -  anamorphosis.quaref : quantiles of the target probability distribution to use (if target == 'custom'))
+ -  anamorphosis.obstype : probability distribution of observations (default=normal, gamma, beta)
 
 
 forward(var,qua,[rank])
@@ -82,7 +82,7 @@ pyensdam.augment: ensemble augmentation
 =======================================
 
 Available functions:
-    augment.sample_mcmc : resample input ensemble with MCMC sampler,
+ -  augment.sample_mcmc : resample input ensemble with MCMC sampler,
                           using covariance localization
 
 
@@ -106,11 +106,11 @@ pyensdam.interpolation: interpolation tools
 ===========================================
 
 Available functions:
-    interpolation.locate1D : locate positions in 1D grid and compute interpolation weights
-    interpolation.interp1D : apply interpolation on 1D input field
-    interpolation.define2D : define 2D grid
-    interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
-    interpolation.interp2D : apply interpolation on 2D input field
+ -  interpolation.locate1D : locate positions in 1D grid and compute interpolation weights
+ -  interpolation.interp1D : apply interpolation on 1D input field
+ -  interpolation.define2D : define 2D grid
+ -  interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
+ -  interpolation.interp2D : apply interpolation on 2D input field
 
 
 location, weight = locate1D(grid,x)
@@ -191,12 +191,12 @@ pyensdam.obserror: Operations related to observation error
 ==========================================================
 
 Available functions:
-    obserror.logpdf : Compute the logarithm of the observation error pdf
-    obserror.cdf : Compute the observation error cdf
-    obserror.sample : Sample the observation error probability distribution
+ -  obserror.logpdf : Compute the logarithm of the observation error pdf
+ -  obserror.cdf : Compute the observation error cdf
+ -  obserror.sample : Sample the observation error probability distribution
 
 Module parameters:
-    obserror.obstype : Type of observation error
+ -  obserror.obstype : Type of observation error
                        (normal, lognormal, gamma, beta)
 
 Notes:
@@ -271,17 +271,17 @@ pyensdam.probability: probability distribution
 ==============================================
 
 Available functions:
-    probability.pdf: compute the probability density function
-    probability.logpdf: compute the logartihm of the probability density function
-    probability.cdf: compute the cumulative distribution function
-    probability.invcdf: compute the iinverse cumulative distribution function
+ -  probability.pdf: compute the probability density function
+ -  probability.logpdf: compute the logartihm of the probability density function
+ -  probability.cdf: compute the cumulative distribution function
+ -  probability.invcdf: compute the iinverse cumulative distribution function
 
 Module parameters:
-    probability.type: type of probability distribution (normal, gamma, beta)
-    probability.k: shape parameter of the gamma distribution
-    probability.theta: scale parameter of the gamma distribution
-    probability.a: parameter alpha of the beta distribution
-    probability.b: parameter beta of the beta distribution
+ -  probability.type: type of probability distribution (normal, gamma, beta)
+ -  probability.k: shape parameter of the gamma distribution
+ -  probability.theta: scale parameter of the gamma distribution
+ -  probability.a: parameter alpha of the beta distribution
+ -  probability.b: parameter beta of the beta distribution
 
 
 pdf=pdf(x)
@@ -341,24 +341,24 @@ pyensdam.random: generate random numbers and fields
 ===================================================
 
 Available functions:
-    random.seed: Seed random number generator
-    random.seed_save: Save seed in restart file
-    random.seed_load: Load seed from restart file
-    random.check: Check random number generator
-    random.swap: Random array swapping
-    random.uniform: Draw random numbers with uniform distribution
-    random.normal: Draw random numbers with normal distribution
-    random.exp: Draw random numbers with exponential distribution
-    random.gamma: Draw random numbers with gamma distribution
-    random.beta: Draw random numbers with beta distribution
-    random.truncated_exp: Draw random numbers with truncated exponential distribution
-    random.truncated_normal: Draw random numbers with truncated normal distribution
-    random.truncated_normal_vec: Draw random vectors with truncated normal distribution
-    random.field1d_init: Initialization for the sampling of 1D random fields
-    random.field2d_init: Initialization for the sampling of 2D random fields
-    random.field1d_sample: Sample 1D random fields with given spectrum
-    random.field2d_sample: Sample 2D random fields with given spectrum
-    random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
+ -  random.seed: Seed random number generator
+ -  random.seed_save: Save seed in restart file
+ -  random.seed_load: Load seed from restart file
+ -  random.check: Check random number generator
+ -  random.swap: Random array swapping
+ -  random.uniform: Draw random numbers with uniform distribution
+ -  random.normal: Draw random numbers with normal distribution
+ -  random.exp: Draw random numbers with exponential distribution
+ -  random.gamma: Draw random numbers with gamma distribution
+ -  random.beta: Draw random numbers with beta distribution
+ -  random.truncated_exp: Draw random numbers with truncated exponential distribution
+ -  random.truncated_normal: Draw random numbers with truncated normal distribution
+ -  random.truncated_normal_vec: Draw random vectors with truncated normal distribution
+ -  random.field1d_init: Initialization for the sampling of 1D random fields
+ -  random.field2d_init: Initialization for the sampling of 2D random fields
+ -  random.field1d_sample: Sample 1D random fields with given spectrum
+ -  random.field2d_sample: Sample 2D random fields with given spectrum
+ -  random.field2s_sample: Sample 2D random fields with given spectrum on the sphere
 
 Module parameters:
 
@@ -581,19 +581,19 @@ pyensdam.scores: Ensemble probablistic scores
 =============================================
 
 Available functions:
-    scores.rank_histogram: Compute rank histogram
-    scores.crps : Compute CRPS score (total, reliability, resolution)
-    scores.rcrv : Compute RCRV score (bias, spread)
-    scores.optimality : Compute OPTIMALITY score
-    scores.entropy : Compute ENTROPY score (with option to compute entropy components)
+ -  scores.rank_histogram: Compute rank histogram
+ -  scores.crps : Compute CRPS score (total, reliability, resolution)
+ -  scores.rcrv : Compute RCRV score (bias, spread)
+ -  scores.optimality : Compute OPTIMALITY score
+ -  scores.entropy : Compute ENTROPY score (with option to compute entropy components)
 
 Module parameters:
-    scores.crps_missing_value: Missing value for CRPS score
-    scores.rcrv_missing_value : missing value for RCRV score
-    scores.rcrv_with_anamorphosis : apply anamorphosis rather than center-reduction in RCRV score
-    scores.rcrv_number_of_quantiles : number of quantiles used in the anamorphosis transformation
-    scores.optimality_missing_value : missing value for OPTIMALITY score
-    scores.entropy_base : basis for the logarithm in entropy computations
+ -  scores.crps_missing_value: Missing value for CRPS score
+ -  scores.rcrv_missing_value : missing value for RCRV score
+ -  scores.rcrv_with_anamorphosis : apply anamorphosis rather than center-reduction in RCRV score
+ -  scores.rcrv_number_of_quantiles : number of quantiles used in the anamorphosis transformation
+ -  scores.optimality_missing_value : missing value for OPTIMALITY score
+ -  scores.entropy_base : basis for the logarithm in entropy computations
 
 Notes:
  - CRPS, RCRV and OPTIMALITY scores have the option to partition the input data
@@ -700,13 +700,13 @@ pyensdam.statistics: ensemble statistics
 ========================================
 
 Available functions:
-    statistics.meanstd : compute ensemble mean and standard deviation
-    statistics.correlation : compute ensemble correlation
-    statistics.covariance : compute ensemble covariance
-    statistics.representer : compute ensemble representer
+ -  statistics.meanstd : compute ensemble mean and standard deviation
+ -  statistics.correlation : compute ensemble correlation
+ -  statistics.covariance : compute ensemble covariance
+ -  statistics.representer : compute ensemble representer
 
 
- meand,[std] = meanstd(ens,[weight],std=True)
+ mean,[std] = meanstd(ens,[weight],std=True)
 
         Compute ensemble mean and standard deviation
 
