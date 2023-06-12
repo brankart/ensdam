@@ -10,6 +10,7 @@ Available functions:
  -  interpolation.define2D : define 2D grid
  -  interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
  -  interpolation.interp2D : apply interpolation on 2D input field
+ -  interpolation.unmask2D : unmask input 2D array
 
 """
 
@@ -27,6 +28,52 @@ cdef extern void c_grid1d_locate(int ngrid,double* grid,double* x,int* ix,int* l
 cdef extern void c_grid2d_locate(double* x,double* y,int* ix,int* iy,int* located) nogil
 cdef extern void c_grid1d_interp(int ngrid,double* grid,double* x,int* ix,double* w) nogil
 cdef extern void c_grid2d_interp(double* x,double* y,int* ix,int* iy,double* w) nogil
+cdef extern void c_unmask(int ni,int nj,double* field) nogil
+
+# Routines to exchange the module global variables
+cdef extern void c_get_unmask_spval(double* var) nogil
+cdef extern void c_set_unmask_spval(double* var) nogil
+cdef extern void c_get_unmask_max(int* var) nogil
+cdef extern void c_set_unmask_max(int* var) nogil
+cdef extern void c_set_unmask_k_ew(int* var) nogil
+cdef extern void c_get_unmask_k_ew(int* var) nogil
+
+# Interface global variables of Fortran module into attributes of this module
+cdef class __module_variable:
+
+  # Special value
+  property unmask_spval:
+    def __get__(self):
+      cdef double var
+      c_get_unmask_spval(&var)
+      return var
+    def __set__(self, double var):
+      c_set_unmask_spval(&var)
+
+  # Max iteration in unmask
+  property unmask_max:
+    def __get__(self):
+      cdef double var
+      c_get_unmask_max(&var)
+      return var
+    def __set__(self, double var):
+      c_set_unmask_max(&var)
+
+  # Grid periodicity in unmask
+  property unmask_k_ew:
+    def __get__(self):
+      cdef double var
+      c_get_unmask_k_ew(&var)
+      return var
+    def __set__(self, double var):
+      c_set_unmask_k_ew(&var)
+
+attr = __module_variable()
+
+# Get default values of module attributes from Fortran module
+unmask_spval = attr.unmask_spval
+unmask_max = attr.unmask_max
+unmask_k_ew = attr.unmask_k_ew
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate1D(double[::1] grid not None,x):
@@ -210,4 +257,28 @@ def interp2D(double[:,::1] field,location,weight):
         field_interpolated[indices] = result
 
     return field_interpolated
+
+# Public function to unmask 2d input field
+def unmask2D(double[:,::1] field):
+    """unmask2D(field)
+
+       Unmask 2D input field
+
+       Inputs
+       ------
+       field [rank-2 double array] : field to unmask (nj,ni)
+
+       Returns
+       -------
+       field [rank-2 double array] : unmask field (in place)
+
+    """
+    # Update Fortran module public variables
+    attr.unmask_spval = unmask_spval
+    attr.unmask_max = unmask_max
+    attr.unmask_k_ew = unmask_k_ew
+
+    c_unmask(<int>field.shape[1],<int>field.shape[0],&field[0,0])
+
+    return
 

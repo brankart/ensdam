@@ -111,6 +111,7 @@ Available functions:
  -  interpolation.define2D : define 2D grid
  -  interpolation.locate2D : locate positions in 2D grid and compute interpolation weights
  -  interpolation.interp2D : apply interpolation on 2D input field
+ -  interpolation.unmask2D : unmask input 2D array
 
 
 location, weight = locate1D(grid,x)
@@ -184,6 +185,19 @@ field_interpolated = interp2D(field,location,weight)
        Returns
        -------
        field_interpolated [double array] : interpolation weight to use (same shape as location)
+
+    
+unmask2D(field)
+
+       Unmask 2D input field
+
+       Inputs
+       ------
+       field [rank-2 double array] : field to unmask (nj,ni)
+
+       Returns
+       -------
+       field [rank-2 double array] : unmask field (in place)
 
     
 

@@ -31,6 +31,7 @@ set (EnsUpdate
 
 set (InterpTools
      InterpTools/interp.f90
+     InterpTools/unmask.f90
     )
 
 set (ObsError
