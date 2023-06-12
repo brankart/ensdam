@@ -35,6 +35,7 @@
                 ! k_ew >= 0  --> periodicity with overlap of k_ew points
         INTEGER, public :: unmask_max = 400 ! how far in terms of number of grid-point we extrapolate into mask,
                 ! will normally stop before 400 iterations, when all land points have been treated !
+        INTEGER, public :: unmask_window = 50 ! maximum size of averaging window
         REAL(KIND=8), public :: unmask_spval= -9999. ! Special value defining mask
 
       CONTAINS
@@ -56,13 +57,13 @@
         REAL(KIND=8), DIMENSION(:,:), INTENT(inout) :: phi
 
         ! Local allocatable arrays:
-        INTEGER(1), ALLOCATABLE, DIMENSION(:,:) :: mask, mask_coast
+        LOGICAL, ALLOCATABLE, DIMENSION(:,:) :: mask, mask_coast
         REAL(KIND=8), ALLOCATABLE, DIMENSION(:,:) :: phitmp
 
         INTEGER :: allocok, jext, ni, nj, ns, ji, jj, ji0
         INTEGER :: jim, jjm, jic, jjc, jip1, jim1, jjp1, jjm1
         REAL(KIND=8) :: datmsk, summsk, zweight, argexp
-        LOGICAL :: ingrid
+        LOGICAL :: inmask
 
         ! Get size of input array
         ni = SIZE(phi,1)
@@ -77,18 +78,18 @@
         IF (allocok.NE.0) PRINT *, 'Allocation error in ensdam_unmask'
 
         ! Initialize the mask
-        mask = 1
-        WHERE (phi == unmask_spval) mask = 0
+        mask = (phi == unmask_spval)
 
         ! Set field to zero on mask
-        phi = phi * mask
+        WHERE(mask) phi = 0.
 
         ! Iterate to reduce the mask step by step
         ! By one row of grid points at each iteration
         DO jext = 1, unmask_max
+          if (.not.any(mask)) exit ! exit if there is no masked point anymore
 
           ! Build mask of the coast-line (belonging to land points)
-          mask_coast(:,:) = 0
+          mask_coast(:,:) = .FALSE.
           DO jj = 1, nj
             DO ji = 1, ni
 
@@ -112,20 +113,23 @@
               END IF
 
               ! define a mask for the coast line
-              mask_coast(ji,jj) = MIN( mask(jim1,jj) + mask(jip1,jj) + &
-                                & mask(ji0,jjm1) + mask(ji0,jjp1), 1 ) &
-                                & * ( 1 - mask(ji0,jj) )
+              IF (mask(ji0,jj)) THEN
+                mask_coast(ji,jj) = .not.mask(jim1,jj)  .OR. &
+                                  & .not.mask(jip1,jj)  .OR. &
+                                  & .not.mask(ji0,jjm1) .OR. &
+                                  & .not.mask(ji0,jjp1)
+              ENDIF
             ENDDO
           ENDDO
 
           ! Fill the coastline points with values from the nearest unmasked points
-          ns=MIN(jext,50)  ! limit of the area of research for unmasked points
+          ns=MIN(jext,unmask_window)  ! limit of the area of research for unmasked points
           phitmp = phi     ! phitmp is going to be computed from phi
           DO jj = 1, nj
             DO ji = 1, ni
 
               ! update coastal points only
-              IF ( mask_coast(ji,jj) == 1 ) THEN
+              IF ( mask_coast(ji,jj) ) THEN
                 summsk = 0.0
                 datmsk = 0.0
 
@@ -139,12 +143,13 @@
                       IF ( jic <  1 + k_ew ) jic = jic + ni - 2 * k_ew ! E boundary
                     ENDIF
                     ! compute weighted average
-                    ingrid = (jic >= 1 .AND. jic <= ni .AND. jjc >= 1 .AND. jjc <= nj)
-                    IF (ingrid) THEN
+                    inmask = (jic >= 1 .AND. jic <= ni .AND. jjc >= 1 .AND. jjc <= nj)
+                    inmask = inmask .AND. .not.mask(jic,jjc)
+                    IF (inmask) THEN
                       ! compute gaussian weight
                       argexp = - REAL( jjm**2+jim**2 , 8 ) &
                              & / REAL( jext**2 , 8 )
-                      zweight = EXP(argexp) * mask(jic,jjc)
+                      zweight = EXP(argexp)
                       ! compute sum of weight, and sum of weighted field
                       summsk = summsk + zweight
                       datmsk = datmsk + zweight * phi(jic,jjc)
@@ -159,7 +164,7 @@
           END DO
 
           ! Loosing land for the next iteration:
-          mask = mask + mask_coast
+          mask = mask .AND. .not.mask_coast
           ! update phi (with one more coastline unmasked)
           phi = phitmp
 

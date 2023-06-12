@@ -12,6 +12,12 @@ Available functions:
  -  interpolation.interp2D : apply interpolation on 2D input field
  -  interpolation.unmask2D : unmask input 2D array
 
+Available parameters:
+ -  unmask_spval  : special value to unmask
+ -  unmask_max    : maximum number of iteration for unmasking
+ -  unmask_window : maximum averaging window in unmasking
+ -  unmask_k_ew   : grid periodicity in unmasking
+
 """
 
 cimport cython
@@ -35,6 +41,8 @@ cdef extern void c_get_unmask_spval(double* var) nogil
 cdef extern void c_set_unmask_spval(double* var) nogil
 cdef extern void c_get_unmask_max(int* var) nogil
 cdef extern void c_set_unmask_max(int* var) nogil
+cdef extern void c_get_unmask_window(int* var) nogil
+cdef extern void c_set_unmask_window(int* var) nogil
 cdef extern void c_set_unmask_k_ew(int* var) nogil
 cdef extern void c_get_unmask_k_ew(int* var) nogil
 
@@ -53,19 +61,28 @@ cdef class __module_variable:
   # Max iteration in unmask
   property unmask_max:
     def __get__(self):
-      cdef double var
+      cdef int var
       c_get_unmask_max(&var)
       return var
-    def __set__(self, double var):
+    def __set__(self, int var):
       c_set_unmask_max(&var)
+
+  # Max averaging window in unmask
+  property unmask_window:
+    def __get__(self):
+      cdef int var
+      c_get_unmask_window(&var)
+      return var
+    def __set__(self, int var):
+      c_set_unmask_window(&var)
 
   # Grid periodicity in unmask
   property unmask_k_ew:
     def __get__(self):
-      cdef double var
+      cdef int var
       c_get_unmask_k_ew(&var)
       return var
-    def __set__(self, double var):
+    def __set__(self, int var):
       c_set_unmask_k_ew(&var)
 
 attr = __module_variable()
@@ -73,6 +90,7 @@ attr = __module_variable()
 # Get default values of module attributes from Fortran module
 unmask_spval = attr.unmask_spval
 unmask_max = attr.unmask_max
+unmask_window = attr.unmask_window
 unmask_k_ew = attr.unmask_k_ew
 
 # Public function to locate position in 1D grid and compute interpolation weights
@@ -276,6 +294,7 @@ def unmask2D(double[:,::1] field):
     # Update Fortran module public variables
     attr.unmask_spval = unmask_spval
     attr.unmask_max = unmask_max
+    attr.unmask_window = unmask_window
     attr.unmask_k_ew = unmask_k_ew
 
     c_unmask(<int>field.shape[1],<int>field.shape[0],&field[0,0])

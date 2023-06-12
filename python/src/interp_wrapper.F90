@@ -30,6 +30,16 @@ subroutine c_set_unmask_max(var) bind(c)
    unmask_max = var
 end subroutine
 
+subroutine c_get_unmask_window(var) bind(c)
+   integer(c_int), intent(out) :: var
+   var = unmask_window
+end subroutine
+
+subroutine c_set_unmask_window(var) bind(c)
+   integer(c_int), intent(in) :: var
+   unmask_window = var
+end subroutine
+
 subroutine c_get_unmask_k_ew(var) bind(c)
    integer(c_int), intent(out) :: var
    var = k_ew

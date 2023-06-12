@@ -17,4 +17,5 @@ print(edam.interpolation.interp1D.__doc__)
 print(edam.interpolation.define2D.__doc__)
 print(edam.interpolation.locate2D.__doc__)
 print(edam.interpolation.interp2D.__doc__)
+print(edam.interpolation.unmask2D.__doc__)
 
