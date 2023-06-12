@@ -20,6 +20,16 @@ subroutine c_set_unmask_spval(var) bind(c)
    unmask_spval = var
 end subroutine
 
+subroutine c_get_unmask_damping(var) bind(c)
+   real(c_double), intent(out) :: var
+   var = unmask_damping
+end subroutine
+
+subroutine c_set_unmask_damping(var) bind(c)
+   real(c_double), intent(in) :: var
+   unmask_damping = var
+end subroutine
+
 subroutine c_get_unmask_max(var) bind(c)
    integer(c_int), intent(out) :: var
    var = unmask_max

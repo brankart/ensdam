@@ -36,7 +36,8 @@
         INTEGER, public :: unmask_max = 400 ! how far in terms of number of grid-point we extrapolate into mask,
                 ! will normally stop before 400 iterations, when all land points have been treated !
         INTEGER, public :: unmask_window = 50 ! maximum size of averaging window
-        REAL(KIND=8), public :: unmask_spval= -9999. ! Special value defining mask
+        REAL(KIND=8), public :: unmask_spval = -9999. ! Special value defining mask
+        REAL(KIND=8), public :: unmask_damping = 0. ! Damp extrapolation as a function of distance to coast (0 = no damping)
 
       CONTAINS
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -159,6 +160,12 @@
 
                 ! compute mean over the defined box with gaussian weight (only where data valid)
                 phitmp(ji,jj) = datmsk / summsk
+
+                ! Damp extrapolation as a function of distance to coast if requested
+                IF (unmask_damping /= 0. ) THEN
+                  argexp = - REAL(jext,8) / unmask_damping
+                  phitmp(ji,jj) = phitmp(ji,jj) * EXP(argexp)
+                ENDIF
               ENDIF
             ENDDO
           END DO

@@ -13,10 +13,11 @@ Available functions:
  -  interpolation.unmask2D : unmask input 2D array
 
 Available parameters:
- -  unmask_spval  : special value to unmask
- -  unmask_max    : maximum number of iteration for unmasking
- -  unmask_window : maximum averaging window in unmasking
- -  unmask_k_ew   : grid periodicity in unmasking
+ -  unmask_spval   : special value to unmask
+ -  unmask_max     : maximum number of iteration for unmasking
+ -  unmask_window  : maximum averaging window in unmasking
+ -  unmask_k_ew    : grid periodicity in unmasking
+ -  unmask_damping : damp extrapolation as a function of distance to coast (0 = no damping)
 
 """
 
@@ -85,6 +86,15 @@ cdef class __module_variable:
     def __set__(self, int var):
       c_set_unmask_k_ew(&var)
 
+  # Damping parameter
+  property unmask_damping:
+    def __get__(self):
+      cdef double var
+      c_get_unmask_damping(&var)
+      return var
+    def __set__(self, double var):
+      c_set_unmask_damping(&var)
+
 attr = __module_variable()
 
 # Get default values of module attributes from Fortran module
@@ -92,6 +102,7 @@ unmask_spval = attr.unmask_spval
 unmask_max = attr.unmask_max
 unmask_window = attr.unmask_window
 unmask_k_ew = attr.unmask_k_ew
+unmask_damping = attr.unmask_damping
 
 # Public function to locate position in 1D grid and compute interpolation weights
 def locate1D(double[::1] grid not None,x):
@@ -296,6 +307,7 @@ def unmask2D(double[:,::1] field):
     attr.unmask_max = unmask_max
     attr.unmask_window = unmask_window
     attr.unmask_k_ew = unmask_k_ew
+    attr.unmask_damping = unmask_damping
 
     c_unmask(<int>field.shape[1],<int>field.shape[0],&field[0,0])
 
