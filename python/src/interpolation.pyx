@@ -46,6 +46,8 @@ cdef extern void c_get_unmask_window(int* var) nogil
 cdef extern void c_set_unmask_window(int* var) nogil
 cdef extern void c_set_unmask_k_ew(int* var) nogil
 cdef extern void c_get_unmask_k_ew(int* var) nogil
+cdef extern void c_get_unmask_damping(double* var) nogil
+cdef extern void c_set_unmask_damping(double* var) nogil
 
 # Interface global variables of Fortran module into attributes of this module
 cdef class __module_variable:
