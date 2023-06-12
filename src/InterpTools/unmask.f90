@@ -123,8 +123,12 @@
             ENDDO
           ENDDO
 
+          print *, 'iteration',jext,'number of coast points',count(mask_coast)
+
           ! Fill the coastline points with values from the nearest unmasked points
-          ns=MIN(jext,unmask_window)  ! limit of the area of research for unmasked points
+          !ns=MIN(jext,unmask_window)  ! limit of the area of research for unmasked points
+          ns=3*unmask_window  ! limit of the area of research for unmasked points
+
           phitmp = phi     ! phitmp is going to be computed from phi
           DO jj = 1, nj
             DO ji = 1, ni
@@ -149,7 +153,8 @@
                     IF (inmask) THEN
                       ! compute gaussian weight
                       argexp = - REAL( jjm**2+jim**2 , 8 ) &
-                             & / REAL( jext**2 , 8 )
+                             & / REAL( unmask_window**2 , 8 )
+                      !      & / REAL( jext**2 , 8 )
                       zweight = EXP(argexp)
                       ! compute sum of weight, and sum of weighted field
                       summsk = summsk + zweight
@@ -163,7 +168,8 @@
 
                 ! Damp extrapolation as a function of distance to coast if requested
                 IF (unmask_damping /= 0. ) THEN
-                  argexp = - REAL(jext,8) / unmask_damping
+                  argexp = - ( 2. * REAL(jext,8) + 1. )
+                  argexp = argexp / ( unmask_damping * unmask_damping)
                   phitmp(ji,jj) = phitmp(ji,jj) * EXP(argexp)
                 ENDIF
               ENDIF
