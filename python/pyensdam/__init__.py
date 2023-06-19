@@ -8,7 +8,7 @@ from . import anamorphosis
 from . import augment
 from . import scores
 from . import statistics
-#from . import update
+from . import update
 from . import interpolation
 from . import obserror
 from . import random

@@ -82,3 +82,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/augment.c
 Python3_add_library(augment MODULE augment.c)
 target_link_libraries(augment PRIVATE censdam Python3::NumPy)
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/update.c
+    COMMAND cython update.pyx
+    MAIN_DEPENDENCY update.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+Python3_add_library(update MODULE update.c)
+target_link_libraries(update PRIVATE censdam Python3::NumPy)
+

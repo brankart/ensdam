@@ -171,7 +171,7 @@ def sample_mcmc(ens not None, multiplicity not None, nup not None, maxchain not 
     else:
       # With extra variables
       glob_my_test_extra = my_test
-      upens, upxens = sample_mcmc_extra(ens,multiplicity,nup,maxchaini,upxens)
+      upens, upxens = sample_mcmc_extra(ens,multiplicity,nup,maxchain,xens)
       return upens, upxens
 
 # Ensemble update without extra variables
@@ -182,7 +182,7 @@ def sample_mcmc_noextra(double[:,:,::1] ens not None,int[::1] multiplicity not N
     upens = numpy.zeros((nup,<int>ens.shape[2]), dtype=numpy.double)
     cdef double[:,::1] upens_ = upens
 
-    c_mcmc_iteration(<int>ens.shape[2],<int>ens.shape[1],<int>ens.shape[0],<int>upens.shape[0],&nextra,&maxchain_,\
+    c_mcmc_iteration(<int>ens.shape[2],<int>ens.shape[1],<int>ens.shape[0],<int>upens.shape[0],nextra,&maxchain_,\
                      &upens_[0,0],&ens[0,0,0],&multiplicity[0],&upens_[0,0],&ens[0,0,0],&argcase)
 
     return upens
@@ -197,8 +197,8 @@ def sample_mcmc_extra(double[:,:,::1] ens not None,int[::1] multiplicity not Non
     upxens = numpy.zeros((nup,<int>xens.shape[2]), dtype=numpy.double)
     cdef double[:,::1] upxens_ = upxens
 
-    c_mcmc_iteration(<int>ens.shape[2],<int>ens.shape[1],<int>ens.shape[0],<int>upens.shape[0],&nextra,&maxchain_,\
+    c_mcmc_iteration(<int>ens.shape[2],<int>ens.shape[1],<int>ens.shape[0],<int>upens.shape[0],nextra,&maxchain_,\
                      &upens_[0,0],&ens[0,0,0],&multiplicity[0],&upxens_[0,0],&xens[0,0,0],&argcase)
 
-    return upen, upxens
+    return upens, upxens
 
