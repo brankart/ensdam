@@ -43,7 +43,7 @@ chain_index = attr.chain_index
 
 # Public function to augment input ensemble with MCMC sampler
 def sample_mcmc(double[:,:,::1] ens not None,int[::1] multiplicity not None,naug not None, maxchain not None):
-    """augens = sample_mcmc(maxchain,ens,multiplicity)
+    """augens = sample_mcmc(ens,multiplicity,naug,maxchain)
 
        Resample input ensemble with MCMC sampler, using covariance localization
 
@@ -51,7 +51,7 @@ def sample_mcmc(double[:,:,::1] ens not None,int[::1] multiplicity not None,naug
        ------
        ens [rank-3 double array] : multiscale input ensemble (nscl,nens,nvar)
        multiplicity [rank-1 integer array] : multiplicity of each scale in the Schur products
-       naug [integer] : number of members requested for the augemnted ensemble
+       naug [integer] : number of members requested for the augmented ensemble
        maxchain [integer] : number of iteration of the MCMC sampler
 
        Returns

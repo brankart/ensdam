@@ -39,7 +39,7 @@ subroutine c_get_mcmc_index(var) bind(c)
 end subroutine
 
 subroutine c_set_mcmc_index(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    mcmc_index = var
 end subroutine
 
@@ -50,7 +50,7 @@ subroutine c_get_mcmc_zero_start(var) bind(c)
 end subroutine
 
 subroutine c_set_mcmc_zero_start(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    mcmc_zero_start = (var/=0)
 end subroutine
 
@@ -60,7 +60,7 @@ subroutine c_get_mcmc_control_print(var) bind(c)
 end subroutine
 
 subroutine c_set_mcmc_control_print(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    mcmc_control_print = var
 end subroutine
 
@@ -70,7 +70,7 @@ subroutine c_get_mcmc_convergence_check(var) bind(c)
 end subroutine
 
 subroutine c_set_mcmc_convergence_check(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    mcmc_convergence_check = var
 end subroutine
 
@@ -81,7 +81,7 @@ subroutine c_get_mcmc_convergence_stop(var) bind(c)
 end subroutine
 
 subroutine c_set_mcmc_convergence_stop(var) bind(c)
-   integer(c_int), intent(out) :: var
+   integer(c_int), intent(in) :: var
    mcmc_convergence_stop = (var/=0)
 end subroutine
 
