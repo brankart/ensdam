@@ -1,6 +1,6 @@
 module ensupdate
 
-use iso_c_binding, only: c_int, c_double
+use iso_c_binding, only: c_int, c_double, c_funptr
 
 use ensdam_mcmc_update
 
@@ -111,8 +111,8 @@ end function
 
 function f_my_test(upens,upxens)
    implicit none
-   real(kind=8), dimension(:), intent(out) :: upens
-   real(kind=8), dimension(:), intent(out), optional :: upxens
+   real(kind=8), dimension(:,:), intent(in) :: upens
+   real(kind=8), dimension(:,:), intent(in), optional :: upxens
    logical :: f_my_test
    integer :: nvar, nens, nextra
 

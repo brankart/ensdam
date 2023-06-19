@@ -15,7 +15,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #set(Python3_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
-add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 ensaugm_wrapper.F90 )
+add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 ensaugm_wrapper.F90 ensupdate_wrapper.F90 )
 target_link_libraries(censdam ensdam_static)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/scores.c
