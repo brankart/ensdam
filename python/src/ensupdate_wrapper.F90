@@ -1,6 +1,6 @@
 module ensupdate
 
-use iso_c_binding, only: c_int, c_double, c_funptr
+use iso_c_binding, only: c_int, c_double, c_funptr, c_f_procpointer
 
 use ensdam_mcmc_update
 
@@ -10,7 +10,7 @@ implicit none
 interface
    function my_jo_callback_interface(nvar,v) bind(c)
       import c_double, c_int
-      integer(c_int), intent(in) :: nvar
+      integer(c_int), intent(in), value :: nvar
       real(c_double), intent(in) :: v(nvar)
       real(c_double) :: my_jo_callback_interface
    end function
@@ -20,9 +20,9 @@ procedure (my_jo_callback_interface), pointer, save :: my_jo => null()
 interface
    function my_test_callback_interface(nvar,nens,nextra,upens,upxens) bind(c)
       import c_double, c_int
-      integer(c_int), intent(in) :: nvar
-      integer(c_int), intent(in) :: nens
-      integer(c_int), intent(in) :: nextra
+      integer(c_int), intent(in), value :: nvar
+      integer(c_int), intent(in), value :: nens
+      integer(c_int), intent(in), value :: nextra
       real(c_double), intent(in) :: upens(nvar,nens)
       real(c_double), intent(in) :: upxens(nvar,nextra)
       integer(c_int) :: my_test_callback_interface
