@@ -123,7 +123,9 @@
             ENDDO
           ENDDO
 
-          print *, 'iteration',jext,'number of coast points',count(mask_coast)
+          IF (MOD(jext,100)==0) THEN
+            print *, 'Iteration',jext,'number of coast points',count(mask_coast)
+          ENDIF
 
           ! Fill the coastline points with values from the nearest unmasked points
           ns=MIN(jext,unmask_window)  ! limit of the area of research for unmasked points
