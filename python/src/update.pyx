@@ -43,12 +43,12 @@ cdef extern void c_get_mcmc_convergence_check(int* var) nogil
 cdef extern void c_set_mcmc_convergence_check(int* var) nogil
 cdef extern void c_get_mcmc_convergence_stop(int* var) nogil
 cdef extern void c_set_mcmc_convergence_stop(int* var) nogil
-cdef extern void c_get_mcmc_mcmc_proposal(int* var) nogil
-cdef extern void c_set_mcmc_mcmc_proposal(int* var) nogil
-cdef extern void c_get_mcmc_mcmc_proposal_std(double* var) nogil
-cdef extern void c_set_mcmc_mcmc_proposal_std(double* var) nogil
-cdef extern void c_get_mcmc_mcmc_schedule(double* var) nogil
-cdef extern void c_set_mcmc_mcmc_schedule(double* var) nogil
+cdef extern void c_get_mcmc_proposal(int* var) nogil
+cdef extern void c_set_mcmc_proposal(int* var) nogil
+cdef extern void c_get_mcmc_proposal_std(double* var) nogil
+cdef extern void c_set_mcmc_proposal_std(double* var) nogil
+cdef extern void c_get_mcmc_schedule(double* var) nogil
+cdef extern void c_set_mcmc_schedule(double* var) nogil
 
 # Define callback routines needed in C-callable wrapper
 cdef double my_jo_callback(int nvar, double* v) with gil:
