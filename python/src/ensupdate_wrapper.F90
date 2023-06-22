@@ -97,12 +97,12 @@ subroutine c_set_mcmc_proposal(var) bind(c)
 end subroutine
 
 subroutine c_get_mcmc_proposal_std(var) bind(c)
-   integer(c_double), intent(out) :: var
+   real(c_double), intent(out) :: var
    var = mcmc_proposal_std
 end subroutine
 
 subroutine c_set_mcmc_proposal_std(var) bind(c)
-   integer(c_double), intent(in) :: var
+   real(c_double), intent(in) :: var
    mcmc_proposal_std = var
 end subroutine
 
