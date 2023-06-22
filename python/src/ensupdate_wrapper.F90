@@ -85,6 +85,37 @@ subroutine c_set_mcmc_convergence_stop(var) bind(c)
    mcmc_convergence_stop = (var/=0)
 end subroutine
 
+subroutine c_get_mcmc_proposal(var) bind(c)
+   integer(c_int), intent(out) :: var
+   var = 0
+   if (mcmc_proposal) var = 1
+end subroutine
+
+subroutine c_set_mcmc_proposal(var) bind(c)
+   integer(c_int), intent(in) :: var
+   mcmc_proposal = (var/=0)
+end subroutine
+
+subroutine c_get_mcmc_proposal_std(var) bind(c)
+   integer(c_double), intent(out) :: var
+   var = mcmc_proposal_std
+end subroutine
+
+subroutine c_set_mcmc_proposal_std(var) bind(c)
+   integer(c_double), intent(in) :: var
+   mcmc_proposal_std = var
+end subroutine
+
+subroutine c_get_mcmc_schedule(var) bind(c)
+   integer(c_double), intent(out) :: var
+   var = mcmc_schedule
+end subroutine
+
+subroutine c_set_mcmc_schedule(var) bind(c)
+   integer(c_double), intent(in) :: var
+   mcmc_schedule = var
+end subroutine
+
 ! Routines to associate callback functions
 
 subroutine c_associate_my_jo_callback(my_jo_in) bind(c)

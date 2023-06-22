@@ -43,6 +43,12 @@ cdef extern void c_get_mcmc_convergence_check(int* var) nogil
 cdef extern void c_set_mcmc_convergence_check(int* var) nogil
 cdef extern void c_get_mcmc_convergence_stop(int* var) nogil
 cdef extern void c_set_mcmc_convergence_stop(int* var) nogil
+cdef extern void c_get_mcmc_mcmc_proposal(int* var) nogil
+cdef extern void c_set_mcmc_mcmc_proposal(int* var) nogil
+cdef extern void c_get_mcmc_mcmc_proposal_std(double* var) nogil
+cdef extern void c_set_mcmc_mcmc_proposal_std(double* var) nogil
+cdef extern void c_get_mcmc_mcmc_schedule(double* var) nogil
+cdef extern void c_set_mcmc_mcmc_schedule(double* var) nogil
 
 # Define callback routines needed in C-callable wrapper
 cdef double my_jo_callback(int nvar, double* v) with gil:
@@ -106,6 +112,30 @@ cdef class __module_variable:
       return var
     def __set__(self, int var):
       c_set_mcmc_convergence_stop(&var)
+  # Input ensemble is a proposal distribution
+  property mcmc_proposal:
+    def __get__(self):
+      cdef int var
+      c_get_mcmc_proposal(&var)
+      return var
+    def __set__(self, int var):
+      c_set_mcmc_proposal(&var)
+  # Proposal distribution std
+  property mcmc_proposal_std:
+    def __get__(self):
+      cdef double var
+      c_get_mcmc_proposal_std(&var)
+      return var
+    def __set__(self, double var):
+      c_set_mcmc_proposal_std(&var)
+  # MCMC schedule
+  property mcmc_schedule:
+    def __get__(self):
+      cdef double var
+      c_get_mcmc_schedule(&var)
+      return var
+    def __set__(self, double var):
+      c_set_mcmc_schedule(&var)
 
 attr = __module_variable()
 
@@ -115,6 +145,9 @@ zero_start = attr.zero_start
 control_print = attr.control_print
 convergence_check = attr.convergence_check
 convergence_stop = attr.convergence_stop
+mcmc_proposal = attr.mcmc_proposal
+mcmc_proposal_std = attr.mcmc_proposal_std
+mcmc_schedule = attr.mcmc_schedule
 
 # Set default values of additional attributes
 glob_my_jo=None
@@ -151,6 +184,9 @@ def sample_mcmc(ens not None, multiplicity not None, nup not None, maxchain not 
     attr.control_print = control_print
     attr.convergence_check = convergence_check
     attr.convergence_stop = convergence_stop
+    attr.mcmc_proposal = mcmc_proposal
+    attr.mcmc_proposal_std = mcmc_proposal_std
+    attr.mcmc_schedule = mcmc_schedule
 
     # Associate callback routine in C-callable wrapper
     c_associate_my_jo_callback(&my_jo_callback)
