@@ -107,12 +107,12 @@ subroutine c_set_mcmc_proposal_std(var) bind(c)
 end subroutine
 
 subroutine c_get_mcmc_schedule(var) bind(c)
-   integer(c_double), intent(out) :: var
+   real(c_double), intent(out) :: var
    var = mcmc_schedule
 end subroutine
 
 subroutine c_set_mcmc_schedule(var) bind(c)
-   integer(c_double), intent(in) :: var
+   real(c_double), intent(in) :: var
    mcmc_schedule = var
 end subroutine
 

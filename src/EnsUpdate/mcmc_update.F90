@@ -317,6 +317,23 @@ MODULE ensdam_mcmc_update
           ! Iterate until new draw is accepted
           next_draw : DO
 
+            ! select proposal distribution, and prepare perturbation deterministic coefficients
+            IF (mcmc_proposal) THEN
+              ! assuming that the input is the proposal distribution
+              alpha = 1._8
+              beta = mcmc_proposal_std
+            ELSE
+              ! assuming that the input is a prior ensemble to update
+              ! 1. Default beta ** 2
+              beta = 1._8 / REAL(mcmc_index,8)
+              ! 2. Upgrade with user-defined schedule (default: mcmc_schedule=0.)
+              beta = MAX ( beta , MIN (  0.5_8 , mcmc_schedule ) )
+              ! 3. Compute alpha ** 2
+              alpha = 1._8 - beta
+              ! 4. Compute alpha and beta
+              alpha = SQRT( alpha ) ; beta = SQRT( beta )
+            ENDIF
+
             ! get new Schur product (using the ensemble augmentation tool)
             CALL newproduct( vtest, ens, multiplicity, sample )
 
@@ -327,23 +344,6 @@ MODULE ensdam_mcmc_update
 #if defined MPI
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
-              ! select proposal distribution
-              IF (mcmc_proposal) THEN
-                ! assuming that the input is the proposal distribution
-                alpha = 1._8
-                beta = mcmc_proposal_std
-              ELSE
-                ! assuming that the input is a prior ensemble to update
-                ! 1. Default beta ** 2
-                beta = 1._8 / REAL(mcmc_index,8)
-                ! 2. Upgrade with user-defined schedule (default: mcmc_schedule=0.)
-                beta = MAX ( beta , MIN (  0.5_8 , mcmc_schedule ) )
-                ! 3. Compute alpha ** 2
-                alpha = 1._8 - beta
-                ! 4. Compute alpha and beta
-                alpha = SQRT( alpha ) ; beta = SQRT( beta )
-              ENDIF
-
               ! get draw from proposal distribution
               vtest = alpha * upens(:,jup) + beta * coefficient * vtest
 

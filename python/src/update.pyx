@@ -55,6 +55,8 @@ cdef double my_jo_callback(int nvar, double* v) with gil:
   cdef double my_jo
   v_ = numpy.asarray(<double[:nvar:1]>v)
   my_jo = glob_my_jo(v_)
+  attr.mcmc_proposal_std = mcmc_proposal_std
+  attr.mcmc_schedule = mcmc_schedule
   return my_jo
 
 cdef int my_test_callback(int nvar, int nens, int nextra, double* upens, double* upxens) with gil:
