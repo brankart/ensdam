@@ -30,8 +30,8 @@ def pow_spectrum(l,m):
   return power
 
 # Definition of the output grid on the sphere
-lon0 = 0. ; dlon = 1 ; nlon=360
-lat0 = -90. ; dlat = 1 ; nlat=181
+lon0 = 0.5   ; dlon = 1 ; nlon=359
+lat0 = -89.5 ; dlat = 1 ; nlat=180
 lon = np.arange(lon0, lon0 + nlon * dlon, dlon, dtype=np.double)
 lat = np.arange(lat0, lat0 + nlat * dlat, dlat, dtype=np.double)
 lon2d, lat2d = np.meshgrid(lon, lat)
@@ -51,9 +51,19 @@ print('-------------------------------------')
 print('2. Compute the spectrum of this field')
 print('-------------------------------------')
 
+# Compute area associated to each grid point
+lon0 = 0.   ; dlon = 1 ; nlon=360
+lat0 = -90. ; dlat = 1 ; nlat=181
+lon = np.arange(lon0, lon0 + nlon * dlon, dlon, dtype=np.double)
+lat = np.arange(lat0, lat0 + nlat * dlat, dlat, dtype=np.double)
+lon2d, lat2d = np.meshgrid(lon, lat)
+area = edam.transpho.mesh_area(lon2d,lat2d)
+area1d = np.ravel(area)
+
+# Perform transformation
 edam.transpho.lmax=30
 edam.transpho.latres=0.5
-spectrum = edam.transpho.forward(field,lon1d,lat1d)
+spectrum = edam.transpho.forward(field*area1d,lon1d,lat1d)
 
 print('shape',spectrum.shape)
 

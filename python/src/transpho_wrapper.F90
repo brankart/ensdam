@@ -66,7 +66,7 @@ subroutine c_mesh_area(ni,nj,lon,lat,area) bind(c)
   integer(c_int), intent(in), value :: ni, nj
   real(c_double), intent(in) :: lon(ni,nj)
   real(c_double), intent(in) :: lat(ni,nj)
-  real(c_double), intent(out) :: area(ni,nj)
+  real(c_double), intent(out) :: area(ni-1,nj-1)
 
   call mesh_area (lon,lat,area)
 end subroutine

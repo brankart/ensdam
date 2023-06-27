@@ -136,7 +136,7 @@ def mesh_area(double[:,::1] lon,double[:,::1] lat):
        area [rank-2 double array] : area of grid cells (nx,ny)
 
     """
-    area = numpy.zeros_like(lon)
+    area = numpy.zeros((lon.shape[0]-1,lon.shape[1]-1))
     cdef double[:,::1] area_ = area
 
     c_mesh_area(<int>lon.shape[1],<int>lon.shape[0],&lon[0,0],&lat[0,0],&area_[0,0])
