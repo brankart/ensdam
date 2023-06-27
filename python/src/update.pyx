@@ -10,7 +10,7 @@ Available functions:
 
 Module parameters:
 
- -  update.chain_index :
+ -  update.chain_index : current chain index
  -  update.zero_start : start from zero (T) or from restart ensemble (F)
  -  update.control_print : number of iteration between control prints
  -  update.convergence_check : number of iteration between convergence checks
