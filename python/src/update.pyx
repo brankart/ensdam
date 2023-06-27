@@ -1,7 +1,7 @@
 # cython: language_level=3
 # cython: profile=True
 """
-pyensdam.update: ensemble update with addtional condtitions
+pyensdam.update: ensemble update with additional conditions
 ===========================================================
 
 Available functions:

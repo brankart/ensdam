@@ -24,7 +24,8 @@ subroutine c_proj_ylm(nvar,nl,proj,tab,lon,lat) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nl
-  real(c_double), intent(out) :: proj(nl+1,2*nl+1)
+  !real(c_double), intent(out) :: proj(nl+1,2*nl+1)
+  real(c_double), intent(out) :: proj(0:nl,-nl:nl)
   real(c_double), intent(in) :: tab(nvar)
   real(c_double), intent(in) :: lon(nvar)
   real(c_double), intent(in) :: lat(nvar)
@@ -36,7 +37,8 @@ subroutine c_back_ylm(nvar,nl,proj,tab,lon,lat) bind(c)
   implicit none
   integer(c_int), intent(in), value :: nvar
   integer(c_int), intent(in), value :: nl
-  real(c_double), intent(in) :: proj(nl+1,2*nl+1)
+  !real(c_double), intent(in) :: proj(nl+1,2*nl+1)
+  real(c_double), intent(out) :: proj(0:nl,-nl:nl)
   real(c_double), intent(out) :: tab(nvar)
   real(c_double), intent(in) :: lon(nvar)
   real(c_double), intent(in) :: lat(nvar)

@@ -33,7 +33,7 @@ reinitialize=True  # Reinitilize module with new attributes
 lmin=0      # Minimum degree of the spherical harmonics
 lmax=500    # Maximum degree of the spherical harmonics
 latmin=-90. # Minimum latitude
-latmax=-90. # Maximum latitude
+latmax=90.  # Maximum latitude
 latres=0.05 # Resolution of Legendre polynomials (in degrees)
 
 # Public function to perform forward transformation (compute spectrum)
@@ -58,11 +58,14 @@ def forward(double[::1] field, double[::1] lon, double[::1] lat):
     cdef double latmin_=latmin, latmax_=latmax, latres_=latres
     if (reinitialize):
       c_init_ylm(lmax_,lmin_,&latmin_,&latmax_,&latres_)
+      reinitialize=False
 
     # Perform forward transformation
     spectrum = numpy.zeros((2*lmax+1,lmax+1), dtype=numpy.double)
     cdef double[:,::1] spectrum_ = spectrum
     c_proj_ylm(<int>lon.shape[0],lmax_,&spectrum_[0,0],&field[0],&lon[0],&lat[0])
+
+    return spectrum
 
 # Public function to perform forward transformation (compute spectrum)
 def backward(double[:,::1] spectrum, double[::1] lon, double[::1] lat, l0=None, l1=None):
@@ -88,6 +91,7 @@ def backward(double[:,::1] spectrum, double[::1] lon, double[::1] lat, l0=None, 
     cdef double latmin_=latmin, latmax_=latmax, latres_=latres
     if (reinitialize):
       c_init_ylm(lmax_,lmin_,&latmin_,&latmax_,&latres_)
+      reinitialize=False
 
     # Test size of input spectrum array
     if (spectrum.shape[0] != 2*lmax+1):
@@ -100,7 +104,7 @@ def backward(double[:,::1] spectrum, double[::1] lon, double[::1] lat, l0=None, 
     field = numpy.zeros_like(lon)
     cdef double[::1] field_ = field
 
-    if (l0==None & l1==None):
+    if ((l0==None) & (l1==None)):
       c_back_ylm(<int>lon.shape[0],lmax_,&spectrum[0,0],&field_[0],&lon[0],&lat[0])
     else:
       if (l0==None):
@@ -112,6 +116,7 @@ def backward(double[:,::1] spectrum, double[::1] lon, double[::1] lat, l0=None, 
 
       c_back_ylm_loc(<int>lon.shape[0],lmax_,&spectrum[0,0],&field_[0],&lon[0],&lat[0],&l0_,&l1_)
 
+    return field
 
 # Public function to compute the area of grid cells on the sphere
 def mesh_area(double[:,::1] lon,double[:,::1] lat):
