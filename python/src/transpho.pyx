@@ -56,6 +56,7 @@ def forward(double[::1] field, double[::1] lon, double[::1] lat):
     # Reinitialize the precomputation of Legendre polynomials if required
     cdef int lmin_=lmin, lmax_=lmax
     cdef double latmin_=latmin, latmax_=latmax, latres_=latres
+    global reinitialize
     if (reinitialize):
       c_init_ylm(lmax_,lmin_,&latmin_,&latmax_,&latres_)
       reinitialize=False
@@ -89,6 +90,7 @@ def backward(double[:,::1] spectrum, double[::1] lon, double[::1] lat, l0=None, 
     # Reinitialize the precomputation of Legendre polynomials if required
     cdef int lmin_=lmin, lmax_=lmax
     cdef double latmin_=latmin, latmax_=latmax, latres_=latres
+    global reinitialize
     if (reinitialize):
       c_init_ylm(lmax_,lmin_,&latmin_,&latmax_,&latres_)
       reinitialize=False
