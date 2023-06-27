@@ -1,5 +1,18 @@
 
-A simple, minimal example of building a Python C module using CMake.
+pyensdam: Ensemble data assimilation module
+
+Avalaible modules:
+ - pyensdam.anamorphosis : ensemble anamorphosis transformation
+ - pyensdam.augment : ensemble augmentation with MCMC sampler
+ - pyensdam.interpolation : interpolation in 1D and 2D grids
+ - pyensdam.obserror : observation error (normal, lognormal, gamma, beta)
+ - pyensdam.probability : probability distribution (normal, lognormal, gamma, beta)
+ - pyensdam.random : random field generator
+ - pyensdam.scores : ensemble probabilistic scores
+ - pyensdam.statistics : ensemble statistics (mean, std, correlation, representer)
+ - pyensdam.transpho : transformation in the basis of the spherical harmonics
+ - pyensdam.update : ensemble observational update, with an MCMC sampler
+
 
 
 pyensdam.anamorphosis: ensemble anamorphosis
@@ -862,7 +875,7 @@ Available functions:
 
 Module parameters:
 
- -  update.chain_index :
+ -  update.chain_index : current chain index
  -  update.zero_start : start from zero (T) or from restart ensemble (F)
  -  update.control_print : number of iteration between control prints
  -  update.convergence_check : number of iteration between convergence checks
