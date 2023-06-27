@@ -25,6 +25,7 @@ add_custom_command(OUTPUT wheel.stamp POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:interpolation>" ${project_name}/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:augment>" ${project_name}/
                    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:update>" ${project_name}/
+                   COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:transpho>" ${project_name}/
                    COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/${setup_file}" bdist_wheel
                    VERBATIM)
 add_custom_target(wheel ALL DEPENDS wheel.stamp)

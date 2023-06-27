@@ -15,7 +15,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 #set(Python3_FIND_STRATEGY LOCATION)
 find_package(Python3 COMPONENTS Interpreter Development NumPy)
 
-add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 ensaugm_wrapper.F90 ensupdate_wrapper.F90 )
+add_library(censdam ensscores_wrapper.F90 obserror_wrapper.F90 stochtools_wrapper.F90 ensstat_wrapper.F90 ensanam_wrapper.F90 interp_wrapper.F90 ensaugm_wrapper.F90 ensupdate_wrapper.F90 transpho_wrapper.F90 )
 target_link_libraries(censdam ensdam_static)
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/scores.c
@@ -89,4 +89,12 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/update.c
 )
 Python3_add_library(update MODULE update.c)
 target_link_libraries(update PRIVATE censdam Python3::NumPy)
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/transpho.c
+    COMMAND cython transpho.pyx
+    MAIN_DEPENDENCY transpho.pyx
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+Python3_add_library(transpho MODULE transpho.c)
+target_link_libraries(transpho PRIVATE censdam Python3::NumPy)
 
