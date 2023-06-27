@@ -1,4 +1,7 @@
 
+A simple, minimal example of building a Python C module using CMake.
+
+
 pyensdam.anamorphosis: ensemble anamorphosis
 ============================================
 
