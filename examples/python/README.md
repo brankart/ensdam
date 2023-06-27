@@ -1,6 +1,6 @@
 
-pyensdam: Ensemble data assimilation module
-===========================================
+pyensdam: Ensemble data assimilation modules
+============================================
 
 Avalaible modules:
  - pyensdam.anamorphosis : ensemble anamorphosis transformation
