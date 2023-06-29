@@ -1,24 +1,21 @@
 ## EnsDAM : Ensemble Data Assimilation Modules
 
-EnsDAM is a collection of FORTRAN modules
+EnsDAM is a collection of modules
 that can be useful to ensemble data assimilation systems.
+
+EnsDAM code is written in Fortran,
+with interface to for use in Python.
 
 EnsDAM is distributed under the terms of the CeCILL free software license agreement.
 See LICENSE.txt for more information. 
 
-EnsDAM code is written in Fortran.
-Interface to python is in development.
-
 ### Installation of the EnsDAM python module
 
-Requirements: cmake, Fortran compiler, python
+Requirements: cmake, Fortran compiler, Python
 
 Edit and run the script: compile.bash
 
 Run the examples in the 'example/python' directory.
-
-The pyensdam module currently includes:
-pyensdam.scores and pyensdam.obserror.
 
 ### Installation of the EnsDAM Fortran library only
 
@@ -32,9 +29,24 @@ exexutables (.x) have been created in the 'examples/fortran' directory.
 
 Run the examples in the 'example/fortran' directory.
 
-### List of available EnsDAM modules
+### List of available EnsDAM modules, as organized in the Python interface
 
-See documentation (in the doc directory) for more details.
+```
+pyensdam.anamorphosis : ensemble anamorphosis transformation
+pyensdam.augment : ensemble augmentation with MCMC sampler
+pyensdam.interpolation : interpolation in 1D and 2D grids
+pyensdam.obserror : observation error (normal, lognormal, gamma, beta)
+pyensdam.probability : probability distribution (normal, lognormal, gamma, beta)
+pyensdam.random : random field generator
+pyensdam.scores : ensemble probabilistic scores
+pyensdam.statistics : ensemble statistics (mean, std, correlation, representer)
+pyensdam.transpho : transformation in the basis of the spherical harmonics
+pyensdam.update : ensemble observational update with MCMC sampler
+```
+
+See README in the 'python' directory for a description of the functions available in each module.
+
+### List of available EnsDAM modules, as available in Fortran
 
 ```
 EnsAnam : ensemble anamorphosis transformation
@@ -70,3 +82,4 @@ TranSpHO : scale separation (by projection on the spherical harmonics)
   module ensdam_sphylm : project on spherical harmonics / transform back on the sphere
 ```
 
+See documentation (in the doc directory) for more details.
