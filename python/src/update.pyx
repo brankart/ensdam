@@ -160,7 +160,7 @@ glob_my_test_extra=None
 def sample_mcmc(ens not None, multiplicity not None, nup not None, maxchain not None, my_jo not None, my_test=None, xens=False):
     """upens, [upxens] = sample_mcmc(ens,multiplicity,nup,maxchain,my_jo,[my_test,xens])
 
- -     Apply new condition (e.g. observations) on input ensemble,
+       Apply new condition (e.g. observations) on input ensemble,
        using MCMC sampler with covariance localization
 
        Option xens is to include extra variables, not involved in the evaluation of the condition

@@ -867,7 +867,7 @@ area = mesh_area(lon,lat)
 
     
 
-pyensdam.update: ensemble update with addtional condtitions
+pyensdam.update: ensemble update with additional conditions
 ===========================================================
 
 Available functions:
