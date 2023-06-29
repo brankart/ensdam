@@ -885,7 +885,7 @@ Module parameters:
 
 upens, [upxens] = sample_mcmc(ens,multiplicity,nup,maxchain,my_jo,[my_test,xens])
 
- -     Apply new condition (e.g. observations) on input ensemble,
+       Apply new condition (e.g. observations) on input ensemble,
        using MCMC sampler with covariance localization
 
        Option xens is to include extra variables, not involved in the evaluation of the condition
