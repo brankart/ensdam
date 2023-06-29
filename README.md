@@ -4,12 +4,12 @@ EnsDAM is a collection of modules
 that can be useful to ensemble data assimilation systems.
 
 EnsDAM code is written in Fortran,
-with interface to for use in Python.
+with interface to Python.
 
 EnsDAM is distributed under the terms of the CeCILL free software license agreement.
 See LICENSE.txt for more information. 
 
-### Installation of the EnsDAM python module
+### Installation of the EnsDAM python modules
 
 Requirements: cmake, Fortran compiler, Python
 
