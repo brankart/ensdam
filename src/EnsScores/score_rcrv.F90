@@ -25,6 +25,9 @@
 ! rcrv_cumul : accumulate data to prepare the final computation of the score
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_rcrv
+#if defined MPI
+      use mpi
+#endif
       IMPLICIT NONE
       PRIVATE
 
@@ -46,7 +49,6 @@ MODULE ensdam_score_rcrv
 
       ! Definition for MPI
 #if defined MPI
-      include "mpif.h"
       INTEGER, PUBLIC, SAVE  :: mpi_comm_score_rcrv=mpi_comm_world   ! definition of module global communicator
       INTEGER, SAVE :: mpi_code
 #endif

@@ -26,6 +26,9 @@
 ! crps_final : compute final score from accumulated data
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_crps
+#if defined MPI
+      use mpi
+#endif
       IMPLICIT NONE
       PRIVATE
 
@@ -42,7 +45,6 @@ MODULE ensdam_score_crps
 
       ! Definition for MPI
 #if defined MPI
-      include "mpif.h"
       INTEGER, PUBLIC, SAVE  :: mpi_comm_score_crps=mpi_comm_world   ! definition of module global communicator
       INTEGER, SAVE :: mpi_code
 #endif

@@ -24,6 +24,9 @@
 ! mcmc_iteration : iterate to sample the posterior probability distribution
 ! ----------------------------------------------------------------------
 MODULE ensdam_mcmc_update
+#if defined MPI
+      use mpi
+#endif
       use ensdam_ensaugm
       use ensdam_storng
       IMPLICIT NONE
@@ -44,7 +47,6 @@ MODULE ensdam_mcmc_update
 
 #if defined MPI
       ! Public definitions for MPI
-      include "mpif.h"
       INTEGER, PUBLIC, SAVE  :: mpi_comm_mcmc_update=mpi_comm_world   ! definition of module global communicator
       INTEGER, save :: mpi_code
 #endif

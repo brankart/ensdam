@@ -26,6 +26,9 @@
 ! getproduct : compute specified multiple Schur product
 ! ----------------------------------------------------------------------
 MODULE ensdam_ensaugm
+#if defined MPI
+      use mpi
+#endif
       use ensdam_schurprod
       use ensdam_storng
       IMPLICIT NONE
@@ -39,7 +42,6 @@ MODULE ensdam_ensaugm
 
       ! Definition for MPI
 #if defined MPI
-      include "mpif.h"
       INTEGER, PUBLIC, SAVE  :: mpi_comm_ensaugm=mpi_comm_world   ! definition of module global communicator
       INTEGER, save :: mpi_code
 #endif

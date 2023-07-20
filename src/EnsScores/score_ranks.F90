@@ -25,6 +25,9 @@
 ! compute_ranks : compute ranks of verification data in ensemble simulation
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_ranks
+#if defined MPI
+      use mpi
+#endif
       use ensdam_anaqua
       use ensdam_storng
       IMPLICIT NONE
@@ -34,7 +37,6 @@ MODULE ensdam_score_ranks
 
       ! Definition for MPI
 #if defined MPI
-      include "mpif.h"
       INTEGER, PUBLIC, SAVE  :: mpi_comm_score_ranks=mpi_comm_world  ! definition of module global communicator
       INTEGER, SAVE :: mpi_code
 #endif
