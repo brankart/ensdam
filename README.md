@@ -10,7 +10,7 @@ See LICENSE.txt for more information.
 
 ### Installation of the EnsDAM python modules
 
-Requirements: cmake, Fortran compiler, Python
+Requirements: cmake, Fortran compiler, Python, Cython
 
 Edit and run the script: compile.bash
 
