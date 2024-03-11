@@ -1,4 +1,4 @@
-module obsanam
+module enssanam
 
 use iso_c_binding, only: c_int, c_double
 
