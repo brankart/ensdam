@@ -3,15 +3,19 @@
 
 ### Warning: This interface is still experimental.
 
-First prepare the shared library with C-callable fortran routines
+First prepare the shared library (ensdam.so) with C-callable fortran routines
 to be used by the Julia interface.
+This can be done from the libraries prepared while installing the python interface
+with the script install.bash.
+This should be improved and included in the cmake installation.
 
 Only a few simple functions have been implemented julia (see the list below).
 To import then in julia:
 
 ```julia
 push!(LOAD_PATH, "./")
-import ensdam
+import scores
+import probability
 ```
 
 ### List of available functions
