@@ -211,6 +211,7 @@ MODULE ensdam_ensaugm
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
+              ! OPENACC
               new(:) = new(:) * ens(:,sample(jfactor),js)
             ENDIF
           ENDDO
@@ -265,6 +266,7 @@ MODULE ensdam_ensaugm
 
         ! Perform the Schur product with required selected members
         jfactor = 1
+        ! OPENACC
         new(:) = ens(:,sample(1),1)
         DO js = 2,jps
           DO jmul = 1,multiplicity(js)
@@ -272,6 +274,7 @@ MODULE ensdam_ensaugm
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
+              ! OPENACC
               new(:) = new(:) * ens(:,sample(jfactor),js)
             ENDIF
           ENDDO

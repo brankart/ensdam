@@ -341,6 +341,7 @@ MODULE ensdam_mcmc_update
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
               ! get draw from proposal distribution
+              ! OPENACC
               vtest = alpha * upens(:,jup) + beta * coefficient * vtest
 
               IF ( accept_new_draw( vtest, jup ) ) THEN
@@ -352,6 +353,7 @@ MODULE ensdam_mcmc_update
                   ! (i.e. using the same sample to compute the product)
                   CALL getproduct( vextra, xens, multiplicity, sample )
                   ! perform the same linear combination, with the same random coefficient
+                  ! OPENACC
                   upxens(:,jup) = alpha * upxens(:,jup) + beta * coefficient * vextra
                 ENDIF
                 ! move to next chain
@@ -393,7 +395,7 @@ MODULE ensdam_mcmc_update
         aprob = EXP ( cost_jo_saved(jup) - cost_jo_test )
 
         ! Accept or reject test draw
-        CALL kiss_uniform( uran )  ! uran ~ U(0,1)
+        IF (iproc.eq.0) CALL kiss_uniform( uran )  ! uran ~ U(0,1)
 #if defined MPI
         CALL mpi_bcast(uran,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
