@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-./mkmf -t Makefile.template -p ../lib/libensdam.a ../src/*
+./mkmf -t Makefile.template -p ../lib/libensdam.a ../src/E* ../src/InterpTools ../src/ObsError ../src/StochTools ../src/TranSpHO/
 
 make all
 
@@ -9,5 +9,5 @@ make all
 
 #make examples
 
-#make install
+make install
 
