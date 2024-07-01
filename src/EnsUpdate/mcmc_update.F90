@@ -185,7 +185,7 @@ MODULE ensdam_mcmc_update
         CALL mcmc_init( upens )
 
         ! Iterate the MCMC chain
-        DO jchain = 1, maxchain
+        chain_loop : DO jchain = 1, maxchain
 
           ! Get next accepted draw of the Markov Chain
           IF (extra_variables) THEN
@@ -205,7 +205,7 @@ MODULE ensdam_mcmc_update
             ENDIF
           ENDIF
 
-        ENDDO
+        ENDDO chain_loop
 
         END SUBROUTINE mcmc_iteration
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -307,28 +307,28 @@ MODULE ensdam_mcmc_update
         ! Size of arrays
         jpup = SIZE(upens,2)  ! Size of updated ensemble
 
+        ! Select proposal distribution, and prepare perturbation deterministic coefficients
+        IF (mcmc_proposal) THEN
+          ! assuming that the input is the proposal distribution
+          alpha = 1._8
+          beta = mcmc_proposal_std
+        ELSE
+          ! assuming that the input is a prior ensemble to update
+          ! 1. Default beta ** 2
+          beta = 1._8 / REAL(mcmc_index,8)
+          ! 2. Upgrade with user-defined schedule (default: mcmc_schedule=0.)
+          beta = MAX ( beta , MIN (  0.5_8 , mcmc_schedule ) )
+          ! 3. Compute alpha ** 2
+          alpha = 1._8 - beta
+          ! 4. Compute alpha and beta
+          alpha = SQRT( alpha ) ; beta = SQRT( beta )
+        ENDIF
+
         ! Loop on Markov chains (size of updated ensemble)
         next_chain : DO jup=1,jpup
 
           ! Iterate until new draw is accepted
           next_draw : DO
-
-            ! select proposal distribution, and prepare perturbation deterministic coefficients
-            IF (mcmc_proposal) THEN
-              ! assuming that the input is the proposal distribution
-              alpha = 1._8
-              beta = mcmc_proposal_std
-            ELSE
-              ! assuming that the input is a prior ensemble to update
-              ! 1. Default beta ** 2
-              beta = 1._8 / REAL(mcmc_index,8)
-              ! 2. Upgrade with user-defined schedule (default: mcmc_schedule=0.)
-              beta = MAX ( beta , MIN (  0.5_8 , mcmc_schedule ) )
-              ! 3. Compute alpha ** 2
-              alpha = 1._8 - beta
-              ! 4. Compute alpha and beta
-              alpha = SQRT( alpha ) ; beta = SQRT( beta )
-            ENDIF
 
             ! get new Schur product (using the ensemble augmentation tool)
             CALL newproduct( vtest, ens, multiplicity, sample )
@@ -336,7 +336,7 @@ MODULE ensdam_mcmc_update
             ! use it to test perturbation(s) to the current vector
             next_test : DO jtest=1,mcmc_member_test
 
-              CALL kiss_gaussian(coefficient)   ! coefficient ~ N(0,1)
+              IF (iproc.eq.0) CALL kiss_gaussian(coefficient)   ! coefficient ~ N(0,1)
 #if defined MPI
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
