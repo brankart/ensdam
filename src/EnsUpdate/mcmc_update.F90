@@ -76,6 +76,10 @@ MODULE ensdam_mcmc_update
 
       PROCEDURE(callback_test), POINTER, SAVE :: convergence_test
   
+      ! Module private working arrays
+      INTEGER, DIMENSION(:), allocatable :: sample
+      REAL(KIND=8), DIMENSION(:), allocatable :: vtest, vextra
+
    CONTAINS
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
@@ -163,6 +167,19 @@ MODULE ensdam_mcmc_update
 
         ! Perform convergence test ?
         convergence_test = PRESENT(my_test)
+
+        ! Allocate working arrays
+        ! allocate sample (member indices) used to build the new Schur product
+        allocate( sample(jpfactor), stat=allocstat )
+        IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
+        ! allocate test vector to be used as tentative new draw
+        allocate( vtest(jpi), stat=allocstat )
+        IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
+        ! allocate vector to store new ensemble member for extra variables
+        IF (extra_variables) THEN
+          allocate( vextra(jpextra), stat=allocstat )
+          IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
+        ENDIF
 
         ! Initialize Markov chain
         CALL mcmc_init( upens )
@@ -280,38 +297,15 @@ MODULE ensdam_mcmc_update
         REAL(KIND=8), DIMENSION(:,:), INTENT( inout ), OPTIONAL :: upxens
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
 
-        INTEGER, DIMENSION(:), allocatable :: sample
-        REAL(KIND=8), DIMENSION(:), allocatable :: vtest, vextra
         REAL(KIND=8) :: coefficient, alpha, beta
-        INTEGER :: jpi,jps,jpm,jpup,jpextra,jpfactor,js,jup,jtest,allocstat
+        INTEGER :: jpup,jup,jtest
         LOGICAL :: extra_variables
 
         ! Are there extra variables to update ?
         extra_variables = PRESENT(upxens)
 
         ! Size of arrays
-        jpi = SIZE(ens,1)  ! Size of observation vector
-        jpm = SIZE(ens,2)  ! Size of ensemble
-        jps = SIZE(ens,3)  ! Number of resolutions (or filtering length scales)
         jpup = SIZE(upens,2)  ! Size of updated ensemble
-        jpfactor = SUM(multiplicity(:))
-        IF (extra_variables) THEN
-          jpextra = SIZE(xens,1)  ! Number of extra variables
-        ENDIF
-
-        ! Allocate sample (member indices) used to build the new Schur product
-        allocate( sample(jpfactor), stat=allocstat )
-        IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
-
-        ! Allocate test vector to be used as tentative new draw
-        allocate( vtest(jpi), stat=allocstat )
-        IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
-
-        ! Allocate vector to store new ensemble member for extra variables
-        IF (extra_variables) THEN
-          allocate( vextra(jpextra), stat=allocstat )
-          IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
-        ENDIF
 
         ! Loop on Markov chains (size of updated ensemble)
         next_chain : DO jup=1,jpup
@@ -373,8 +367,6 @@ MODULE ensdam_mcmc_update
         ! Update chain index
         mcmc_index = mcmc_index + 1
 
-        deallocate(vtest,sample)
-
         END SUBROUTINE next_accepted_draw
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
@@ -393,9 +385,6 @@ MODULE ensdam_mcmc_update
         LOGICAL :: accept_new_draw
 
         REAL(KIND=8) :: cost_jo_test, uran, aprob
-        INTEGER :: jpi, allocstat
-
-        jpi = SIZE(vtest,1)  ! Size of observation vector
 
         ! Evaluate observation cost function
         cost_jo_test = cost_jo( vtest )
