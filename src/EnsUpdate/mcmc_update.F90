@@ -185,6 +185,7 @@ MODULE ensdam_mcmc_update
         CALL mcmc_init( upens )
 
         ! Iterate the MCMC chain
+        !$acc data copyin(ens, xens, upens, upxens) copyout(upens, upxens) create(vtest, vextra)
         chain_loop : DO jchain = 1, maxchain
 
           ! Get next accepted draw of the Markov Chain
@@ -206,6 +207,7 @@ MODULE ensdam_mcmc_update
           ENDIF
 
         ENDDO chain_loop
+        !$acc end data
 
         END SUBROUTINE mcmc_iteration
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -298,7 +300,7 @@ MODULE ensdam_mcmc_update
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
 
         REAL(KIND=8) :: coefficient, alpha, beta
-        INTEGER :: jpup,jup,jtest
+        INTEGER :: jpup,jup,jtest,ji
         LOGICAL :: extra_variables
 
         ! Are there extra variables to update ?
@@ -341,20 +343,48 @@ MODULE ensdam_mcmc_update
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
               ! get draw from proposal distribution
-              ! OPENACC
-              vtest = alpha * upens(:,jup) + beta * coefficient * vtest
+#if defined OPENACC
+              !$acc data present(upens, vtest)
+              !$acc parallel loop
+              DO ji=1,jpi
+                vtest(ji) = alpha * upens(ji,jup) + beta * coefficient * vtest(ji)
+              ENDDO
+              !$acc end parallel loop
+              !$acc end data
+#else
+              vtest(:) = alpha * upens(:,jup) + beta * coefficient * vtest(:)
+#endif
 
               IF ( accept_new_draw( vtest, jup ) ) THEN
                 ! update ensemble member
-                upens(:,jup) = vtest
+#if defined OPENACC
+                !$acc data present(upens, vtest)
+                !$acc parallel loop
+                DO ji=1,jpi
+                  upens(ji,jup) = vtest(ji)
+                ENDDO
+                !$acc end parallel loop
+                !$acc end data
+#else
+                upens(:,jup) = vtest(:)
+#endif
                 ! update extra variables of the same member
                 IF (extra_variables) THEN
                   ! get Schur product of extra variables corresponding to the one obtained by newproduct
                   ! (i.e. using the same sample to compute the product)
                   CALL getproduct( vextra, xens, multiplicity, sample )
                   ! perform the same linear combination, with the same random coefficient
-                  ! OPENACC
-                  upxens(:,jup) = alpha * upxens(:,jup) + beta * coefficient * vextra
+#if defined OPENACC
+                  !$acc data present(upxens, vextra)
+                  !$acc parallel loop
+                  DO ji=1,jpi
+                    upxens(:,jup) = alpha * upxens(ji,jup) + beta * coefficient * vextra(ji)
+                  ENDDO
+                  !$acc end parallel loop
+                  !$acc end data
+#else
+                  upxens(:,jup) = alpha * upxens(:,jup) + beta * coefficient * vextra(:)
+#endif
                 ENDIF
                 ! move to next chain
                 EXIT next_draw

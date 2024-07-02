@@ -166,7 +166,7 @@ MODULE ensdam_ensaugm
         INTEGER, DIMENSION(:), INTENT( in ) :: multiplicity
         INTEGER, DIMENSION(:), INTENT( out ) :: sample
 
-        INTEGER :: jpi,jps,jpm,jpfactor,jm,js,jmul,jfactor,allocstat
+        INTEGER :: jpi,jps,jpm,jpfactor,jm,js,jmul,jfactor,allocstat,ji
         INTEGER, DIMENSION(:), allocatable :: tmp_sample
 
         jpi = SIZE(ens,1)  ! Size of state vector
@@ -204,15 +204,34 @@ MODULE ensdam_ensaugm
         
         ! Perform the Schur product with randomly selected members
         jfactor = 1
+#if defined OPENACC
+        !$acc data copyin(sample) present(ens, new)
+        !$acc parallel loop
+        DO ji=1,jpi
+           new(ji) = ens(ji,sample(1),1)
+        ENDDO
+        !$acc end parallel loop
+        !$acc end data
+#else
         new(:) = ens(:,sample(1),1)
+#endif
         DO js = 2,jps
           DO jmul = 1,multiplicity(js)
             jfactor = jfactor+1
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
-              ! OPENACC
+#if defined OPENACC
+              !$acc data copyin(sample) present(ens, new)
+              !$acc parallel loop
+              DO ji=1,jpi
+                new(ji) = new(ji) * ens(:,sample(jfactor),js)
+              ENDDO
+              !$acc end parallel loop
+              !$acc end data
+#else
               new(:) = new(:) * ens(:,sample(jfactor),js)
+#endif
             ENDIF
           ENDDO
         ENDDO
@@ -266,16 +285,34 @@ MODULE ensdam_ensaugm
 
         ! Perform the Schur product with required selected members
         jfactor = 1
-        ! OPENACC
+#if defined OPENACC
+        !$acc data copyin(sample) present(ens, new)
+        !$acc parallel loop
+        DO ji=1,jpi
+           new(ji) = ens(ji,sample(1),1)
+        ENDDO
+        !$acc end parallel loop
+        !$acc end data
+#else
         new(:) = ens(:,sample(1),1)
+#endif
         DO js = 2,jps
           DO jmul = 1,multiplicity(js)
             jfactor = jfactor+1
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
-              ! OPENACC
+#if defined OPENACC
+              !$acc data copyin(sample) present(ens, new)
+              !$acc parallel loop
+              DO ji=1,jpi
+                new(ji) = new(ji) * ens(:,sample(jfactor),js)
+              ENDDO
+              !$acc end parallel loop
+              !$acc end data
+#else
               new(:) = new(:) * ens(:,sample(jfactor),js)
+#endif
             ENDIF
           ENDDO
         ENDDO
