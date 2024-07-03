@@ -87,9 +87,13 @@ MODULE ensdam_obserror
       IF (SIZE(sigma,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       ologpdf = 0.
+      !$acc data present(y, x, sigma)
+      !$acc parallel loop
       DO ji=1,jpi
         ologpdf = ologpdf + obserror_logpdf_variable( y(ji), x(ji), sigma(ji) )
       ENDDO
+      !$acc end parallel loop
+      !$acc end data
 
       obserror_logpdf_vector = ologpdf
 
@@ -121,9 +125,13 @@ MODULE ensdam_obserror
       IF (SIZE(x,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
       ologpdf = 0.
+      !$acc data present(y, x)
+      !$acc parallel loop
       DO ji=1,jpi
         ologpdf = ologpdf + obserror_logpdf_variable( y(ji), x(ji), sigma )
       ENDDO
+      !$acc end parallel loop
+      !$acc end data
 
       obserror_logpdf_vector_homogeneous = ologpdf
 
@@ -204,9 +212,13 @@ MODULE ensdam_obserror
       IF (SIZE(sigma,1).NE.jpi) STOP 'Inconsistent size in obserror'
       IF (SIZE(cdf,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
+      !$acc data present(y, x, sigma, cdf)
+      !$acc parallel loop
       DO ji=1,jpi
         call obserror_cdf_variable( y(ji), x(ji), sigma(ji), cdf(ji) )
       ENDDO
+      !$acc end parallel loop
+      !$acc end data
 
       END SUBROUTINE obserror_cdf_vector
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -232,9 +244,13 @@ MODULE ensdam_obserror
       IF (SIZE(x,1).NE.jpi) STOP 'Inconsistent size in obserror'
       IF (SIZE(cdf,1).NE.jpi) STOP 'Inconsistent size in obserror'
 
+      !$acc data present(y, x, cdf)
+      !$acc parallel loop
       DO ji=1,jpi
         call obserror_cdf_variable( y(ji), x(ji), sigma, cdf(ji) )
       ENDDO
+      !$acc end parallel loop
+      !$acc end data
 
       END SUBROUTINE obserror_cdf_vector_homogeneous
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
