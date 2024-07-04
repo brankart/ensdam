@@ -1,0 +1,22 @@
+# Fortran settings
+# module load nvidia-compilers/24.3
+# module load openmpi/4.0.5-cuda
+FC = mpifort
+LD = mpifort
+AR = ar
+FPPFLAGS = -DMPI_INCLUDE -DOPENACC
+FFLAGS = -acc -Minfo=accel -fpic -module ../include/ $(IDEV_PATH) -I../include/
+LDFLAGS = $(LDEV_PATH) -lnetcdff
+#SHFLAGS = -shared $(LDEV_PATH) -lnetcdf
+SHFLAGS = -shared $(LDEV_PATH)
+ARFLAGS = -rv
+LIST =
+INSTALL_DIR=$(HOME)
+
+# f2py settings
+F2PY = f2py
+SIGDIR = signatures/With_MPI
+WRAPDIR = wrappers/With_MPI
+FVENDOR = intelem
+FCOMPILER = /smplocal/pub/Modules/IDRIS/wrappers/mpiifort
+F2PYFLAGS = --fcompiler=$FVENDOR --f90exec=$FCOMPILER

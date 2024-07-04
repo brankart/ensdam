@@ -31,6 +31,9 @@ MODULE ensdam_score_crps
 #endif
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC crps_score, crps_cumul, crps_final
 
@@ -228,8 +231,8 @@ MODULE ensdam_score_crps
 
 ! Verification inside ensemble range
       DO i=1,n-1
-        bb(i)=bb(i)+MAX(MIN(a,e(i+1))-e(i),0.)
-        aa(i)=aa(i)+MAX(e(i+1)-MAX(a,e(i)),0.)
+        bb(i)=bb(i)+MAX(MIN(a,e(i+1))-e(i),0._8)
+        aa(i)=aa(i)+MAX(e(i+1)-MAX(a,e(i)),0._8)
       ENDDO
 
 ! Verfication larger than all ensemble members

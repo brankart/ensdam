@@ -32,6 +32,9 @@ MODULE ensdam_score_ranks
       use ensdam_storng
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC compute_ranks
 

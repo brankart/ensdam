@@ -29,10 +29,16 @@ MODULE ensdam_ensaugm
 #if defined MPI
       use mpi
 #endif
+#ifdef OPENACC
+      use openacc
+#endif
       use ensdam_schurprod
       use ensdam_storng
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC sample_augmented_ensemble, newproduct, getproduct
 
@@ -225,7 +231,7 @@ MODULE ensdam_ensaugm
               !$acc data copyin(sample) present(ens, new)
               !$acc parallel loop
               DO ji=1,jpi
-                new(ji) = new(ji) * ens(:,sample(jfactor),js)
+                new(ji) = new(ji) * ens(ji,sample(jfactor),js)
               ENDDO
               !$acc end parallel loop
               !$acc end data
@@ -259,7 +265,7 @@ MODULE ensdam_ensaugm
         INTEGER, DIMENSION(:), INTENT( in ) :: multiplicity
         INTEGER, DIMENSION(:), INTENT( in ) :: sample
 
-        INTEGER :: jpi,jps,jpm,jpfactor,jm,js,jmul,jfactor,allocstat
+        INTEGER :: jpi,jps,jpm,jpfactor,jm,js,jmul,jfactor,allocstat,ji
 
         jpi = SIZE(ens,1)  ! Size of state vector
         jpm = SIZE(ens,2)  ! Size of ensemble
@@ -306,7 +312,7 @@ MODULE ensdam_ensaugm
               !$acc data copyin(sample) present(ens, new)
               !$acc parallel loop
               DO ji=1,jpi
-                new(ji) = new(ji) * ens(:,sample(jfactor),js)
+                new(ji) = new(ji) * ens(ji,sample(jfactor),js)
               ENDDO
               !$acc end parallel loop
               !$acc end data

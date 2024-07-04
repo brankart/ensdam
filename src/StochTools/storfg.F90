@@ -50,6 +50,9 @@ MODULE ensdam_storfg
 
    IMPLICIT NONE
    PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
    PUBLIC def_spect_init
    PUBLIC def_spect_power

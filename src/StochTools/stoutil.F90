@@ -23,6 +23,9 @@
 ! ----------------------------
 ! ----------------------------------------------------------------------
 MODULE ensdam_stoutil
+#ifdef OPENACC
+   use openacc
+#endif
    IMPLICIT NONE
    PRIVATE
 
@@ -46,6 +49,7 @@ MODULE ensdam_stoutil
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
       FUNCTION cdf_gaussian(x)
+      !$acc routine seq
       IMPLICIT NONE
       REAL(KIND=8), INTENT(in) :: x
       REAL(KIND=8) :: cdf_gaussian
@@ -84,6 +88,7 @@ MODULE ensdam_stoutil
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
       FUNCTION logpdf_gaussian(x)
+      !$acc routine seq
       IMPLICIT NONE
       REAL(KIND=8), INTENT(in) :: x
       REAL(KIND=8) :: logpdf_gaussian

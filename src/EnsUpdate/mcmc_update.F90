@@ -27,10 +27,16 @@ MODULE ensdam_mcmc_update
 #if defined MPI
       use mpi
 #endif
+#ifdef OPENACC
+      use openacc
+#endif
       use ensdam_ensaugm
       use ensdam_storng
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC mcmc_iteration
 
@@ -300,13 +306,14 @@ MODULE ensdam_mcmc_update
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
 
         REAL(KIND=8) :: coefficient, alpha, beta
-        INTEGER :: jpup,jup,jtest,ji
+        INTEGER :: jpi,jpup,jup,jtest,ji
         LOGICAL :: extra_variables
 
         ! Are there extra variables to update ?
         extra_variables = PRESENT(upxens)
 
         ! Size of arrays
+        jpi  = SIZE(upens,1)  ! Size of vector
         jpup = SIZE(upens,2)  ! Size of updated ensemble
 
         ! Select proposal distribution, and prepare perturbation deterministic coefficients

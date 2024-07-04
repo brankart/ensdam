@@ -30,6 +30,9 @@ MODULE ensdam_meanstd
 #endif
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC ensemble_meanstd, update_meanstd
 

@@ -33,6 +33,9 @@ MODULE ensdam_covariance
       use ensdam_meanstd
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC ensemble_correlation, ensemble_representer, ensemble_covariance, update_meancov
 

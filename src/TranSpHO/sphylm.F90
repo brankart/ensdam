@@ -35,6 +35,9 @@ MODULE ensdam_sphylm
 #endif
         implicit none
         private
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
         public init_ylm
         public init_regr_ylm

@@ -30,6 +30,9 @@ MODULE ensdam_score_optimality
 #endif
       IMPLICIT NONE
       PRIVATE
+#ifdef MPI_INCLUDE
+      include "mpif.h"
+#endif
 
       PUBLIC optimality_score, optimality_cumul
 
