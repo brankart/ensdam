@@ -30,7 +30,7 @@
 ! ylm : evaluate spherical harmonics
 ! ----------------------------------------------------------------------
 MODULE ensdam_sphylm
-#if defined MPI
+#ifdef MPI_MODULE
         use mpi
 #endif
         implicit none

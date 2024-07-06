@@ -26,7 +26,7 @@
 ! getproduct : compute specified multiple Schur product
 ! ----------------------------------------------------------------------
 MODULE ensdam_ensaugm
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
 #ifdef OPENACC

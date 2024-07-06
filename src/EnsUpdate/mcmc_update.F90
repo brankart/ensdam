@@ -24,7 +24,7 @@
 ! mcmc_iteration : iterate to sample the posterior probability distribution
 ! ----------------------------------------------------------------------
 MODULE ensdam_mcmc_update
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
 #ifdef OPENACC

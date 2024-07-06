@@ -4,7 +4,7 @@
 FC = mpifort
 LD = mpifort
 AR = ar
-FPPFLAGS = -DMPI_INCLUDE -DOPENACC
+FPPFLAGS = -DMPI -DMPI_INCLUDE -DOPENACC
 FFLAGS = -acc -Minfo=accel -fpic -module ../include/ $(IDEV_PATH) -I../include/
 LDFLAGS = $(LDEV_PATH) -lnetcdff
 #SHFLAGS = -shared $(LDEV_PATH) -lnetcdf

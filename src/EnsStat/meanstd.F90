@@ -25,7 +25,7 @@
 ! update_meanstd : update mean and standard deviation with one additional input member
 ! ----------------------------------------------------------------------
 MODULE ensdam_meanstd
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
       IMPLICIT NONE

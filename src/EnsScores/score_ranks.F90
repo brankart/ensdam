@@ -25,7 +25,7 @@
 ! compute_ranks : compute ranks of verification data in ensemble simulation
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_ranks
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
       use ensdam_anaqua

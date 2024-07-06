@@ -26,7 +26,7 @@
 ! crps_final : compute final score from accumulated data
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_crps
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
       IMPLICIT NONE

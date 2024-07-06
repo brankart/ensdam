@@ -44,7 +44,7 @@ MODULE ensdam_storfg
    !!   gen_field_2s    : genrate 2d random field (on the sphere)
    USE ensdam_storng
    USE ensdam_sphylm
-#if defined MPI
+#ifdef MPI_MODULE
    use mpi
 #endif
 

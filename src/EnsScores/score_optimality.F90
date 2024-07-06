@@ -25,7 +25,7 @@
 ! optimality_cumul : accumulate data to prepare the final computation of the score
 ! ----------------------------------------------------------------------
 MODULE ensdam_score_optimality
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
       IMPLICIT NONE

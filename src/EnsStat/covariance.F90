@@ -27,7 +27,7 @@
 ! update_meancov : update mean and covariance with one additional input member
 ! ----------------------------------------------------------------------
 MODULE ensdam_covariance
-#if defined MPI
+#ifdef MPI_MODULE
       use mpi
 #endif
       use ensdam_meanstd
