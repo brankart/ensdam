@@ -228,7 +228,7 @@ MODULE ensdam_ensaugm
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
 #if defined OPENACC
-              !$acc data copyin(sample) present(ens, new)
+              !$acc data present(sample, ens, new)
               !$acc parallel loop
               DO ji=1,jpi
                 new(ji) = new(ji) * ens(ji,sample(jfactor),js)
@@ -309,7 +309,7 @@ MODULE ensdam_ensaugm
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
 #if defined OPENACC
-              !$acc data copyin(sample) present(ens, new)
+              !$acc data present(sample,ens, new)
               !$acc parallel loop
               DO ji=1,jpi
                 new(ji) = new(ji) * ens(ji,sample(jfactor),js)

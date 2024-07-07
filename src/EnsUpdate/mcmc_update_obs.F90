@@ -23,7 +23,7 @@
 ! ----------------------------
 ! mcmc_iteration : iterate to sample the posterior probability distribution
 ! ----------------------------------------------------------------------
-MODULE ensdam_mcmc_update
+MODULE ensdam_mcmc_update_obs
 #ifdef MPI_MODULE
       use mpi
 #endif
@@ -67,8 +67,14 @@ MODULE ensdam_mcmc_update
         END FUNCTION
       END INTERFACE
 
+      ! observation cost function
       PROCEDURE(callback_jo), POINTER, SAVE :: cost_jo
-      REAL(KIND=8), DIMENSION(:), SAVE, allocatable :: cost_jo_saved  ! saved value of the observation cost function
+      ! saved value of the observation cost function
+      REAL(KIND=8), DIMENSION(:), SAVE, allocatable :: cost_jo_saved
+      ! observation vector
+      REAL(KIND=8), DIMENSION(:), POINTER, SAVE :: obs_ptr
+      ! observation error standard deviation
+      REAL(KIND=8), DIMENSION(:), POINTER, SAVE :: oestd_ptr
 
       ! Module private definitions for convergence test
       INTERFACE
@@ -86,20 +92,28 @@ MODULE ensdam_mcmc_update
       INTEGER, DIMENSION(:), allocatable :: sample
       REAL(KIND=8), DIMENSION(:), allocatable :: vtest, vextra
 
+      ! Size of arrays
+      INTEGER, SAVE :: jpo, jpextra, jpup
+      ! Are there extra variables ?
+      LOGICAL, SAVE :: extra_variables
+
    CONTAINS
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-        SUBROUTINE mcmc_iteration( maxchain, upens, ens, multiplicity, my_jo, my_test, upxens, xens)
+        SUBROUTINE mcmc_iteration( maxchain, upens, ens, multiplicity, &
+                                 & my_jo, my_test, upxens, xens, obs, oestd)
 !----------------------------------------------------------------------
 ! ** Purpose :   iterate to sample the posterior probability distribution
 ! 
 ! ** Arguments :
 !         maxchain      : maximum number of successful iterations in the Markov chain
-!         upens         : current version of updated ensemble (all variables needed to apply observation operator),
+!         upens         : current version of updated ensemble
+!                         (all variables needed to apply observation operator),
 !                         initialized to output of last call
 !                         output as last iterate of the current call
-!         ens           : input ensemble to be updated (all variables needed to apply observation operator)),
+!         ens           : input ensemble to be updated
+!                         (all variables needed to apply observation operator),
 !                         assumed available at several resolutions
 !                         js=1 -> full resolution
 !                         js>1 -> lower resolution versions of the same ensemble
@@ -107,34 +121,48 @@ MODULE ensdam_mcmc_update
 !         multiplicity  : multiplicity of each resolution to produce new members
 !         my_jo         : callback routine to observation cost function: jo = -log[p(yo|Hx)]
 !         my_test       : callback routine for convergence test
-!         upxens        : current version of updated ensemble (extra variables, not needed to apply observation operator),
+!         upxens        : current version of updated ensemble
+!                         (extra variables, not needed to apply observation operator),
 !                         initialized to output of last call
 !                         output as last iterate of the current call
-!         xens          : input ensemble to be updated (extra variables, not needed to apply observation operator)),
+!         xens          : input ensemble to be updated
+!                         (extra variables, not needed to apply observation operator),
 !                         assumed available at several resolutions
 !                         js=1 -> full resolution
 !                         js>1 -> lower resolution versions of the same ensemble
 !                         all marginal distributions must be N(0,1)
+!         obs           : observation vector (if my_jo no present)
+!         oestd         : observation error standard deviation (if my_jo no present)
 !----------------------------------------------------------------------
         IMPLICIT NONE
         INTEGER, INTENT( in ) :: maxchain
         REAL(KIND=8), DIMENSION(:,:), INTENT( inout ) :: upens
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ) :: ens
         INTEGER, DIMENSION(:), INTENT( in ) :: multiplicity
-        PROCEDURE(callback_jo) :: my_jo
+        PROCEDURE(callback_jo), OPTIONAL :: my_jo
         PROCEDURE(callback_test), OPTIONAL :: my_test
         REAL(KIND=8), DIMENSION(:,:), INTENT( inout ), OPTIONAL :: upxens
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
+        REAL(KIND=8), DIMENSION(:), INTENT( in ), TARGET, OPTIONAL :: obs
+        REAL(KIND=8), DIMENSION(:), INTENT( in ), TARGET, OPTIONAL :: oestd
 
-        INTEGER :: jpo,jps,jpm,jpup,jpextra,jpfactor,js,jchain,allocstat
-        LOGICAL :: extra_variables, convergence_test
+        INTEGER :: jps,jpm,jpfactor,js,jchain,allocstat
+        LOGICAL :: convergence_test
 
 #if defined MPI
         call mpi_comm_rank(mpi_comm_mcmc_update,iproc,mpi_code)
 #endif
 
         ! Definition of observation cost function: jo = -log[p(yo|Hx)]
-        cost_jo => my_jo
+        IF (PRESENT(my_jo)) THEN
+          cost_jo => my_jo
+        ELSE
+          IF (.NOT.PRESENT(obs))   STOP 'Bad arguments in mcmc_update'
+          IF (.NOT.PRESENT(oestd)) STOP 'Bad arguments in mcmc_update'
+          obs_ptr   => obs
+          oestd_ptr => oestd
+          cost_jo => cost_jo_local
+        ENDIF
 
         ! Check size of input vectors
         jpo = SIZE(ens,1)  ! Size of observation vector
@@ -166,6 +194,7 @@ MODULE ensdam_mcmc_update
           jpextra = SIZE(xens,1)  ! Number of extra variables
           IF (SIZE(xens,2).NE.jpm) STOP 'Inconsistent size in mcmc_update'
           IF (SIZE(xens,3).NE.jps) STOP 'Inconsistent size in mcmc_update'
+          IF (SIZE(upxens,1).NE.jpextra) STOP 'Inconsistent size in mcmc_update'
           IF (SIZE(upxens,2).NE.jpup) STOP 'Inconsistent size in mcmc_update'
         ELSE
           IF (PRESENT(xens)) STOP 'Inconsistent optional arguments in mcmc_update'
@@ -187,11 +216,13 @@ MODULE ensdam_mcmc_update
           IF (allocstat.NE.0) STOP 'Allocation error in mcmc_update'
         ENDIF
 
+        !Provide data to GPU devices
+        !$acc data copyin(ens, xens, upens, upxens, obs_ptr, oestd_ptr) copyout(upens, upxens) create(vtest, vextra)
+
         ! Initialize Markov chain
         CALL mcmc_init( upens )
 
         ! Iterate the MCMC chain
-        !$acc data copyin(ens, xens, upens, upxens) copyout(upens, upxens) create(vtest, vextra)
         chain_loop : DO jchain = 1, maxchain
 
           ! Get next accepted draw of the Markov Chain
@@ -306,18 +337,7 @@ MODULE ensdam_mcmc_update
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
 
         REAL(KIND=8) :: coefficient, alpha, beta
-        INTEGER :: jpo,jpextra,jpup,jup,jtest,ji
-        LOGICAL :: extra_variables
-
-        ! Are there extra variables to update ?
-        extra_variables = PRESENT(upxens)
-
-        ! Size of arrays
-        jpo  = SIZE(upens,1)  ! Size of vector
-        jpup = SIZE(upens,2)  ! Size of updated ensemble
-        IF (extra_variables) THEN
-          jpextra = SIZE(upxens,1)  ! Number of extra variables
-        ENDIF
+        INTEGER :: jup,jtest,ji
 
         ! Select proposal distribution, and prepare perturbation deterministic coefficients
         IF (mcmc_proposal) THEN
@@ -451,4 +471,41 @@ MODULE ensdam_mcmc_update
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-END MODULE ensdam_mcmc_update
+        FUNCTION cost_jo_local(v)
+!----------------------------------------------------------------------
+! ** Purpose :   local version of cost function (if my_jo not prsent)
+!                jo = -log[p(yo|Hx)
+! 
+! ** Arguments :
+!         v   : model equivalent to obesrvation
+!----------------------------------------------------------------------
+        IMPLICIT NONE
+        REAL(KIND=8), DIMENSION(:), intent(in) :: v
+        REAL(KIND=8) :: cost_jo_local
+
+        INTEGER :: jo
+        REAL(kind=8) :: cost_one, cost_all
+
+        cost_all = 0.
+
+        !$acc data present(v,obs_ptr,oestd_ptr)
+        !$acc parallel loop private(cost_one) reduction(+:cost_all)
+        DO jo = 1,jpo
+          cost_one  = ( v(jo) - obs_ptr(jo) ) / oestd_ptr(jo)
+          cost_all = cost_all + 0.5 * cost_one * cost_one
+        ENDDO
+        !$acc end parallel loop
+        !$acc end data
+
+#if defined MPI
+        CALL mpi_allreduce (mpi_in_place, cost_all, 1,  &
+     &       mpi_double_precision,mpi_sum,mpi_comm_mcmc_update,mpi_code)
+#endif
+
+        cost_jo_local = cost_all
+
+        END FUNCTION
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+! --------------------------------------------------------------------
+! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+END MODULE ensdam_mcmc_update_obs

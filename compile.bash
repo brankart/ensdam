@@ -14,8 +14,8 @@ flags=""
 flags_fortran=""
 
 # Generate the module with or without mpi: pyensdam or pyensdam_mpi
-flag_mpi="OFF"   # ON or OFF
 flag_mpi="ON"   # ON or OFF
+flag_mpi="OFF"   # ON or OFF
 
 # Uncomment to explicitly specify the python3 exectuable
 flags="$flags -DPython3_EXECUTABLE=/gpfslocalsup/pub/anaconda-py3/2021.05/envs/python-3.10.4/bin/python3"
@@ -34,7 +34,7 @@ project_name="pyensdam"
 if [ ${flag_mpi} = "ON" ]  ;then
   project_tail="_mpi"
   project_name="pyensdam_mpi"
-  flags_fortran="-DMPI $flags_fortran"
+  flags_fortran="-DMPI -DMPI_MODULE $flags_fortran"
 fi
 
 flags="$flags -DCMAKE_Fortran_FLAGS=$flags_fortran"
