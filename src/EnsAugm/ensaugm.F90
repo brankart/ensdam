@@ -209,38 +209,37 @@ MODULE ensdam_ensaugm
 #endif
         
         ! Perform the Schur product with randomly selected members
-        jfactor = 1
 #if defined OPENACC
         !$acc data copyin(sample) present(ens, new)
-        !$acc parallel loop
+        !$acc parallel loop private(jfactor)
         DO ji=1,jpi
-           new(ji) = ens(ji,sample(1),1)
+           jfactor = 1
+           new(ji) = ens(ji,sample(jfactor),1)
+
+           DO js = 2,jps
+             DO jmul = 1,multiplicity(js)
+               jfactor = jfactor + 1
+               new(ji) = new(ji) * ens(ji,sample(jfactor),js)
+             ENDDO
+           ENDDO
         ENDDO
         !$acc end parallel loop
         !$acc end data
 #else
+        jfactor = 1
         new(:) = ens(:,sample(1),1)
-#endif
+
         DO js = 2,jps
           DO jmul = 1,multiplicity(js)
             jfactor = jfactor+1
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
-#if defined OPENACC
-              !$acc data present(sample, ens, new)
-              !$acc parallel loop
-              DO ji=1,jpi
-                new(ji) = new(ji) * ens(ji,sample(jfactor),js)
-              ENDDO
-              !$acc end parallel loop
-              !$acc end data
-#else
               new(:) = new(:) * ens(:,sample(jfactor),js)
-#endif
             ENDIF
           ENDDO
         ENDDO
+#endif
 
         END SUBROUTINE newproduct
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -290,38 +289,37 @@ MODULE ensdam_ensaugm
         IF (SIZE(sample,1).NE.jpfactor) STOP 'Inconsistent size in ensaugm'
 
         ! Perform the Schur product with required selected members
-        jfactor = 1
 #if defined OPENACC
         !$acc data copyin(sample) present(ens, new)
-        !$acc parallel loop
+        !$acc parallel loop private(jfactor)
         DO ji=1,jpi
-           new(ji) = ens(ji,sample(1),1)
+           jfactor = 1
+           new(ji) = ens(ji,sample(jfactor),1)
+
+           DO js = 2,jps
+             DO jmul = 1,multiplicity(js)
+               jfactor = jfactor + 1
+               new(ji) = new(ji) * ens(ji,sample(jfactor),js)
+             ENDDO
+           ENDDO
         ENDDO
         !$acc end parallel loop
         !$acc end data
 #else
+        jfactor = 1
         new(:) = ens(:,sample(1),1)
-#endif
+
         DO js = 2,jps
           DO jmul = 1,multiplicity(js)
             jfactor = jfactor+1
             IF (ensaugm_with_renormalization) THEN
               CALL schurprod( new(:), ens(:,sample(jfactor),js) )
             ELSE
-#if defined OPENACC
-              !$acc data present(sample,ens, new)
-              !$acc parallel loop
-              DO ji=1,jpi
-                new(ji) = new(ji) * ens(ji,sample(jfactor),js)
-              ENDDO
-              !$acc end parallel loop
-              !$acc end data
-#else
               new(:) = new(:) * ens(:,sample(jfactor),js)
-#endif
             ENDIF
           ENDDO
         ENDDO
+#endif
 
         END SUBROUTINE getproduct
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
