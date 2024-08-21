@@ -46,7 +46,7 @@ set (StochTools
      StochTools/storfg.F90
      StochTools/storng.f90
      StochTools/stotge.f90
-     StochTools/stoutil.f90
+     StochTools/stoutil.F90
     )
 
 set (TranSpHO
