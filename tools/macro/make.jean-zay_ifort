@@ -1,4 +1,7 @@
 # Fortran settings
+LIB_ENSDAM = ../lib/libensdam_mpi.a
+LIB_ENSDAM_SHARED = ../lib/libensdam_mpi.so
+
 FC = mpiifort
 LD = mpiifort
 AR = ar

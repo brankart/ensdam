@@ -6,8 +6,6 @@ include Makefile.macro
 #
 EXAMPLE_DIR = ../examples
 DOC_DIR = ../doc
-LIB_ENSDAM = ../lib/libensdam.a
-LIB_ENSDAM_SHARED = ../lib/libensdam.so
 MOD_DIR = ../include
 #
 #========================================================
@@ -42,7 +40,7 @@ ranlib: $(LIB_ENSDAM)
 #
 install: ranlib solib
 	cp $(LIB_ENSDAM) $(INSTALL_DIR)/lib/
-	cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR)/lib/
+	#cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR)/lib/
 	cp $(MOD_DIR)/*.mod $(INSTALL_DIR)/include/
 #
 uninstall:

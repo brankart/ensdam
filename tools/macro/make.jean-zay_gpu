@@ -1,11 +1,17 @@
 # Fortran settings
 # module load nvidia-compilers/24.3
 # module load openmpi/4.0.5-cuda
+LIB_ENSDAM = ../lib/libensdam_gpu.a
+LIB_ENSDAM_SHARED = ../lib/libensdam_gpu.so
+
 FC = mpifort
 LD = mpifort
 AR = ar
 FPPFLAGS = -DMPI -DMPI_INCLUDE -DOPENACC
+#FPPFLAGS = -DMPI -DMPI_INCLUDE
 FFLAGS = -acc -Minfo=accel -fpic -module ../include/ $(IDEV_PATH) -I../include/
+#FFLAGS = -acc=gpu,noautopar -gpu=cc70,managed -Minfo=accel -fpic -module ../include/ $(IDEV_PATH) -I../include/
+#FFLAGS = -fpic -module ../include/ $(IDEV_PATH) -I../include/
 LDFLAGS = $(LDEV_PATH) -lnetcdff
 #SHFLAGS = -shared $(LDEV_PATH) -lnetcdf
 SHFLAGS = -shared $(LDEV_PATH)
