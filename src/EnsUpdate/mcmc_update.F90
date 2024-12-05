@@ -48,6 +48,7 @@ MODULE ensdam_mcmc_update
       LOGICAL, PUBLIC, SAVE :: mcmc_convergence_stop=.FALSE. ! Stop iterating at convergence
       INTEGER, PUBLIC, SAVE :: mcmc_member_test=1  ! Number of test to perform with the same Schur product
       LOGICAL, PUBLIC, SAVE :: mcmc_proposal=.FALSE. ! Input is a proposal distribution, not a prior ensemble
+      INTEGER, PUBLIC, SAVE :: mcmc_adap_type=0 ! Type of adaptive algorithm (default=0->none)
       REAL(KIND=8), PUBLIC, SAVE :: mcmc_proposal_std=1._8 ! Standard deviation of proposal distribution
       REAL(KIND=8), PUBLIC, SAVE :: mcmc_schedule=0._8 ! MCMC schedule, can be changed in cost_jo, as a function of Jo
 
@@ -306,7 +307,7 @@ MODULE ensdam_mcmc_update
         REAL(KIND=8), DIMENSION(:,:,:), INTENT( in ), OPTIONAL :: xens
 
         REAL(KIND=8) :: coefficient, alpha, beta
-        INTEGER :: jpo,jpextra,jpup,jup,jtest,ji
+        INTEGER :: jpo,jpextra,jpup,jup,jtest,ji,jporeal
         LOGICAL :: extra_variables
 
         ! Are there extra variables to update ?
@@ -318,6 +319,9 @@ MODULE ensdam_mcmc_update
         IF (extra_variables) THEN
           jpextra = SIZE(upxens,1)  ! Number of extra variables
         ENDIF
+
+        ! Number of real observations (in adaptive scheme)
+        jporeal = jpo / ( mcmc_adap_type + 1 )
 
         ! Select proposal distribution, and prepare perturbation deterministic coefficients
         IF (mcmc_proposal) THEN
@@ -354,13 +358,25 @@ MODULE ensdam_mcmc_update
 #endif
               ! get draw from proposal distribution
 #if defined OPENACC
-              !$acc data present(upens, vtest)
-              !$acc parallel loop
-              DO ji=1,jpo
-                vtest(ji) = alpha * upens(ji,jup) + beta * coefficient * vtest(ji)
-              ENDDO
-              !$acc end parallel loop
-              !$acc end data
+              IF (mcmc_adap_type>1) THEN
+                !$acc data present(upens, vtest)
+                !$acc parallel loop
+                DO ji=1,jpo
+                  vtest(ji) = beta * coefficient * vtest(ji)
+                  IF (ji.LE.jporeal) vtest(ji) = vtest(ji) * EXP( upens(2*jporeal+ji,jup) )
+                  vtest(ji) = vtest(ji) + alpha * upens(ji,jup)
+                ENDDO
+                !$acc end parallel loop
+                !$acc end data
+              ELSE
+                !$acc data present(upens, vtest)
+                !$acc parallel loop
+                DO ji=1,jpo
+                  vtest(ji) = alpha * upens(ji,jup) + beta * coefficient * vtest(ji)
+                ENDDO
+                !$acc end parallel loop
+                !$acc end data
+              ENDIF
 #else
               vtest(:) = alpha * upens(:,jup) + beta * coefficient * vtest(:)
 #endif
