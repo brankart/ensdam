@@ -17,7 +17,8 @@ LDFLAGS = $(LDEV_PATH) -lnetcdff
 SHFLAGS = -shared $(LDEV_PATH)
 ARFLAGS = -rv
 LIST =
-INSTALL_DIR=$(HOME)
+INSTALL_DIR_LIB=$(HOME)/lib
+INSTALL_DIR_INC=$(HOME)/include_gpu
 
 # f2py settings
 F2PY = f2py

@@ -39,13 +39,13 @@ ranlib: $(LIB_ENSDAM)
 	ranlib $(LIB_ENSDAM)
 #
 install: ranlib solib
-	cp $(LIB_ENSDAM) $(INSTALL_DIR)/lib/
-	#cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR)/lib/
-	cp $(MOD_DIR)/*.mod $(INSTALL_DIR)/include/
+	cp $(LIB_ENSDAM) $(INSTALL_DIR_LIB)
+	#cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR_LIB)/lib/
+	cp $(MOD_DIR)/*.mod $(INSTALL_DIR_INC)
 #
 uninstall:
-	rm -f $(INSTALL_DIR)/$(LIB_ENSDAM)
-	rm -f $(INSTALL_DIR)/include/ensdam_*.mod
+	rm -f $(INSTALL_DIR_LIB)/$(LIB_ENSDAM)
+	rm -f $(INSTALL_DIR_INC)/ensdam_*.mod
 #
 #========================================================
 #          Clean everything
