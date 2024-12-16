@@ -167,7 +167,7 @@
                 phitmp(ji,jj) = datmsk / summsk
 
                 ! Damp extrapolation as a function of distance to coast if requested
-                ! The resulting factor follows the formula: factor = exp ( − x^ 2 / l^ 2,
+                ! The resulting factor follows the formula: factor = exp ( − x^ 2 / l^ 2 ),
                 ! where the distances x and l are expressed in number of grid points from the coast line.
                 ! Variables: x -> jext and l -> unmask_damping
                 ! The factor to apply from exp( − x^ 2 / l^ 2) to exp [ − (x+1)^ 2 / l^ 2 ]
