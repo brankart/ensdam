@@ -212,6 +212,7 @@ MODULE ensdam_ensaugm
 #if defined OPENACC
         !$acc data copyin(sample) present(ens, new)
         !$acc parallel loop private(jfactor)
+        !$omp target update to(sample)
         !$omp target teams distribute parallel do private(jfactor)
         DO ji=1,jpi
            jfactor = 1
@@ -294,6 +295,7 @@ MODULE ensdam_ensaugm
 #if defined OPENACC
         !$acc data copyin(sample) present(ens, new)
         !$acc parallel loop private(jfactor)
+        !$omp target update to(sample)
         !$omp target teams distribute parallel do private(jfactor)
         DO ji=1,jpi
            jfactor = 1
