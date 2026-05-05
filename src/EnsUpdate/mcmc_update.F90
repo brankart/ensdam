@@ -193,6 +193,7 @@ MODULE ensdam_mcmc_update
 
         ! Iterate the MCMC chain
         !$acc data copyin(ens, xens, upens, upxens) copyout(upens, upxens) create(vtest, vextra)
+        !$omp target data map(to: ens, xens) map(tofrom: upens, upxens) map(alloc: vtest, vextra)
         chain_loop : DO jchain = 1, maxchain
 
           ! Get next accepted draw of the Markov Chain
@@ -218,6 +219,7 @@ MODULE ensdam_mcmc_update
           ENDIF
 
         ENDDO chain_loop
+        !$omp end target data
         !$acc end data
 
         END SUBROUTINE mcmc_iteration
@@ -365,19 +367,23 @@ MODULE ensdam_mcmc_update
               IF (mcmc_adap_type>1) THEN
                 !$acc data present(upens, vtest)
                 !$acc parallel loop
+                !$omp target teams distribute parallel do
                 DO ji=1,jpo
                   vtest(ji) = beta * coefficient * vtest(ji)
                   IF (ji.LE.jporeal) vtest(ji) = vtest(ji) * EXP( upens(2*jporeal+ji,jup) )
                   vtest(ji) = vtest(ji) + alpha * upens(ji,jup)
                 ENDDO
+                !$omp end target teams distribute parallel do
                 !$acc end parallel loop
                 !$acc end data
               ELSE
                 !$acc data present(upens, vtest)
                 !$acc parallel loop
+                !$omp target teams distribute parallel do
                 DO ji=1,jpo
                   vtest(ji) = alpha * upens(ji,jup) + beta * coefficient * vtest(ji)
                 ENDDO
+                !$omp end target teams distribute parallel do
                 !$acc end parallel loop
                 !$acc end data
               ENDIF
@@ -390,9 +396,11 @@ MODULE ensdam_mcmc_update
 #if defined OPENACC
                 !$acc data present(upens, vtest)
                 !$acc parallel loop
+                !$omp target teams distribute parallel do
                 DO ji=1,jpo
                   upens(ji,jup) = vtest(ji)
                 ENDDO
+                !$omp end target teams distribute parallel do
                 !$acc end parallel loop
                 !$acc end data
 #else
@@ -407,9 +415,11 @@ MODULE ensdam_mcmc_update
 #if defined OPENACC
                   !$acc data present(upxens, vextra)
                   !$acc parallel loop
+                  !$omp target teams distribute parallel do
                   DO ji=1,jpextra
                     upxens(ji,jup) = alpha * upxens(ji,jup) + beta * coefficient * vextra(ji)
                   ENDDO
+                  !$omp end target teams distribute parallel do
                   !$acc end parallel loop
                   !$acc end data
 #else
