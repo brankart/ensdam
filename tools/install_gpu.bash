@@ -3,6 +3,7 @@
 
 module purge
 module load nvidia-compilers/24.3
+#module load netcdf-fortran/4.5.3-mpi-cuda
 module load cuda/12.2.0  # not needed before, worked with cuda/12.4.1
 module load openmpi/4.0.5-cuda
 

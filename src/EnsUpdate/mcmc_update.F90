@@ -206,9 +206,13 @@ MODULE ensdam_mcmc_update
             IF (MOD(jchain,mcmc_convergence_check).EQ.0) THEN
               ! Check convergence of the MCMC chain
               IF (extra_variables) THEN
-                IF (my_test(upens,upxens).AND.mcmc_convergence_stop) EXIT
+                IF (my_test(upens,upxens)) THEN
+                  IF (mcmc_convergence_stop) EXIT
+                ENDIF
               ELSE
-                IF (my_test(upens).AND.mcmc_convergence_stop) EXIT
+                IF (my_test(upens)) THEN
+                  IF (mcmc_convergence_stop) EXIT
+                ENDIF
               ENDIF
             ENDIF
           ENDIF
