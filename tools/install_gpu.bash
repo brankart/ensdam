@@ -18,9 +18,11 @@ elif [ $cluster = 'adastra' ] ; then
 
   module purge
   module load cpe/24.07
-  module load craype-accel-amd-gfx90a craype-x86-trento
+  module load craype-x86-trento
+  module load craype-accel-amd-gfx90a
   module load PrgEnv-cray
-  module load amd-mixed
+  module load rocm
+  module load cray-mpich
 
   ln -sf macro/make.adastra_gpu Makefile.macro
 

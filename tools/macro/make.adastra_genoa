@@ -1,23 +1,20 @@
 # Fortran settings
-#  module load cpe/24.07
-#  module load craype-accel-amd-gfx90a craype-x86-trento
-#  module load PrgEnv-cray
-#  module load amd-mixed
+# module purge
+# module load cpe/24.07
+# module load craype-x86-genoa
+# module load PrgEnv-cray
+# module load cray-mpich
 LIB_ENSDAM = ../lib/libensdam_genoa.a
 INSTALL_DIR_LIB=$(HOME)/lib
 INSTALL_DIR_INC=$(HOME)/include_genoa
 
 FC = ftn
 LD = ftn
-CPPFLAGS = -DMPI -DMPI_MODULE -DOPENMP -DCRAY
-CPPDEFS = -DMPI -DMPI_MODULE -DOPENMP -DCRAY
-#CPPFLAGS = -DMPI
-#CPPDEFS = -DMPI
+CPPFLAGS = -DMPI -DMPI_MODULE
+CPPDEFS = -DMPI -DMPI_MODULE
 NETCDF_INC = 
 NETCDF_LIB = 
-FFLAGS = -homp -hnoacc -fpic $(NETCDF_INC) $(IDEV_PATH) -I${HOME}/include_genoa
-LDFLAGS = -homp -hnoacc -lnetcdff -lhdf5_fortran $(NETCDF_LIB) -L$(HOME)/lib -lensdam_genoa
-#FFLAGS = -fpic $(NETCDF_INC) $(IDEV_PATH) -I${HOME}/include_gpu
-#LDFLAGS = -lnetcdff $(NETCDF_LIB) -L$(HOME)/lib -lensdam
+FFLAGS = -homp -hnoacc -fpic $(IDEV_PATH)
+LDFLAGS = -homp -hnoacc
 ARFLAGS = rv
 LIST =
