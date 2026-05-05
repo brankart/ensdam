@@ -64,65 +64,65 @@ stoutil.o: ../src/StochTools/stoutil.F90
 	$(FC) $(CPPDEFS) $(FPPFLAGS) $(FFLAGS) $(OTHERFLAGS) $(OTHER_FFLAGS) -c	../src/StochTools/stoutil.F90
 unmask.o: ../src/InterpTools/unmask.f90
 	$(FC) $(FPPFLAGS) $(FFLAGS) $(OTHERFLAGS) $(OTHER_FFLAGS) -c	../src/InterpTools/unmask.f90
-./anatra.f90: ../src/EnsAnam/anatra.f90
-	cp ../src/EnsAnam/anatra.f90 .
+./stoanam.f90: ../src/StochTools/stoanam.f90
+	cp ../src/StochTools/stoanam.f90 .
+./ensaugm.F90: ../src/EnsAugm/ensaugm.F90
+	cp ../src/EnsAugm/ensaugm.F90 .
+./score_entropy.F90: ../src/EnsScores/score_entropy.F90
+	cp ../src/EnsScores/score_entropy.F90 .
+./anautil.f90: ../src/EnsAnam/anautil.f90
+	cp ../src/EnsAnam/anautil.f90 .
+./qxgs.f90: ../src/StochTools/qxgs.f90
+	cp ../src/StochTools/qxgs.f90 .
+./stogprod.f90: ../src/StochTools/stogprod.f90
+	cp ../src/StochTools/stogprod.f90 .
+./score_rcrv.F90: ../src/EnsScores/score_rcrv.F90
+	cp ../src/EnsScores/score_rcrv.F90 .
+./stotge.f90: ../src/StochTools/stotge.f90
+	cp ../src/StochTools/stotge.f90 .
+./storfg.F90: ../src/StochTools/storfg.F90
+	cp ../src/StochTools/storfg.F90 .
+./score_crps.F90: ../src/EnsScores/score_crps.F90
+	cp ../src/EnsScores/score_crps.F90 .
+./interp.f90: ../src/InterpTools/interp.f90
+	cp ../src/InterpTools/interp.f90 .
+./anaobs.f90: ../src/EnsAnam/anaobs.f90
+	cp ../src/EnsAnam/anaobs.f90 .
 ./storng.f90: ../src/StochTools/storng.f90
 	cp ../src/StochTools/storng.f90 .
 ./mcmc_update_obs.F90: ../src/EnsUpdate/mcmc_update_obs.F90
 	cp ../src/EnsUpdate/mcmc_update_obs.F90 .
-./stotge.f90: ../src/StochTools/stotge.f90
-	cp ../src/StochTools/stotge.f90 .
-./score_optimality.F90: ../src/EnsScores/score_optimality.F90
-	cp ../src/EnsScores/score_optimality.F90 .
-./mcmc_update.F90: ../src/EnsUpdate/mcmc_update.F90
-	cp ../src/EnsUpdate/mcmc_update.F90 .
-./ensaugm.F90: ../src/EnsAugm/ensaugm.F90
-	cp ../src/EnsAugm/ensaugm.F90 .
-./anautil.f90: ../src/EnsAnam/anautil.f90
-	cp ../src/EnsAnam/anautil.f90 .
-./anaqua.f90: ../src/EnsAnam/anaqua.f90
-	cp ../src/EnsAnam/anaqua.f90 .
-./stoanam.f90: ../src/StochTools/stoanam.f90
-	cp ../src/StochTools/stoanam.f90 .
-./interp.f90: ../src/InterpTools/interp.f90
-	cp ../src/InterpTools/interp.f90 .
-./stoutil.F90: ../src/StochTools/stoutil.F90
-	cp ../src/StochTools/stoutil.F90 .
-./obserror.F90: ../src/ObsError/obserror.F90
-	cp ../src/ObsError/obserror.F90 .
-./storfg.F90: ../src/StochTools/storfg.F90
-	cp ../src/StochTools/storfg.F90 .
-./stogprod.f90: ../src/StochTools/stogprod.f90
-	cp ../src/StochTools/stogprod.f90 .
 ./spharea.f90: ../src/TranSpHO/spharea.f90
 	cp ../src/TranSpHO/spharea.f90 .
-./unmask.f90: ../src/InterpTools/unmask.f90
-	cp ../src/InterpTools/unmask.f90 .
+./mcmc_update.F90: ../src/EnsUpdate/mcmc_update.F90
+	cp ../src/EnsUpdate/mcmc_update.F90 .
+./stoutil.F90: ../src/StochTools/stoutil.F90
+	cp ../src/StochTools/stoutil.F90 .
+./anaqua.f90: ../src/EnsAnam/anaqua.f90
+	cp ../src/EnsAnam/anaqua.f90 .
 ./covariance.F90: ../src/EnsStat/covariance.F90
 	cp ../src/EnsStat/covariance.F90 .
 ./score_ranks.F90: ../src/EnsScores/score_ranks.F90
 	cp ../src/EnsScores/score_ranks.F90 .
-./constant.f90: ../src/StochTools/constant.f90
-	cp ../src/StochTools/constant.f90 .
-./score_crps.F90: ../src/EnsScores/score_crps.F90
-	cp ../src/EnsScores/score_crps.F90 .
-./score_rcrv.F90: ../src/EnsScores/score_rcrv.F90
-	cp ../src/EnsScores/score_rcrv.F90 .
-./meanstd.F90: ../src/EnsStat/meanstd.F90
-	cp ../src/EnsStat/meanstd.F90 .
-./score_entropy.F90: ../src/EnsScores/score_entropy.F90
-	cp ../src/EnsScores/score_entropy.F90 .
 ./schurprod.f90: ../src/EnsAugm/schurprod.f90
 	cp ../src/EnsAugm/schurprod.f90 .
+./constant.f90: ../src/StochTools/constant.f90
+	cp ../src/StochTools/constant.f90 .
 ./sphylm.F90: ../src/TranSpHO/sphylm.F90
 	cp ../src/TranSpHO/sphylm.F90 .
-./anaobs.f90: ../src/EnsAnam/anaobs.f90
-	cp ../src/EnsAnam/anaobs.f90 .
-./qxgs.f90: ../src/StochTools/qxgs.f90
-	cp ../src/StochTools/qxgs.f90 .
-SRC = ../src/EnsUpdate/mcmc_update_obs.F90 ../src/InterpTools/interp.f90 ../src/EnsScores/score_ranks.F90 ../src/EnsStat/meanstd.F90 ../src/StochTools/stoutil.F90 ../src/EnsScores/score_entropy.F90 ../src/EnsAnam/anatra.f90 ../src/EnsAugm/ensaugm.F90 ../src/StochTools/qxgs.f90 ../src/EnsAugm/schurprod.f90 ../src/StochTools/storfg.F90 ../src/ObsError/obserror.F90 ../src/EnsUpdate/mcmc_update.F90 ../src/EnsScores/score_crps.F90 ../src/EnsScores/score_optimality.F90 ../src/EnsScores/score_rcrv.F90 ../src/StochTools/stotge.f90 ../src/TranSpHO/spharea.f90 ../src/TranSpHO/sphylm.F90 ../src/StochTools/constant.f90 ../src/EnsAnam/anaqua.f90 ../src/StochTools/stogprod.f90 ../src/EnsAnam/anautil.f90 ../src/StochTools/storng.f90 ../src/InterpTools/unmask.f90 ../src/StochTools/stoanam.f90 ../src/EnsStat/covariance.F90 ../src/EnsAnam/anaobs.f90
-OBJ = mcmc_update_obs.o interp.o score_ranks.o meanstd.o stoutil.o score_entropy.o anatra.o ensaugm.o qxgs.o schurprod.o storfg.o obserror.o mcmc_update.o score_crps.o score_optimality.o score_rcrv.o stotge.o spharea.o sphylm.o constant.o anaqua.o stogprod.o anautil.o storng.o unmask.o stoanam.o covariance.o anaobs.o
-OFF = ../src/EnsAnam/anatra.f90 ../src/StochTools/storng.f90 ../src/EnsUpdate/mcmc_update_obs.F90 ../src/StochTools/stotge.f90 ../src/EnsScores/score_optimality.F90 ../src/EnsUpdate/mcmc_update.F90 ../src/EnsAugm/ensaugm.F90 ../src/EnsAnam/anautil.f90 ../src/EnsAnam/anaqua.f90 ../src/StochTools/stoanam.f90 ../src/InterpTools/interp.f90 ../src/StochTools/stoutil.F90 ../src/ObsError/obserror.F90 ../src/StochTools/storfg.F90 ../src/StochTools/stogprod.f90 ../src/TranSpHO/spharea.f90 ../src/InterpTools/unmask.f90 ../src/EnsStat/covariance.F90 ../src/EnsScores/score_ranks.F90 ../src/StochTools/constant.f90 ../src/EnsScores/score_crps.F90 ../src/EnsScores/score_rcrv.F90 ../src/EnsStat/meanstd.F90 ../src/EnsScores/score_entropy.F90 ../src/EnsAugm/schurprod.f90 ../src/TranSpHO/sphylm.F90 ../src/EnsAnam/anaobs.f90 ../src/StochTools/qxgs.f90
+./score_optimality.F90: ../src/EnsScores/score_optimality.F90
+	cp ../src/EnsScores/score_optimality.F90 .
+./meanstd.F90: ../src/EnsStat/meanstd.F90
+	cp ../src/EnsStat/meanstd.F90 .
+./obserror.F90: ../src/ObsError/obserror.F90
+	cp ../src/ObsError/obserror.F90 .
+./anatra.f90: ../src/EnsAnam/anatra.f90
+	cp ../src/EnsAnam/anatra.f90 .
+./unmask.f90: ../src/InterpTools/unmask.f90
+	cp ../src/InterpTools/unmask.f90 .
+SRC = ../src/EnsScores/score_rcrv.F90 ../src/EnsAugm/ensaugm.F90 ../src/TranSpHO/spharea.f90 ../src/ObsError/obserror.F90 ../src/StochTools/stotge.f90 ../src/TranSpHO/sphylm.F90 ../src/EnsAnam/anaobs.f90 ../src/StochTools/stoutil.F90 ../src/EnsScores/score_entropy.F90 ../src/StochTools/constant.f90 ../src/EnsAugm/schurprod.f90 ../src/InterpTools/unmask.f90 ../src/EnsUpdate/mcmc_update.F90 ../src/EnsStat/meanstd.F90 ../src/StochTools/stoanam.f90 ../src/EnsScores/score_ranks.F90 ../src/EnsAnam/anautil.f90 ../src/InterpTools/interp.f90 ../src/StochTools/qxgs.f90 ../src/EnsStat/covariance.F90 ../src/EnsScores/score_crps.F90 ../src/StochTools/storng.f90 ../src/EnsAnam/anatra.f90 ../src/StochTools/stogprod.f90 ../src/EnsUpdate/mcmc_update_obs.F90 ../src/EnsAnam/anaqua.f90 ../src/StochTools/storfg.F90 ../src/EnsScores/score_optimality.F90
+OBJ = score_rcrv.o ensaugm.o spharea.o obserror.o stotge.o sphylm.o anaobs.o stoutil.o score_entropy.o constant.o schurprod.o unmask.o mcmc_update.o meanstd.o stoanam.o score_ranks.o anautil.o interp.o qxgs.o covariance.o score_crps.o storng.o anatra.o stogprod.o mcmc_update_obs.o anaqua.o storfg.o score_optimality.o
+OFF = ../src/StochTools/stoanam.f90 ../src/EnsAugm/ensaugm.F90 ../src/EnsScores/score_entropy.F90 ../src/EnsAnam/anautil.f90 ../src/StochTools/qxgs.f90 ../src/StochTools/stogprod.f90 ../src/EnsScores/score_rcrv.F90 ../src/StochTools/stotge.f90 ../src/StochTools/storfg.F90 ../src/EnsScores/score_crps.F90 ../src/InterpTools/interp.f90 ../src/EnsAnam/anaobs.f90 ../src/StochTools/storng.f90 ../src/EnsUpdate/mcmc_update_obs.F90 ../src/TranSpHO/spharea.f90 ../src/EnsUpdate/mcmc_update.F90 ../src/StochTools/stoutil.F90 ../src/EnsAnam/anaqua.f90 ../src/EnsStat/covariance.F90 ../src/EnsScores/score_ranks.F90 ../src/EnsAugm/schurprod.f90 ../src/StochTools/constant.f90 ../src/TranSpHO/sphylm.F90 ../src/EnsScores/score_optimality.F90 ../src/EnsStat/meanstd.F90 ../src/ObsError/obserror.F90 ../src/EnsAnam/anatra.f90 ../src/InterpTools/unmask.f90
 clean: neat
 	-rm -f .../lib/libensdam_gpu.a.cppdefs $(OBJ) ../lib/libensdam_gpu.a
 

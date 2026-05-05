@@ -86,7 +86,7 @@ MODULE ensdam_schurprod
 !         var      : second input variable with which performing the Schur product
 !----------------------------------------------------------------------
         IMPLICIT NONE
-        REAL(KIND=8), INTENT( out ) :: prod
+        REAL(KIND=8), INTENT( inout ) :: prod
         REAL(KIND=8), INTENT( in ) :: var
 
         REAL(KIND=8) :: gprod

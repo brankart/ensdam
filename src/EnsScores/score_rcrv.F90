@@ -76,6 +76,8 @@ MODULE ensdam_score_rcrv
       REAL(KIND=8), DIMENSION(:,:), INTENT( in ) :: ens
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: verif
 
+! Does not compile with CRAY ?!
+#if ! defined CRAY
       INTEGER :: jpi,jpm,nbr,ji
 
       jpi = SIZE(ens,1)  ! Size of state vector
@@ -106,6 +108,7 @@ MODULE ensdam_score_rcrv
       IF (allocated(quadef)) deallocate(quadef)
       IF (allocated(quaref)) deallocate(quaref)
       IF (allocated(qua)) deallocate(qua)
+#endif
 
       END SUBROUTINE rcrv_score_global
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -129,6 +132,8 @@ MODULE ensdam_score_rcrv
       REAL(KIND=8), DIMENSION(:), INTENT( in ) :: verif
       INTEGER, DIMENSION(:), INTENT( in ) :: partition
 
+! Does not compile with CRAY ?!
+#if ! defined CRAY
       INTEGER :: jpi,jpm,submin,submax,jsub,ji,allocstat
       REAL(KIND=8), DIMENSION(:,:), allocatable :: aa,bb
       INTEGER, DIMENSION(:), allocatable :: nbr
@@ -184,6 +189,7 @@ MODULE ensdam_score_rcrv
       IF (allocated(quaref)) deallocate(quaref)
       IF (allocated(qua)) deallocate(qua)
 
+#endif
       END SUBROUTINE rcrv_score_partition
 ! &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ! --------------------------------------------------------------------

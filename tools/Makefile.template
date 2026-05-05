@@ -6,7 +6,7 @@ include Makefile.macro
 #
 EXAMPLE_DIR = ../examples
 DOC_DIR = ../doc
-MOD_DIR = ../include
+MOD_DIR = .
 #
 #========================================================
 #          Compile modules
@@ -38,7 +38,7 @@ solib: $(OBJ)
 ranlib: $(LIB_ENSDAM)
 	ranlib $(LIB_ENSDAM)
 #
-install: ranlib solib
+install: ranlib
 	cp $(LIB_ENSDAM) $(INSTALL_DIR_LIB)
 	#cp $(LIB_ENSDAM_SHARED) $(INSTALL_DIR_LIB)/lib/
 	cp $(MOD_DIR)/*.mod $(INSTALL_DIR_INC)
