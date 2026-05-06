@@ -36,7 +36,7 @@ fi
 
 
 
-./mkmf -t Makefile.template -p ../lib/libensdam_mpi.a ../src/E* ../src/InterpTools ../src/ObsError ../src/StochTools ../src/TranSpHO/
+./mkmf -t Makefile.template -p ../lib/libensdam_genoa.a ../src/E* ../src/InterpTools ../src/ObsError ../src/StochTools ../src/TranSpHO/
 
 make all
 

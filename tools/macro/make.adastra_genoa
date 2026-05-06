@@ -10,11 +10,11 @@ INSTALL_DIR_INC=$(HOME)/include_genoa
 
 FC = ftn
 LD = ftn
-CPPFLAGS = -DMPI -DMPI_MODULE
-CPPDEFS = -DMPI -DMPI_MODULE
+CPPFLAGS = -DMPI -DMPI_MODULE -DCRAY
+CPPDEFS = -DMPI -DMPI_MODULE -DCRAY
 NETCDF_INC = 
 NETCDF_LIB = 
-FFLAGS = -homp -hnoacc -fpic $(IDEV_PATH)
-LDFLAGS = -homp -hnoacc
+FFLAGS = -hnoomp -hnoacc -fpic $(IDEV_PATH)
+LDFLAGS = -hnoomp -hnoacc
 ARFLAGS = rv
 LIST =
