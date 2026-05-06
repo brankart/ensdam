@@ -363,7 +363,7 @@ MODULE ensdam_mcmc_update
               CALL mpi_bcast(coefficient,1,mpi_double_precision,0,mpi_comm_mcmc_update,mpi_code)
 #endif
               ! get draw from proposal distribution
-#if defined OPENACC
+#if defined OPENACC || defined OPENMP
               IF (mcmc_adap_type>1) THEN
                 !$acc data present(upens, vtest)
                 !$acc parallel loop
@@ -393,7 +393,7 @@ MODULE ensdam_mcmc_update
 
               IF ( accept_new_draw( vtest, jup ) ) THEN
                 ! update ensemble member
-#if defined OPENACC
+#if defined OPENACC || defined OPENMP
                 !$acc data present(upens, vtest)
                 !$acc parallel loop
                 !$omp target teams distribute parallel do
@@ -412,7 +412,7 @@ MODULE ensdam_mcmc_update
                   ! (i.e. using the same sample to compute the product)
                   CALL getproduct( vextra, xens, multiplicity, sample )
                   ! perform the same linear combination, with the same random coefficient
-#if defined OPENACC
+#if defined OPENACC || defined OPENMP
                   !$acc data present(upxens, vextra)
                   !$acc parallel loop
                   !$omp target teams distribute parallel do

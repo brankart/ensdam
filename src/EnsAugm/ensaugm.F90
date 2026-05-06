@@ -209,10 +209,10 @@ MODULE ensdam_ensaugm
 #endif
         
         ! Perform the Schur product with randomly selected members
-#if defined OPENACC
+#if defined OPENACC || defined OPENMP
         !$acc data copyin(sample) present(ens, new)
         !$acc parallel loop private(jfactor)
-        !$omp target update to(sample)
+        !$omp target update to(sample,multiplicity)
         !$omp target teams distribute parallel do private(jfactor)
         DO ji=1,jpi
            jfactor = 1
@@ -292,10 +292,10 @@ MODULE ensdam_ensaugm
         IF (SIZE(sample,1).NE.jpfactor) STOP 'Inconsistent size in ensaugm'
 
         ! Perform the Schur product with required selected members
-#if defined OPENACC
+#if defined OPENACC || defined OPENMP
         !$acc data copyin(sample) present(ens, new)
         !$acc parallel loop private(jfactor)
-        !$omp target update to(sample)
+        !$omp target update to(sample,multiplicity)
         !$omp target teams distribute parallel do private(jfactor)
         DO ji=1,jpi
            jfactor = 1
